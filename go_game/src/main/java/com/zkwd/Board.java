@@ -15,14 +15,14 @@ public class Board {
     }
 
     void putBlack(int x, int y) {
-        board[x][y] = new Intersection(x, y, BLACK);
+        board[x][y] = new Intersection(BLACK);
     }
 
     void putWhite(int x, int y) {
-        board[x][y] = new Intersection(x, y, WHITE);
+        board[x][y] = new Intersection(WHITE);
     }
 
     void removeStone(int x, int y) {
-        board[x][y] = new Intersection(x, y, FREE);
+        board[x][y] = new Intersection(FREE);
     }
 }

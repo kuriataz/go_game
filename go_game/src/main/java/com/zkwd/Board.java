@@ -7,22 +7,22 @@ public class Board {
     public static final int FREE = 0;
 
     int size;
-    Intersection[][] board;
+    int[][] board;
 
     public Board(int size) {
         this.size = size;
-        this.board = new Intersection [size][size]; // by default every cell is 0 = EMPTY
+        this.board = new int[size][size]; // by default every cell is 0 = EMPTY
     }
 
     void putBlack(int x, int y) {
-        board[x][y] = new Intersection(BLACK);
+        board[x][y] = BLACK;
     }
 
     void putWhite(int x, int y) {
-        board[x][y] = new Intersection(WHITE);
+        board[x][y] = WHITE;
     }
 
     void removeStone(int x, int y) {
-        board[x][y] = new Intersection(FREE);
+        board[x][y] = FREE;
     }
 }

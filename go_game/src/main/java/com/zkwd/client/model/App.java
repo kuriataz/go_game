@@ -1,5 +1,9 @@
 package com.zkwd.client.model;
 
+import java.io.IOException;
+
+import com.zkwd.client.Player;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -16,10 +20,15 @@ public class App extends Application
      */
     private static Scene scene;
 
+    private static Player hook;
+
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws IOException {
 
         StackPane sp = new StackPane(new Text("loading"));
+
+        //connect to server
+        hook = new Player("localhost", 8888);
 
         scene = new Scene(sp, 600, 400);
 
@@ -35,6 +44,27 @@ public class App extends Application
      */
     public static void changeState(State state){
         scene.setRoot(state.getState().launch());
+    }
+
+    public static Player getServerHook() {
+        return hook;
+    }
+
+    /**
+     * Send a message to the server and wait for a response.
+     * @param message
+     * @return The response
+     */
+    public static String transmit(String message){
+        return hook.transmit(message);
+    }
+
+    /**
+     * Wait for a message from the server.
+     * @return The message, once it is delivered.
+     */
+    public static String await() {
+        return hook.await();
     }
 
     public static void main( String[] args )

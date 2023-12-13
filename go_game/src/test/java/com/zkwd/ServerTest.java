@@ -21,24 +21,24 @@ public class ServerTest {
     serverThread.start();
 
     // Start a couple of clients
-    Thread playerThread1 = new Thread(() -> {
-      try {
-        Player player1 = new Player("localhost", 8888);
-        player1.start();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    });
-    playerThread1.start();
+    // Thread playerThread1 = new Thread(() -> {
+    //   try {
+    //     Player player1 = new Player("localhost", 8888);
+    //     player1.start();
+    //   } catch (IOException e) {
+    //     e.printStackTrace();
+    //   }
+    // });
+    // playerThread1.start();
 
-    Thread playerThread2 = new Thread(() -> {
-      try {
-        Player player2 = new Player("localhost", 8888);
-        player2.start();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    });
-    playerThread2.start();
+    // Thread playerThread2 = new Thread(() -> {
+    //   try {
+    //     Player player2 = new Player("localhost", 8888);
+    //     player2.start();
+    //   } catch (IOException e) {
+    //     e.printStackTrace();
+    //   }
+    // });
+    // playerThread2.start();
   }
 }

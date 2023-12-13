@@ -30,10 +30,31 @@ public class LobbyScreen extends BorderPane implements IScreen {
         codeInput.getChildren().addAll(join, tf, btn);
         codeInput.setAlignment(Pos.CENTER);
 
+        // TODO : maybe move the event handler outside the constructor
+        // will have to make the above definitions class-wide, though.
         btn.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent event){
-                // ask server if code is taken
-                App.changeState(State.INGAME);
+                String code = tf.getText();
+
+                // send a command to the server to check if the code is taken
+                String result = App.transmit("checklobby:" + code);
+
+                while(result.equals("_wait")){
+                    // waiting screen
+                    txt.setText("awaiting an opponent...");
+                    btn.setDisable(true);
+                    
+                    result = App.await();
+                }
+                
+                if(result.equals("_connect")) {
+
+                    App.changeState(State.INGAME);
+
+                } else {
+                    // incorrect result
+                    // communicate that something went wrong
+                }
             }
         });
 

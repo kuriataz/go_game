@@ -32,26 +32,39 @@ public class Player {
     }
   }
 
-  public void start() {
-    try {
-      BufferedReader userInput =
-          new BufferedReader(new InputStreamReader(System.in));
-
-      while (true) {
-        String message = userInput.readLine();
-        out.println(message);
-
-        String response = in.readLine();
-        System.out.println("Server says: " + response);
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    } finally {
-      try {
-        socket.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+  /**
+   * Await for a message from the server.
+   * @return The message, once it is delivered.
+   * @throws IOException
+   */
+  public String await() {
+    try{
+      return in.readLine();
+    } catch (IOException e){
+      return null;
     }
   }
+
+  // public void start() {
+  //   try {
+  //     BufferedReader userInput =
+  //         new BufferedReader(new InputStreamReader(System.in));
+
+  //     while (true) {
+  //       String message = userInput.readLine();
+  //       out.println(message);
+
+  //       String response = in.readLine();
+  //       System.out.println("Server says: " + response);
+  //     }
+  //   } catch (IOException e) {
+  //     e.printStackTrace();
+  //   } finally {
+  //     try {
+  //       socket.close();
+  //     } catch (IOException e) {
+  //       e.printStackTrace();
+  //     }
+  //   }
+  // }
 }

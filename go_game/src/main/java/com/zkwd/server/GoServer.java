@@ -3,9 +3,13 @@ package com.zkwd.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class GoServer {
   private ServerSocket serverSocket;
+
+  // will contain a list of codes, under which some player is awaiting an opponent
+  private ArrayList<String> pendingGames;
 
   public GoServer(int port) throws IOException {
     serverSocket = new ServerSocket(port);

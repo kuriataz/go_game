@@ -5,17 +5,22 @@ import java.util.ArrayList;
 public class Intersection {
   private int state;
   private Boolean breath = true;
-  private ArrayList<Intersection> neighbours;
+  public ArrayList<Intersection> neighbours;
 
-  public Intersection(int state) { this.state = state; }
+  Intersection(int state) { this.state = state; }
 
-  public void setState(int state) { this.state = state; }
+  void setState(int state) { this.state = state; }
 
-  public int getState() { return this.state; }
+  int getState() { return this.state; }
 
-  public Boolean checkBreath() { return this.breath; }
+  Boolean checkBreath() { return this.breath; }
 
-  public Boolean isBreathing() {
+  /**
+   *
+   * @return true if the intersection (or its' chain has at least one breath).
+   *     False if not
+   */
+  Boolean isBreathing() {
     if (this.state == 0) {
       this.breath = true;
       return true;

@@ -1,8 +1,9 @@
 package com.zkwd;
 
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -20,10 +21,16 @@ public class App extends Application
     @Override
     public void start(Stage stage){
 
-        Text txt = new Text("hello world");
-        StackPane sp = new StackPane(txt);
+        Board board = new Board(10).randomize();
 
-        stage.setScene(new Scene(sp, 600, 400));
+        GUIBoard gb = new GUIBoard(board);
+
+        Text txt = new Text("- board -");
+        
+        VBox box = new VBox(txt, gb);
+        box.setAlignment(Pos.CENTER);
+
+        stage.setScene(new Scene(box, 600, 400));
         stage.show();
     }
 }

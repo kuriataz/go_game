@@ -1,4 +1,4 @@
-package com.zkwd.server;
+package com.zkwd.server.game;
 
 import java.util.ArrayList;
 

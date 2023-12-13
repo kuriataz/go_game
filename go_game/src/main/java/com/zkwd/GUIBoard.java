@@ -11,77 +11,73 @@ import javafx.scene.shape.Line;
 
 /**
  * Draws a board to be displayed on screen.
- * 
+ *
  * (we could make this a builder for free tbh)
  */
-public class GUIBoard extends Group{
-    int size;
-    Board boardState;
-    GridPane gp;
+public class GUIBoard extends Group {
+  int size;
+  Board boardState;
+  GridPane gp;
 
-    /**
-     * size of circle nodes and padding - will determine size of board
-     */
-    final double CircleSize = 12;
-    final double GridPadding = 3;
-    
-    public GUIBoard(Board state){
-        super();
-        this.size = state.getSize();
+  /**
+   * size of circle nodes and padding - will determine size of board
+   */
+  final double CircleSize = 12;
+  final double GridPadding = 3;
 
-        // grid lines
-        for(int i = 0; i < size; ++i){
+  public GUIBoard(Board state) {
+    super();
+    this.size = state.getSize();
 
-            Line vertical = new Line(
-                getCoords(i, 0).getX(),
-                getCoords(i, 0).getY(),
-                getCoords(i, size - 1).getX(),
-                getCoords(i, size - 1).getY());
+    // grid lines
+    for (int i = 0; i < size; ++i) {
 
-            vertical.setStrokeWidth(2);
-            this.getChildren().add(vertical);
+      Line vertical = new Line(getCoords(i, 0).getX(), getCoords(i, 0).getY(),
+                               getCoords(i, size - 1).getX(),
+                               getCoords(i, size - 1).getY());
 
-            Line horizontal = new Line(
-                getCoords(0, i).getX(),
-                getCoords(0, i).getY(),
-                getCoords(size - 1, i).getX(),
-                getCoords(size - 1, i).getY());
+      vertical.setStrokeWidth(2);
+      this.getChildren().add(vertical);
 
-            horizontal.setStrokeWidth(2);
-            this.getChildren().add(horizontal);
-        }
+      Line horizontal = new Line(getCoords(0, i).getX(), getCoords(0, i).getY(),
+                                 getCoords(size - 1, i).getX(),
+                                 getCoords(size - 1, i).getY());
 
-        // stones
-        gp = new GridPane();
-        //gp.setPadding(new Insets(GridPadding));
-        gp.setAlignment(Pos.CENTER);
-        for(int i = 0; i < size; ++i){
-            for(int j = 0; j < size; ++j){
-                Circle shape = new Circle(CircleSize);
-                GridPane.setMargin(shape, new Insets(GridPadding));
-                shape.setStroke(Color.BLACK);
-                shape.setStrokeWidth(2);
-
-                switch(state.getValue(i, j)){
-                    case 1: //WHITE
-                        shape.setFill(Color.WHITE);
-                        break;
-                    case -1: //BLACK
-                        shape.setFill(Color.BLACK);
-                        break;
-                    default:
-                        shape.setFill(Color.TRANSPARENT);
-                        shape.setStroke(Color.TRANSPARENT);
-                }
-                gp.add(shape, i, j);
-            }
-        }
-
-        this.getChildren().add(gp);
+      horizontal.setStrokeWidth(2);
+      this.getChildren().add(horizontal);
     }
 
-    Point2D getCoords(int x, int y){
-        double w = GridPadding + CircleSize + 1;
-        return new Point2D(w * (2*x + 1), w * (2*y + 1));
+    // stones
+    gp = new GridPane();
+    // gp.setPadding(new Insets(GridPadding));
+    gp.setAlignment(Pos.CENTER);
+    for (int i = 0; i < size; ++i) {
+      for (int j = 0; j < size; ++j) {
+        Circle shape = new Circle(CircleSize);
+        GridPane.setMargin(shape, new Insets(GridPadding));
+        shape.setStroke(Color.BLACK);
+        shape.setStrokeWidth(2);
+
+        switch (state.getValue(i, j)) {
+        case 1: // WHITE
+          shape.setFill(Color.WHITE);
+          break;
+        case -1: // BLACK
+          shape.setFill(Color.BLACK);
+          break;
+        default:
+          shape.setFill(Color.TRANSPARENT);
+          shape.setStroke(Color.TRANSPARENT);
+        }
+        gp.add(shape, i, j);
+      }
     }
+
+    this.getChildren().add(gp);
+  }
+
+  Point2D getCoords(int x, int y) {
+    double w = GridPadding + CircleSize + 1;
+    return new Point2D(w * (2 * x + 1), w * (2 * y + 1));
+  }
 }

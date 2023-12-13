@@ -19,7 +19,6 @@ public class Player {
 
   public void start() {
     try {
-
       BufferedReader userInput =
           new BufferedReader(new InputStreamReader(System.in));
 

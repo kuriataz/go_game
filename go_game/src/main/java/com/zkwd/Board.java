@@ -25,36 +25,9 @@ public class Board {
     }
   }
 
-<<<<<<< HEAD
   void putWhite(int x, int y) {
     if (validMove(board[x][y])) {
       board[x][y] = WHITE;
-=======
-    /**
-     * Randomizes the board state. Mostly for debug purposes.
-     * @return The board that has been randomized (this)
-     */
-    public Board randomize() {
-        Random r = new Random();
-        for(int i = 0; i < size; ++i){
-            for(int j = 0; j < size; ++j){
-                board[i][j] = r.nextInt() % 3 - 1;
-            }
-        }
-        return this;
-    }
-
-    int getSize() {
-        return this.size;
-    }
-
-    int getValue(int x, int y){
-        return board[x][y];
-    }
-
-    void putBlack(int x, int y) {
-        board[x][y] = BLACK;
->>>>>>> 92b014786e58ac46a4e310e0bb0f4e473484b90d
     }
   }
 

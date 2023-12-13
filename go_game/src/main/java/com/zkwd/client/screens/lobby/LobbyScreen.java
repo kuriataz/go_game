@@ -2,8 +2,9 @@ package com.zkwd.client.screens.lobby;
 
 import com.zkwd.client.model.App;
 import com.zkwd.client.model.IScreen;
-import com.zkwd.client.model.State;
+import com.zkwd.client.model.AppState;
 
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -37,19 +38,24 @@ public class LobbyScreen extends BorderPane implements IScreen {
                 String code = tf.getText();
 
                 // send a command to the server to check if the code is taken
-                String result = App.transmit("checklobby:" + code);
+                String result = App.transmit("joinlobby:" + code);
 
-                while(result.equals("_wait")){
+                if(result.equals("_wait")){
                     // waiting screen
                     txt.setText("awaiting an opponent...");
                     btn.setDisable(true);
-                    
-                    result = App.await();
-                }
-                
-                if(result.equals("_connect")) {
+                    tf.setDisable(true);
 
-                    App.changeState(State.INGAME);
+                    Thread th = new Thread(waiter);
+                    th.setDaemon(true);
+                    th.start();
+
+                    // put up like a loading wheel or something would be neat
+                    // also a button to cancel
+
+                } else if(result.equals("_connect")) {
+
+                    App.changeState(AppState.INGAME);
 
                 } else {
                     // incorrect result
@@ -67,4 +73,26 @@ public class LobbyScreen extends BorderPane implements IScreen {
     public Pane launch() {
         return this;
     }
+
+    /**
+     * Waits for an opponent to join the lobby in the background
+     */
+    Task<String> waiter = new Task<String>() {
+        @Override protected String call() {
+            return App.await();
+        }
+
+        @Override protected void succeeded() {
+            super.succeeded();
+
+            // change state to ingame
+            App.changeState(AppState.INGAME);
+        }
+
+        @Override protected void cancelled() {
+            super.cancelled();
+            // request to remove from list
+            // TODO : a command that does this
+        }
+    };
 }

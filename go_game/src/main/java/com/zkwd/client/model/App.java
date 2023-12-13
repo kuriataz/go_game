@@ -35,14 +35,14 @@ public class App extends Application
         stage.setScene(scene);
         stage.show();
 
-        changeState(State.LOBBY);
+        changeState(AppState.LOBBY);
     }
 
     /**
      * Changes the state of the application.
      * @param state The desired state.
      */
-    public static void changeState(State state){
+    public static void changeState(AppState state){
         scene.setRoot(state.getState().launch());
     }
 

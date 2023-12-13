@@ -29,9 +29,9 @@ public class PlayerHandler implements Runnable {
 
         // TODO : IMPLEMENT A COMMAND SYSTEM
 
-        if(clientMessage.startsWith("checklobby:")){
+        if(clientMessage.startsWith("joinlobby:")){
           // check lobby
-          String arg = clientMessage.substring("checklobby:".length());
+          String arg = clientMessage.substring("joinlobby:".length());
           Socket opponent = GoServer.tryJoin(arg);
           if(opponent != null){
             // create a game here

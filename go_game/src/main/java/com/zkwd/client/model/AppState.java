@@ -4,14 +4,14 @@ import com.zkwd.client.screens.ingame.GameScreen;
 import com.zkwd.client.screens.lobby.LobbyScreen;
 import com.zkwd.client.screens.results.ResultsScreen;
 
-public enum State {
+public enum AppState {
     LOBBY (LobbyScreen.class),
     INGAME (GameScreen.class),
     RESULTS (ResultsScreen.class);
 
     private Class<? extends IScreen> c;
 
-    private State(Class<? extends IScreen> c){
+    private AppState(Class<? extends IScreen> c){
         this.c = c;
     }
 

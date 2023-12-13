@@ -1,7 +1,10 @@
-package com.zkwd;
+package com.zkwd.server;
 
 import java.util.ArrayList;
 
+/**
+ * The container
+ */
 public class Intersection {
   private int state;
   private Boolean breath = true;
@@ -17,7 +20,7 @@ public class Intersection {
 
   /**
    *
-   * @return true if the intersection (or its' chain has at least one breath).
+   * @return true if the intersection (or it's chain has at least one breath).
    *     False if not
    */
   Boolean isBreathing() {

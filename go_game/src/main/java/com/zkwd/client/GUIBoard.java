@@ -1,9 +1,13 @@
-package com.zkwd;
+package com.zkwd.client;
 
+import com.zkwd.server.Board;
+
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -29,7 +33,9 @@ public class GUIBoard extends Group {
     super();
     this.size = state.getSize();
 
-    // grid lines
+    /**
+     * GRID LINES
+     */
     for (int i = 0; i < size; ++i) {
 
       Line vertical = new Line(getCoords(i, 0).getX(), getCoords(i, 0).getY(),
@@ -47,9 +53,10 @@ public class GUIBoard extends Group {
       this.getChildren().add(horizontal);
     }
 
-    // stones
+    /**
+     * STONES
+     */
     gp = new GridPane();
-    // gp.setPadding(new Insets(GridPadding));
     gp.setAlignment(Pos.CENTER);
     for (int i = 0; i < size; ++i) {
       for (int j = 0; j < size; ++j) {
@@ -76,7 +83,12 @@ public class GUIBoard extends Group {
     this.getChildren().add(gp);
   }
 
-  Point2D getCoords(int x, int y) {
+  public ObservableList<Node> getButtons() {
+    return gp.getChildren();
+  }
+
+  // gets coordinates in local space for the center of intersection (x, y)
+  private Point2D getCoords(int x, int y) {
     double w = GridPadding + CircleSize + 1;
     return new Point2D(w * (2 * x + 1), w * (2 * y + 1));
   }

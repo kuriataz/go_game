@@ -1,7 +1,6 @@
-package com.zkwd;
+package com.zkwd.server;
 
 import java.util.Random;
-import javafx.beans.binding.When;
 
 /**
  * Stores game information: the size of the board and placement of pieces on it.
@@ -19,6 +18,11 @@ public class Board {
     this.size = size;
     this.board =
         new Intersection[size][size]; // by default every cell is 0 = EMPTY
+    for (int i = 0; i < size; ++i) {
+      for (int j = 0; j < size; ++j) {
+        board[i][j] = new Intersection(0);
+      }
+    }
   }
 
   /**
@@ -35,13 +39,26 @@ public class Board {
     return this;
   }
 
+  /**
+   * Cycle between values (debug).
+   * @param x row
+   * @param y column
+  */
+  public void flip(int x, int y){
+    board[y][x].setState((board[x][y].getState() + 2) % 3 - 1);
+  }
+
+  /**
+   * Gets the size of the board.
+   * @return The size of the board
+   */
   int getSize() { return this.size; }
 
   /**
-   * Returns the state of the intersection (color)
+   * Returns the state of the intersection (color).
    * @param x intersection's x coordinate
    * @param y intersection's y coordinate
-   * @return state (FREE, BLACK, WHITE) of the intersection with coordinates x,
+   * @return state (0: free, 1: white, -1: black) of the intersection with coordinates x,
    *     y
    */
   int getValue(int x, int y) { return board[x][y].getState(); }
@@ -61,19 +78,16 @@ public class Board {
   void removeStone(int x, int y) { board[x][y].setState(FREE); }
 
   /**
-   * Checks if the new stone can be put on the intersetion
+   * Checks if the new stone can be put on the intersetion.
    * @param state FREE, BLACK, WHITE
    * @return true if the intersetion is FREE = 0
    */
   Boolean validMove(int state) {
-    if (state == 0) {
-      return true;
-    }
-    return false;
+    return (state == FREE);
   }
 
   /**
-   * Sets neighbours of each intersection
+   * Sets neighbours of each intersection.
    */
   void setNeighbours() {
     for (int i = 0; i != size; ++i) {
@@ -92,5 +106,24 @@ public class Board {
         }
       }
     }
+  }
+
+  /**
+   * FORMATTING OF THE OUTPUT STRING
+   * white -> W
+   * black -> B
+   * empty -> E
+   * printed column by column, columns divided by |
+   */
+  public String prepareBoardString() {
+    String out = "";
+    for(int i = 0; i < size; ++i){
+      for(int j = 0; j < size; ++j){
+        int k = board[i][j].getState();
+        out += (k == 1) ? "W" : (k == -1) ? "B" : "E";
+      }
+      out += "|";
+    }
+    return out;
   }
 }

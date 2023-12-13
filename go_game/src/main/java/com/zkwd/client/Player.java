@@ -1,4 +1,4 @@
-package com.zkwd;
+package com.zkwd.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,6 +15,21 @@ public class Player {
     socket = new Socket(serverAddress, serverPort);
     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     out = new PrintWriter(socket.getOutputStream(), true);
+  }
+
+  /**
+   * Sends a message to the server and awaits for its response.
+   * @param message The transmitted message
+   * @return The response of the server
+   * @throws IOException
+   */
+  public String transmit(String message) {
+    out.println(message);
+    try{
+      return in.readLine();
+    } catch (IOException e){
+      return null;
+    }
   }
 
   public void start() {

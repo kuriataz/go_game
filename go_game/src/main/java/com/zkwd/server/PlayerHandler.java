@@ -1,4 +1,4 @@
-package com.zkwd;
+package com.zkwd.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -11,31 +11,32 @@ public class Board {
   public static final int WHITE = 1;
   public static final int FREE = 0;
 
-  int size;
-  int[][] board;
+  private int size;
+  private Intersection[][] board;
 
   public Board(int size) {
     this.size = size;
-    this.board = new int[size][size]; // by default every cell is 0 = EMPTY
+    this.board =
+        new Intersection[size][size]; // by default every cell is 0 = EMPTY
   }
 
+  public int getSize() { return this.size; }
+
+  public int getValue(int x, int y) { return board[x][y].getState(); }
+
   void putBlack(int x, int y) {
-    if (validMove(board[x][y])) {
-      board[x][y] = BLACK;
+    if (validMove(board[x][y].getState())) {
+      board[x][y].setState(BLACK);
     }
   }
 
   void putWhite(int x, int y) {
-    if (validMove(board[x][y])) {
-      board[x][y] = WHITE;
+    if (validMove(board[x][y].getState())) {
+      board[x][y].setState(WHITE);
     }
   }
 
-  void removeStone(int x, int y) {
-    if (validMove(board[x][y])) {
-      board[x][y] = FREE;
-    }
-  }
+  void removeStone(int x, int y) { board[x][y].setState(FREE); }
 
   Boolean validMove(int state) {
     if (state == 0) {

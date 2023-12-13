@@ -11,8 +11,8 @@ public class Board {
   public static final int WHITE = 1;
   public static final int FREE = 0;
 
-  private int size;
-  private Intersection[][] board;
+  int size;
+  int[][] board;
 
   public Board(int size) {
     this.size = size;
@@ -28,19 +28,48 @@ public class Board {
     if (validMove(board[x][y].getState())) {
       board[x][y].setState(BLACK);
     }
-  }
 
-  void putWhite(int x, int y) {
-    if (validMove(board[x][y].getState())) {
-      board[x][y].setState(WHITE);
+    /**
+     * Randomizes the board state. Mostly for debug purposes.
+     * @return The board that has been randomized (this)
+     */
+    public Board randomize() {
+      Random r = new Random();
+      for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+          board[i][j] = r.nextInt() % 3 - 1;
+        }
+      }
+      return this;
     }
-  }
 
-  void removeStone(int x, int y) { board[x][y].setState(FREE); }
+    int getSize() { return this.size; }
 
-  Boolean validMove(int state) {
-    if (state == 0) {
-      return true;
+    int getValue(int x, int y) { return board[x][y]; }
+
+    void putBlack(int x, int y) {
+      if (validMove(board[x][y])) {
+        board[x][y] = BLACK;
+      }
+    }
+
+    void putWhite(int x, int y) {
+      if (validMove(board[x][y])) {
+        board[x][y] = WHITE;
+      }
+    }
+
+    void removeStone(int x, int y) {
+      if (validMove(board[x][y])) {
+        board[x][y] = FREE;
+      }
+    }
+
+    Boolean validMove(int state) {
+      if (state == 0) {
+        return true;
+      }
+      return false;
     }
     return false;
   }

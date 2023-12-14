@@ -1,18 +1,20 @@
 package com.zkwd.server.connection;
 
+import com.zkwd.server.Commands.Command;
+import com.zkwd.server.GoServer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-
-import com.zkwd.server.GoServer;
+import java.util.ArrayList;
 
 public class PlayerHandler implements Runnable {
 
   private Socket playerSocket;
   private BufferedReader in;
   private PrintWriter out;
+  private ArrayList<Command> commands;
 
   public PlayerHandler(Socket socket) throws IOException {
     this.playerSocket = socket;
@@ -29,15 +31,16 @@ public class PlayerHandler implements Runnable {
 
         // TODO : IMPLEMENT A COMMAND SYSTEM
 
-        if(clientMessage.startsWith("joinlobby:")){
+        if (clientMessage.startsWith("joinlobby:")) {
           // check lobby
           String arg = clientMessage.substring("joinlobby:".length());
           Socket opponent = GoServer.tryJoin(arg);
-          if(opponent != null){
+          if (opponent != null) {
             // create a game here
 
             // send out messages to both players that they've been connected
-            new PrintWriter(opponent.getOutputStream(), true).println("_connect");
+            new PrintWriter(opponent.getOutputStream(), true)
+                .println("_connect");
             out.println("_connect");
           } else {
             // add yourself to waiting list

@@ -1,4 +1,4 @@
-package com.zkwd;
+package com.zkwd.client.screens.ingame;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -14,10 +14,7 @@ import javafx.scene.shape.Line;
  *
  * (we could make this a builder for free tbh)
  */
-public class GUIBoard extends Group {
-  int size;
-  Board boardState;
-  GridPane gp;
+public class GUIBoardBuilder {
 
   /**
    * size of circle nodes and padding - will determine size of board
@@ -25,31 +22,45 @@ public class GUIBoard extends Group {
   final double CircleSize = 12;
   final double GridPadding = 3;
 
-  public GUIBoard(Board state) {
-    super();
-    this.size = state.getSize();
+  Group DisplayBoard(String boardState) {
+    Group out = new Group();
 
-    // grid lines
+    String[] lines = boardState.split("|");
+
+    if(lines.length != lines[0].length()){
+      //data is wrong
+      //maybe throw something here
+      return null;
+    } 
+
+    int size = lines.length;
+
+    /**
+     * GRID LINES
+     */
     for (int i = 0; i < size; ++i) {
 
-      Line vertical = new Line(getCoords(i, 0).getX(), getCoords(i, 0).getY(),
+      Line vertical = new Line(getCoords(i, 0).getX(), 
+                               getCoords(i, 0).getY(),
                                getCoords(i, size - 1).getX(),
                                getCoords(i, size - 1).getY());
 
       vertical.setStrokeWidth(2);
-      this.getChildren().add(vertical);
+      out.getChildren().add(vertical);
 
-      Line horizontal = new Line(getCoords(0, i).getX(), getCoords(0, i).getY(),
+      Line horizontal = new Line(getCoords(0, i).getX(), 
+                                 getCoords(0, i).getY(),
                                  getCoords(size - 1, i).getX(),
                                  getCoords(size - 1, i).getY());
 
       horizontal.setStrokeWidth(2);
-      this.getChildren().add(horizontal);
+      out.getChildren().add(horizontal);
     }
 
-    // stones
-    gp = new GridPane();
-    // gp.setPadding(new Insets(GridPadding));
+    /**
+     * STONES
+     */
+    GridPane gp = new GridPane();
     gp.setAlignment(Pos.CENTER);
     for (int i = 0; i < size; ++i) {
       for (int j = 0; j < size; ++j) {
@@ -58,11 +69,11 @@ public class GUIBoard extends Group {
         shape.setStroke(Color.BLACK);
         shape.setStrokeWidth(2);
 
-        switch (state.getValue(i, j)) {
-        case 1: // WHITE
+        switch (lines[i].charAt(j)) {
+        case 'W': // WHITE
           shape.setFill(Color.WHITE);
           break;
-        case -1: // BLACK
+        case 'B': // BLACK
           shape.setFill(Color.BLACK);
           break;
         default:
@@ -72,11 +83,13 @@ public class GUIBoard extends Group {
         gp.add(shape, i, j);
       }
     }
+    out.getChildren().add(gp);
 
-    this.getChildren().add(gp);
+    return out;
   }
 
-  Point2D getCoords(int x, int y) {
+  // gets coordinates in local space for the center of intersection (x, y)
+  private Point2D getCoords(int x, int y) {
     double w = GridPadding + CircleSize + 1;
     return new Point2D(w * (2 * x + 1), w * (2 * y + 1));
   }

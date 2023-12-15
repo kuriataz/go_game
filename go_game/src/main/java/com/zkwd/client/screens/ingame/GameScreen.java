@@ -40,6 +40,7 @@ public class GameScreen extends BorderPane implements IScreen {
       this.boardState = result;
     };
 
+    // where should be a loop to do it again and again?
     this.setCenter(boardBuilder.DisplayBoard(boardState, clickHandler));
   }
 

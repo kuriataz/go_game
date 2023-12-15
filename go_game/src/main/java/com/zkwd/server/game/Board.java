@@ -75,6 +75,12 @@ public class Board {
       board[x][y].setState(WHITE);
     }
   }
+
+  public void putStone(int x, int y, int playerColor) {
+    if (correctMove(x, y, playerColor)) {
+      board[x][y].setState(playerColor);
+    }
+  }
   // void putWhite(int x, int y) {
   //   if (validMove(board[x][y].getState())) {
   //     board[x][y].setState(WHITE);

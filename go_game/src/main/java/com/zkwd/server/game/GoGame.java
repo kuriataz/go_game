@@ -22,8 +22,7 @@
 
 //   private int round = 0;
 //   //   private boolean turn = true; //turn is true when black goes, false
-//   when
-//   //   white goes
+//   //   when white goes
 //   private int turn = BLACK; // turn is -1 when black goes, 1 when white goes
 
 //   public void run() {

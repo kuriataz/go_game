@@ -47,8 +47,24 @@ public class PlayerHandler implements Runnable {
             GoServer.waitForGame(arg, playerSocket);
             out.println("_wait");
           }
-        } else {
-          out.println(clientMessage + " - modified");
+        } else if (clientMessage.startsWith("makemove:")) {
+          String arg = clientMessage.substring("makemove:".length());
+          // Split the coordinates using the comma as a delimiter
+          String[] coordinates = arg.split(",");
+
+          // Convert the coordinates to integers
+          if (coordinates.length == 2) {
+            try {
+              int clickedX = Integer.parseInt(coordinates[0]);
+              int clickedY = Integer.parseInt(coordinates[1]);
+
+              // TODO :  CHECK IF IT IS CORRECT, SAVE BOARD CHANGES, GENERATE
+              // STRING FOR BUILDER
+
+            } catch (NumberFormatException e) {
+              e.printStackTrace();
+            }
+          }
         }
       }
     } catch (IOException e) {

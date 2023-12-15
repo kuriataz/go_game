@@ -1,9 +1,11 @@
 package com.zkwd.client.screens.ingame;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -22,16 +24,16 @@ public class GUIBoardBuilder {
   final double CircleSize = 12;
   final double GridPadding = 3;
 
-  Group DisplayBoard(String boardState) {
+  Group DisplayBoard(String boardState, EventHandler<MouseEvent> clickHandler) {
     Group out = new Group();
 
-    String[] lines = boardState.split("|");
+    String[] lines = boardState.split("\\|");
 
-    if(lines.length != lines[0].length()){
-      //data is wrong
-      //maybe throw something here
+    if (lines.length != lines[0].length()) {
+      // data is wrong
+      // maybe throw something here
       return null;
-    } 
+    }
 
     int size = lines.length;
 
@@ -40,16 +42,14 @@ public class GUIBoardBuilder {
      */
     for (int i = 0; i < size; ++i) {
 
-      Line vertical = new Line(getCoords(i, 0).getX(), 
-                               getCoords(i, 0).getY(),
+      Line vertical = new Line(getCoords(i, 0).getX(), getCoords(i, 0).getY(),
                                getCoords(i, size - 1).getX(),
                                getCoords(i, size - 1).getY());
 
       vertical.setStrokeWidth(2);
       out.getChildren().add(vertical);
 
-      Line horizontal = new Line(getCoords(0, i).getX(), 
-                                 getCoords(0, i).getY(),
+      Line horizontal = new Line(getCoords(0, i).getX(), getCoords(0, i).getY(),
                                  getCoords(size - 1, i).getX(),
                                  getCoords(size - 1, i).getY());
 
@@ -80,6 +80,7 @@ public class GUIBoardBuilder {
           shape.setFill(Color.TRANSPARENT);
           shape.setStroke(Color.TRANSPARENT);
         }
+        shape.setOnMouseClicked(clickHandler);
         gp.add(shape, i, j);
       }
     }

@@ -49,8 +49,7 @@ public class PlayerHandler implements Runnable {
           }
         } else if (clientMessage.startsWith("makemove:")) {
           String arg = clientMessage.substring("makemove:".length());
-          // Split the coordinates using the comma as a delimiter
-          String[] coordinates = arg.split(",");
+          String[] coordinates = arg.split(" ");
 
           // Convert the coordinates to integers
           if (coordinates.length == 2) {

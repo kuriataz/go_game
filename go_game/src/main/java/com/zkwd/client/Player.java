@@ -1,12 +1,10 @@
 package com.zkwd.client;
 
-import com.zkwd.server.game.Chain;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 
 public class Player {
   private Socket socket;
@@ -46,6 +44,10 @@ public class Player {
       return null;
     }
   }
+
+  // public String waitForMove() {
+
+  // }
 
   // public void start() {
   //   try {

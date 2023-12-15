@@ -43,8 +43,8 @@ public class Board {
    * Cycle between values (debug).
    * @param x row
    * @param y column
-  */
-  public void flip(int x, int y){
+   */
+  public void flip(int x, int y) {
     board[y][x].setState((board[x][y].getState() + 2) % 3 - 1);
   }
 
@@ -58,22 +58,28 @@ public class Board {
    * Returns the state of the intersection (color).
    * @param x intersection's x coordinate
    * @param y intersection's y coordinate
-   * @return state (0: free, 1: white, -1: black) of the intersection with coordinates x,
+   * @return state (0: free, 1: white, -1: black) of the intersection with
+   *     coordinates x,
    *     y
    */
   int getValue(int x, int y) { return board[x][y].getState(); }
 
   void putBlack(int x, int y) {
-    if (validMove(board[x][y].getState())) {
+    if (correctMove(x, y, BLACK)) {
       board[x][y].setState(BLACK);
     }
   }
 
   void putWhite(int x, int y) {
-    if (validMove(board[x][y].getState())) {
+    if (correctMove(x, y, WHITE)) {
       board[x][y].setState(WHITE);
     }
   }
+  // void putWhite(int x, int y) {
+  //   if (validMove(board[x][y].getState())) {
+  //     board[x][y].setState(WHITE);
+  //   }
+  // }
 
   void removeStone(int x, int y) { board[x][y].setState(FREE); }
 
@@ -82,8 +88,17 @@ public class Board {
    * @param state FREE, BLACK, WHITE
    * @return true if the intersetion is FREE = 0
    */
-  Boolean validMove(int state) {
-    return (state == FREE);
+  boolean validMove(int state) { return (state == FREE); }
+
+  boolean correctMove(int x, int y, int playerColor) {
+    boolean free = (board[x][y].getState() == FREE);
+    boolean suicide = true;
+    for (Intersection i : board[x][y].neighbours) {
+      if (i.getState() != -(playerColor)) {
+        suicide = false;
+      }
+    }
+    return free && !suicide;
   }
 
   /**
@@ -117,8 +132,8 @@ public class Board {
    */
   public String prepareBoardString() {
     String out = "";
-    for(int i = 0; i < size; ++i){
-      for(int j = 0; j < size; ++j){
+    for (int i = 0; i < size; ++i) {
+      for (int j = 0; j < size; ++j) {
         int k = board[i][j].getState();
         out += (k == 1) ? "W" : (k == -1) ? "B" : "E";
       }

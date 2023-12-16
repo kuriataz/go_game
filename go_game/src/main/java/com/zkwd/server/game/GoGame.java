@@ -19,7 +19,7 @@ public class GoGame {
   /**
    * Game state information
    */
-  private Board board;
+  private Board board = new Board(3);
   //private ArrayList<Chain> blackChains;
   //private ArrayList<Chain> whiteChains;
 
@@ -60,6 +60,7 @@ public class GoGame {
 
       // player makes move or passes, and sends that here
       currentPlayer.send("game_go");
+      currentPlayer.send("game_" + round + "_" + board.prepareBoardString());
       String move = currentPlayer.await();
       System.out.println("game received " + move);
 

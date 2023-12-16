@@ -26,7 +26,7 @@ public class GameScreen extends BorderPane implements IScreen {
   private IntegerProperty round = new SimpleIntegerProperty(0);
 
   Group board;
-  Text roundCount = new Text("");
+  Text roundCount = new Text("default text");
 
   public GameScreen() {
     super();
@@ -35,8 +35,11 @@ public class GameScreen extends BorderPane implements IScreen {
 
     boardState.addListener((ChangeListener<String>)
       (obs, newVal, oldVal) -> {
-        board = boardBuilder.DisplayBoard(newVal);
-        this.setCenter(board);
+        Platform.runLater(() -> {
+          System.out.println("board has changed");
+          updateBoard(newVal);
+          this.setCenter(board);
+        });
       }
     );
 
@@ -47,11 +50,14 @@ public class GameScreen extends BorderPane implements IScreen {
     );
 
     this.boardBuilder = new GUIBoardBuilder();
-    this.boardState.set("WEE|BEW|EEE"); // for test
 
     // begin game
     // somehow
     runGame();
+  }
+
+  private void updateBoard(String boardString){
+    board = boardBuilder.DisplayBoard(boardString);
   }
 
   /**
@@ -63,33 +69,41 @@ public class GameScreen extends BorderPane implements IScreen {
     // loop needs to run in a background thread so as to not freeze the application.
     new Thread() {
       /**
-       * Game loop proper: make a move, and then wait another move.
-       * TODO : think about when the loop should end
+       * TODO : think about when the loop should end ig?
        */
       public void run() {
-        String message = App.await();
-        String[] split;
+        String message;
 
         while(true){
           // wait for your round
-          while(!message.equals("game_go") && !message.equals("game_goagain")){
+          do {
             message = App.await();
-          }
+          } while(!message.equals("game_go") && !message.equals("game_goagain"));
 
-          // if this is the first attempt at making a move, a signal will be sent to alter the board
+          // if this is the first attempt at making a move, a signal will have been sent to alter the board
           if(message.equals("game_go")){
+            System.out.println("waiting for board");
 
             // next signal will be game_[round]_[boardState]
-            message = App.await();
-            split = message.split("_");
+            // (need to create a new variable for it to be effectively final)
+            String nboard = App.await();
 
-            try {
-              round.set(Integer.parseInt(split[1]));
-            } catch (NumberFormatException e) {} // doesnt really happen (probably still add this later though!)
-            boardState.set(split[2]);
+            Platform.runLater(() -> {
+              String[] split = nboard.split("_");
+              try {
+                round.set(Integer.parseInt(split[1]));
+              } catch (NumberFormatException e) {} // doesnt really happen (probably still add this later though!)
+              boardState.set(split[2]);
+              System.out.println("board should now be: " + split[2]);
+            });
           }
 
-          enableInput();
+          // wait for board to be changed
+          while(board == null);
+
+          Platform.runLater(() -> {
+            enableInput();
+          });
 
           /**
            * App proceeds to the next loop iteration and does nothing until it receives a signal to move again ("game_go"

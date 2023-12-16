@@ -53,6 +53,9 @@ public class GoGame {
 
     Player currentPlayer = black;
 
+    black.send(board.prepareBoardString());
+    white.send(board.prepareBoardString());
+
     /**
      * !! GAME LOOP !!
      */

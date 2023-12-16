@@ -59,6 +59,7 @@ public class GameScreen extends BorderPane implements IScreen {
 
   private void updateBoard(String boardString){
     board = boardBuilder.DisplayBoard(boardString);
+    this.setCenter(board);
   }
 
   /**
@@ -74,6 +75,12 @@ public class GameScreen extends BorderPane implements IScreen {
        */
       public void run() {
         String message;
+        String s = App.await();
+
+        Platform.runLater(() -> {
+          boardState.set(s);
+          updateBoard(s);
+        });
 
         while(true){
           // wait for your round
@@ -88,9 +95,12 @@ public class GameScreen extends BorderPane implements IScreen {
             // next signal will be game_[round]_[boardState]
             // (need to create a new variable for it to be effectively final)
             String nboard = App.await();
+            String[] split = nboard.split("_");
 
+            // theoretically, the second runLater block should always be executed after the first,
+            // so board should never be null at the point that app thread calls enableInput()
+            // however, this doesnt want to work
             Platform.runLater(() -> {
-              String[] split = nboard.split("_");
               try {
                 round.set(Integer.parseInt(split[1]));
               } catch (NumberFormatException e) {} // doesnt really happen (probably still add this later though!)
@@ -100,11 +110,6 @@ public class GameScreen extends BorderPane implements IScreen {
               System.out.println("board should now be: " + split[2]);
             });
           }
-
-          // wait for board to be changed
-          while(board == null);
-
-          System.out.println("board has been updated");
 
           Platform.runLater(() -> {
             enableInput();

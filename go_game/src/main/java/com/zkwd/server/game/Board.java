@@ -97,14 +97,18 @@ public class Board {
   boolean validMove(int state) { return (state == FREE); }
 
   boolean correctMove(int x, int y, int playerColor) {
-    boolean free = (board[x][y].getState() == FREE);
-    boolean suicide = true;
-    for (Intersection i : board[x][y].neighbours) {
-      if (i.getState() != -(playerColor)) {
-        suicide = false;
-      }
-    }
-    return free && !suicide;
+    // boolean free = (board[x][y].getState() == FREE);
+    // boolean suicide = true;
+    // for (Intersection i : board[x][y].neighbours) {
+    //   if (i.getState() != -(playerColor)) {
+    //     suicide = false;
+    //   }
+    // }
+    // return free && !suicide;
+    return true;
+    /**
+     * TODO : testing - uncomment above
+     */
   }
 
   /**

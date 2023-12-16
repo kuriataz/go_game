@@ -25,6 +25,7 @@ public class Player {
      * @param message The string to be sent.
      */
     public void send(String message){
+        System.out.println("--sending: " + message);
         out.println(message);
     }
 

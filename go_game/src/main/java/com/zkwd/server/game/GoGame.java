@@ -53,8 +53,8 @@ public class GoGame {
 
     Player currentPlayer = black;
 
-    black.send(board.prepareBoardString());
-    white.send(board.prepareBoardString());
+    black.send("game_black_" + board.prepareBoardString());
+    white.send("game_white_" + board.prepareBoardString());
 
     /**
      * !! GAME LOOP !!
@@ -68,8 +68,9 @@ public class GoGame {
       System.out.println("game received " + move);
 
       // pass
-      if (move == "move:pass") {
-
+      if (move.equals("move:pass")) {
+        System.out.println("1." + move);
+        
         // if player passes, change the turn and go to next loop
         if (currentPlayer == black) {
           currentPlayer = white;
@@ -77,9 +78,10 @@ public class GoGame {
           currentPlayer = black;
         }
       } else {
-
+        System.out.println("1." + move);
         // move format is "move:x y"
         move = move.substring("move:".length());
+        System.out.println("2." + move);
 
         try {
           int x = Integer.parseInt(move.split(" ")[0]);
@@ -89,6 +91,7 @@ public class GoGame {
           boolean correct = board.correctMove(x, y, turn);
 
           if (correct) {
+            System.out.println("this is a test");
 
             if (currentPlayer == black) {
               board.putBlack(x, y);
@@ -110,6 +113,7 @@ public class GoGame {
             }
           } else {
             // send incorrect signal - current player must go again
+            currentPlayer.send("_game_incorrect");
             currentPlayer.send("game_goagain");
           }
         } catch (NumberFormatException e) {

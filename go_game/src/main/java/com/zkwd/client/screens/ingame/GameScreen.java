@@ -4,51 +4,26 @@ import com.zkwd.client.model.App;
 import com.zkwd.client.model.IScreen;
 
 import javafx.application.Platform;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 public class GameScreen extends BorderPane implements IScreen {
 
   GUIBoardBuilder boardBuilder;
 
-  // autoupdate GUI with changing boardState
-  private StringProperty boardState = new SimpleStringProperty("");
-  private IntegerProperty round = new SimpleIntegerProperty(0);
-
   Group board;
-  Text roundCount = new Text("default text");
+  Text txt = new Text("default text");
 
   public GameScreen() {
     super();
 
-    this.setTop(roundCount);
-
-    // boardState.addListener((ChangeListener<String>)
-    //   (obs, newVal, oldVal) -> {
-    //     Platform.runLater(() -> {
-    //       System.out.println("board has changed");
-    //       updateBoard(newVal);
-    //       System.out.println("showing new board: " + board.hashCode());
-    //       this.setCenter(board);
-    //     });
-    //   }
-    // );
-
-    // round.addListener((ChangeListener<Number>)
-    //   (obs, newVal, oldVal) -> {
-    //     roundCount.setText("round " + newVal);
-    //   }
-    // );
+    this.setTop(txt);
+    txt.setTextAlignment(TextAlignment.CENTER);
 
     this.boardBuilder = new GUIBoardBuilder();
 
@@ -77,9 +52,12 @@ public class GameScreen extends BorderPane implements IScreen {
         String message;
         String s = App.await();
 
+        String clr = s.split("_")[1];
+        String brd = s.split("_")[2];
+
         Platform.runLater(() -> {
-          boardState.set(s);
-          updateBoard(s);
+          updateBoard(brd);
+          txt.setText(clr);
         });
 
         while(true){
@@ -88,26 +66,15 @@ public class GameScreen extends BorderPane implements IScreen {
             message = App.await();
           } while(!message.equals("game_go") && !message.equals("game_goagain"));
 
-          // if this is the first attempt at making a move, a signal will have been sent to alter the board
           if(message.equals("game_go")){
-            System.out.println("waiting for board");
 
             // next signal will be game_[round]_[boardState]
-            // (need to create a new variable for it to be effectively final)
             String nboard = App.await();
             String[] split = nboard.split("_");
 
-            // theoretically, the second runLater block should always be executed after the first,
-            // so board should never be null at the point that app thread calls enableInput()
-            // however, this doesnt want to work
             Platform.runLater(() -> {
-              try {
-                round.set(Integer.parseInt(split[1]));
-              } catch (NumberFormatException e) {} // doesnt really happen (probably still add this later though!)
-              boardState.set(split[2]);
+              // TODO : update round with split[1]
               updateBoard(split[2]);
-              
-              System.out.println("board should now be: " + split[2]);
             });
           }
 
@@ -126,6 +93,8 @@ public class GameScreen extends BorderPane implements IScreen {
            * but without updating the board this time.
            * 
            * Also, all messages received while waiting for "game_go" or "go_again" are ignored.
+           * 
+           * I Am Not Sure This Works Lol
            */
         }
       }
@@ -135,6 +104,7 @@ public class GameScreen extends BorderPane implements IScreen {
   }
 
   private void enableInput() {
+    System.out.println("awaiting user input");
     board.setOnMouseClicked(clickHandler);
   }
 
@@ -147,6 +117,7 @@ public class GameScreen extends BorderPane implements IScreen {
    * X and Y are in local space, so the handler should be applied to the entire board to calculate properly.
    */
   EventHandler<MouseEvent> clickHandler = event -> {
+    System.out.println("event");
     double mouseX = event.getX();
     double mouseY = event.getY();
 
@@ -163,7 +134,7 @@ public class GameScreen extends BorderPane implements IScreen {
     String result = App.transmit("move:" + clickedPosition);
 
     if(!result.equals("game_incorrect")){
-      boardState.set(result);
+      updateBoard(result);
     } else {
       // TODO : make this put up a little modal or something. probably later though
     }

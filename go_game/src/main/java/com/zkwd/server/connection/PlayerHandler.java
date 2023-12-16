@@ -56,10 +56,16 @@ public class PlayerHandler implements Runnable {
             GoServer.waitForGame(arg, playerSocket);
             out.println("_wait");
           }
-          
-          // !! WAIT UNTIL GAME CONCLUDED OR WAITING IS OVER !!
 
           while(true);
+
+          /**
+           * have this thread wait on something that gogame has access to?
+           * 
+           * if we have it wait on the player socket,
+           * we can both send notify from the app (cancel queue),
+           * or gogame (when the game is finished). it seems like the best option to me, even if its a bit clunky
+           */
 
         } else {
           // default response

@@ -59,6 +59,7 @@ public class GoGame {
     while (true) {
 
       // player makes move or passes, and sends that here
+      currentPlayer.send("game_go");
       String move = currentPlayer.await();
       System.out.println("game received " + move);
 

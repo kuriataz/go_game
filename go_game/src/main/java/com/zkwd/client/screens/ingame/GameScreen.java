@@ -50,7 +50,8 @@ public class GameScreen extends BorderPane implements IScreen {
     this.boardState.set("WEE|BEW|EEE"); // for test
 
     // begin game
-    // runGame();
+    // somehow
+    runGame();
   }
 
   /**
@@ -104,7 +105,7 @@ public class GameScreen extends BorderPane implements IScreen {
            */
         }
       }
-    }.run();
+    }.start();
 
     return true;
   }
@@ -145,25 +146,6 @@ public class GameScreen extends BorderPane implements IScreen {
 
     // disable itself until next round
     disableInput();
-  };
-
-  Task<String> looper = new Task<String>() {
-    @Override
-    protected String call() {
-      return App.await();
-    }
-
-    @Override
-    protected void succeeded() {
-      super.succeeded();
-    }
-
-    @Override
-    protected void cancelled() {
-      super.cancelled();
-      // request to remove from list
-      // TODO : a command that does this
-    }
   };
 
   public Pane launch() { return this; }

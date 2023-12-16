@@ -33,21 +33,22 @@ public class GameScreen extends BorderPane implements IScreen {
 
     this.setTop(roundCount);
 
-    boardState.addListener((ChangeListener<String>)
-      (obs, newVal, oldVal) -> {
-        Platform.runLater(() -> {
-          System.out.println("board has changed");
-          updateBoard(newVal);
-          this.setCenter(board);
-        });
-      }
-    );
+    // boardState.addListener((ChangeListener<String>)
+    //   (obs, newVal, oldVal) -> {
+    //     Platform.runLater(() -> {
+    //       System.out.println("board has changed");
+    //       updateBoard(newVal);
+    //       System.out.println("showing new board: " + board.hashCode());
+    //       this.setCenter(board);
+    //     });
+    //   }
+    // );
 
-    round.addListener((ChangeListener<Number>)
-      (obs, newVal, oldVal) -> {
-        roundCount.setText("round " + newVal);
-      }
-    );
+    // round.addListener((ChangeListener<Number>)
+    //   (obs, newVal, oldVal) -> {
+    //     roundCount.setText("round " + newVal);
+    //   }
+    // );
 
     this.boardBuilder = new GUIBoardBuilder();
 
@@ -69,7 +70,7 @@ public class GameScreen extends BorderPane implements IScreen {
     // loop needs to run in a background thread so as to not freeze the application.
     new Thread() {
       /**
-       * TODO : think about when the loop should end ig?
+       * TODO : think about when the loop should end?
        */
       public void run() {
         String message;
@@ -94,12 +95,16 @@ public class GameScreen extends BorderPane implements IScreen {
                 round.set(Integer.parseInt(split[1]));
               } catch (NumberFormatException e) {} // doesnt really happen (probably still add this later though!)
               boardState.set(split[2]);
+              updateBoard(split[2]);
+              
               System.out.println("board should now be: " + split[2]);
             });
           }
 
           // wait for board to be changed
           while(board == null);
+
+          System.out.println("board has been updated");
 
           Platform.runLater(() -> {
             enableInput();

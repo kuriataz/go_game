@@ -6,12 +6,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class Player {
+public class ServerMessenger {
   private Socket socket;
   private BufferedReader in;
   private PrintWriter out;
 
-  public Player(String serverAddress, int serverPort) throws IOException {
+  public ServerMessenger(String serverAddress, int serverPort) throws IOException {
     socket = new Socket(serverAddress, serverPort);
     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     out = new PrintWriter(socket.getOutputStream(), true);

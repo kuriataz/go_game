@@ -24,7 +24,7 @@ public class GUIBoardBuilder {
   final double CircleSize = 12;
   final double GridPadding = 3;
 
-  Group DisplayBoard(String boardState, EventHandler<MouseEvent> clickHandler) {
+  Group DisplayBoard(String boardState) {
     Group out = new Group();
 
     String[] lines = boardState.split("\\|");
@@ -80,7 +80,6 @@ public class GUIBoardBuilder {
           shape.setFill(Color.TRANSPARENT);
           shape.setStroke(Color.TRANSPARENT);
         }
-        shape.setOnMouseClicked(clickHandler);
         gp.add(shape, i, j);
       }
     }

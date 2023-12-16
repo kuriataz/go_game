@@ -12,15 +12,20 @@ import java.util.ArrayList;
 
 public class PlayerHandler implements Runnable {
 
+  /**
+   * Communication
+   */
   private Socket playerSocket;
   private BufferedReader in;
   private PrintWriter out;
-  private GoGame game;
+
+  /**
+   * this is a command log i think? correct me
+   */
   private ArrayList<Command> commands;
 
-  public PlayerHandler(Socket socket, GoGame game) throws IOException {
+  public PlayerHandler(Socket socket) throws IOException {
     this.playerSocket = socket;
-    this.game = game;
     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     out = new PrintWriter(socket.getOutputStream(), true);
   }
@@ -35,42 +40,33 @@ public class PlayerHandler implements Runnable {
         // TODO : IMPLEMENT A COMMAND SYSTEM
 
         if (clientMessage.startsWith("joinlobby:")) {
-          // check lobby
+
+          // find out if the lobby code is taken
           String arg = clientMessage.substring("joinlobby:".length());
           Socket opponent = GoServer.tryJoin(arg);
-          if (opponent != null) {
-            // create a game here
 
-            // send out messages to both players that they've been connected
-            new PrintWriter(opponent.getOutputStream(), true)
-                .println("_connect");
-            out.println("_connect");
+          // if so, start a game
+          if (opponent != null) {
+            try {
+              //
+              GoGame newGame = new GoGame(opponent, playerSocket);
+              newGame.run();
+              //
+            } catch (Exception e){
+              /**
+               * TODO : in GoGame, exceptions should be thrown that should end the game (one of the players disconnects, something goes very wrong)
+               * because here both players (or the remaining player) can be safely disconnected into the lobby screen
+               */
+            }
           } else {
+            // lobby is not taken, so take the lobby
             // add yourself to waiting list
             GoServer.waitForGame(arg, playerSocket);
             out.println("_wait");
           }
-        } else if (clientMessage.startsWith("makemove:")) {
-          String arg = clientMessage.substring("makemove:".length());
-          String[] coordinates = arg.split(" ");
-          String result = "_error";
-
-          // Convert the coordinates to integers
-          if (coordinates.length == 2) {
-            try {
-              int clickedX = Integer.parseInt(coordinates[0]);
-              int clickedY = Integer.parseInt(coordinates[1]);
-
-              // TODO :  CHECK IF IT IS CORRECT, SAVE BOARD CHANGES, GENERATE
-              // STRING FOR BUILDER, !!!ERROR HANDLING!!!
-              game.getBoard().putStone(clickedX, clickedY, game.getTurn());
-              result = game.getBoard().prepareBoardString();
-
-            } catch (NumberFormatException e) {
-              e.printStackTrace();
-            }
-          }
-          out.println(result); // will it reach both players? (from both PH)
+        } else {
+          // default response
+          out.println("_unknowncmd");
         }
       }
     } catch (IOException e) {

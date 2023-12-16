@@ -1,6 +1,7 @@
 package com.zkwd.server.game;
 
-import com.zkwd.client.Player;
+import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 
 /**
@@ -13,36 +14,73 @@ public class GoGame {
   public static final int FREE = 0;
 
   private Player black;
-  private ArrayList<Chain> blackChains;
-
   private Player white;
-  private ArrayList<Chain> whiteChains;
 
+  /**
+   * Game state information
+   */
   private Board board;
+  //private ArrayList<Chain> blackChains;
+  //private ArrayList<Chain> whiteChains;
 
+  /**
+   * Turn information
+   */
   private int round = 0;
-  //   private boolean turn = true; //turn is true when black goes, false
-  //   when white goes
   private int turn = BLACK; // turn is -1 when black goes, 1 when white goes
 
+  /**
+   * GoGame uses sockets to communicate with player applications separately from the PlayerHandler class.
+   * @param host black pieces
+   * @param joinee white pieces
+   * @exception IOException pass this back to player handler
+   */
+  public GoGame(Socket host, Socket joinee) throws IOException{
+    black = new Player(host);
+    white = new Player(joinee);
+  }
+
+  /**
+   * Mediate a game of Go between the two players.
+   */
   public void run() {
+    /**
+     * Make both players enter the game state on client-side.
+     */
+    black.send("_connect");
+    white.send("_connect");
+
     Player currentPlayer = black;
 
-    // await both players to be ready
-    // after that, assume
+    /**
+     * Tell players, which color they are (for synchronization purposes)
+     */
+    black.send("game_black");
+    white.send("game_white");
 
+    /**
+     * !! GAME LOOP !!
+     */
     while (true) {
-      // player makes move or passes
-      String move = currentPlayer.waitForMove();
+
+      // player makes move or passes, and sends that here
+      String move = currentPlayer.await();
+      System.out.println("game received " + move);
+
       // pass
-      if (move == "") {
+      if (move == "move:pass") {
+
+        // if player passes, change the turn and go to next loop
         if (currentPlayer == black) {
           currentPlayer = white;
         } else {
           currentPlayer = black;
         }
       } else {
-        // move format is "x y"
+
+        // move format is "move:x y"
+        move = move.substring("move:".length());
+
         try {
           int x = Integer.parseInt(move.split(" ")[0]);
           int y = Integer.parseInt(move.split(" ")[1]);
@@ -52,15 +90,6 @@ public class GoGame {
 
           if (correct) {
 
-            // if move is correct, update board
-            // and calculate differences
-            //   if (turn == BLACK) {
-            //     board.putBlack(x, y);
-            //     turn = WHITE;
-            //   } else {
-            //     board.putWhite(x, y);
-            //     turn = BLACK;
-            //   }
             if (currentPlayer == black) {
               board.putBlack(x, y);
               currentPlayer = white;
@@ -71,24 +100,24 @@ public class GoGame {
               turn = BLACK;
             }
 
-            // send correct signal: the new board to display
+            // send correct signal: being the new board to display
             String newBoard = board.prepareBoardString();
-            white.send(newBoard);
-            black.send(newBoard);
+            white.send("game_" + round + "_" + newBoard);
+            black.send("game_" + round + "_" + newBoard);
 
-            round++;
+            if(turn == WHITE){
+              round++;
+            }
           } else {
             // send incorrect signal - current player must go again
-            currentPlayer.send("");
+            currentPlayer.send("game_go");
           }
         } catch (NumberFormatException e) {
           // the transmitted move was somehow incorrect - current player must
           // try again
-          currentPlayer.send("");
+          currentPlayer.send("game_go");
         }
       }
     }
   }
-
-  String getMove() { return ""; }
 }

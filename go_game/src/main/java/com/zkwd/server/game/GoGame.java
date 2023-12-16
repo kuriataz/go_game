@@ -53,12 +53,6 @@ public class GoGame {
     Player currentPlayer = black;
 
     /**
-     * Tell players, which color they are (for synchronization purposes)
-     */
-    black.send("game_black");
-    white.send("game_white");
-
-    /**
      * !! GAME LOOP !!
      */
     while (true) {
@@ -110,12 +104,12 @@ public class GoGame {
             }
           } else {
             // send incorrect signal - current player must go again
-            currentPlayer.send("game_go");
+            currentPlayer.send("game_goagain");
           }
         } catch (NumberFormatException e) {
           // the transmitted move was somehow incorrect - current player must
           // try again
-          currentPlayer.send("game_go");
+          currentPlayer.send("game_goagain");
         }
       }
     }

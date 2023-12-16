@@ -84,8 +84,8 @@ public class LobbyScreen extends BorderPane implements IScreen {
     protected void succeeded() {
       super.succeeded();
 
-      // change state to ingame
-      App.changeState(AppState.INGAME);
+      if(call().equals("_connect"))
+        App.changeState(AppState.INGAME);
     }
 
     @Override

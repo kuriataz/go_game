@@ -47,23 +47,18 @@ public class PlayerHandler implements Runnable {
 
           // if so, start a game
           if (opponent != null) {
-            try {
-              //
-              GoGame newGame = new GoGame(opponent, playerSocket);
-              newGame.run();
-              //
-            } catch (Exception e){
-              /**
-               * TODO : in GoGame, exceptions should be thrown that should end the game (one of the players disconnects, something goes very wrong)
-               * because here both players (or the remaining player) can be safely disconnected into the lobby screen
-               */
-            }
+            //
+            GoServer.createNewGame(opponent, playerSocket);
+            //
           } else {
             // lobby is not taken, so take the lobby
             // add yourself to waiting list
             GoServer.waitForGame(arg, playerSocket);
             out.println("_wait");
           }
+          
+          // !! WAIT UNTIL GAME CONCLUDED OR WAITING DONE !!
+
         } else {
           // default response
           out.println("_unknowncmd");

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import com.zkwd.server.connection.Lobby;
 import com.zkwd.server.connection.PlayerHandler;
+import com.zkwd.server.game.GoGame;
 
 public class GoServer {
   private ServerSocket serverSocket;
@@ -45,5 +46,20 @@ public class GoServer {
 
   public static void waitForGame(String code, Socket socket){
     pendingGames.add(new Lobby(code, socket));
+  }
+
+  public static void createNewGame(Socket host, Socket joinee) {
+    new Thread() {
+      @Override public void run() {
+        try {
+          new GoGame(host, joinee).run();
+        } catch (Exception e){
+          /**
+           * TODO : in GoGame, exceptions should be thrown that should end the game (one of the players disconnects, something goes very wrong)
+           * because here both players (or the remaining player) can be safely disconnected into the lobby screen
+           */
+        }
+      }
+    };
   }
 }

@@ -22,8 +22,8 @@ public class GameScreen extends BorderPane implements IScreen {
   GUIBoardBuilder boardBuilder;
 
   // autoupdate GUI with changing boardState
-  private StringProperty boardState = new SimpleStringProperty();
-  private IntegerProperty round = new SimpleIntegerProperty();
+  private StringProperty boardState = new SimpleStringProperty("");
+  private IntegerProperty round = new SimpleIntegerProperty(0);
 
   Group board;
   Text roundCount = new Text("");
@@ -50,11 +50,7 @@ public class GameScreen extends BorderPane implements IScreen {
     this.boardState.set("WEE|BEW|EEE"); // for test
 
     // begin game
-    Platform.runLater(new Runnable() {
-      @Override public void run() {
-        runGame();
-      }
-    });
+    // runGame();
   }
 
   /**
@@ -108,7 +104,7 @@ public class GameScreen extends BorderPane implements IScreen {
            */
         }
       }
-    };
+    }.run();
 
     return true;
   }

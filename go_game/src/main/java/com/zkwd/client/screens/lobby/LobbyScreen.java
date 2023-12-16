@@ -84,7 +84,7 @@ public class LobbyScreen extends BorderPane implements IScreen {
     protected void succeeded() {
       super.succeeded();
 
-      if(call().equals("_connect"))
+      if(this.getValue().equals("_connect"))
         App.changeState(AppState.INGAME);
     }
 

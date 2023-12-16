@@ -57,7 +57,9 @@ public class PlayerHandler implements Runnable {
             out.println("_wait");
           }
           
-          // !! WAIT UNTIL GAME CONCLUDED OR WAITING DONE !!
+          // !! WAIT UNTIL GAME CONCLUDED OR WAITING IS OVER !!
+
+          while(true);
 
         } else {
           // default response

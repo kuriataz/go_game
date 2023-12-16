@@ -26,7 +26,9 @@ public class ServerMessenger {
   public String transmit(String message) {
     out.println(message);
     try {
-      return in.readLine();
+      String a = in.readLine();
+      System.out.println(a);
+      return a;
     } catch (IOException e) {
       return null;
     }
@@ -39,7 +41,9 @@ public class ServerMessenger {
    */
   public String await() {
     try {
-      return in.readLine();
+      String a = in.readLine();
+      System.out.println(a);
+      return a;
     } catch (IOException e) {
       return null;
     }

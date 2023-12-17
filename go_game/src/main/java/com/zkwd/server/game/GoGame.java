@@ -53,75 +53,98 @@ public class GoGame {
 
     Player currentPlayer = black;
 
-    black.send("game_black_" + board.prepareBoardString());
-    white.send("game_white_" + board.prepareBoardString());
+    black.send("game_black");
+    white.send("game_white");
+
+    String response = "type a message and send it to the other client!";
 
     /**
      * !! GAME LOOP !!
      */
-    while (true) {
+    while (!currentPlayer.getSocket().isClosed()) {
 
-      // player makes move or passes, and sends that here
       currentPlayer.send("game_go");
-      currentPlayer.send("game_" + round + "_" + board.prepareBoardString());
-      String move = currentPlayer.await();
-      System.out.println("game received " + move);
+      currentPlayer.send(response);
 
-      // pass
-      if (move.equals("move:pass")) {
-        System.out.println("1." + move);
+      try {
+
+        response = currentPlayer.await();
+
+      } catch (IOException e){
+        e.printStackTrace();
         
-        // if player passes, change the turn and go to next loop
-        if (currentPlayer == black) {
-          currentPlayer = white;
-        } else {
-          currentPlayer = black;
-        }
-      } else {
-        System.out.println("1." + move);
-        // move format is "move:x y"
-        move = move.substring("move:".length());
-        System.out.println("2." + move);
-
-        try {
-          int x = Integer.parseInt(move.split(" ")[0]);
-          int y = Integer.parseInt(move.split(" ")[1]);
-
-          // check move for correctness
-          boolean correct = board.correctMove(x, y, turn);
-
-          if (correct) {
-            System.out.println("this is a test");
-
-            if (currentPlayer == black) {
-              board.putBlack(x, y);
-              currentPlayer = white;
-              turn = WHITE;
-            } else {
-              board.putWhite(x, y);
-              currentPlayer = black;
-              turn = BLACK;
-            }
-
-            // send correct signal: being the new board to display
-            String newBoard = board.prepareBoardString();
-            white.send("game_" + round + "_" + newBoard);
-            black.send("game_" + round + "_" + newBoard);
-
-            if(turn == WHITE){
-              round++;
-            }
-          } else {
-            // send incorrect signal - current player must go again
-            currentPlayer.send("_game_incorrect");
-            currentPlayer.send("game_goagain");
-          }
-        } catch (NumberFormatException e) {
-          // the transmitted move was somehow incorrect - current player must
-          // try again
-          currentPlayer.send("game_goagain");
-        }
+        response = "oops! an error occurred :(";
       }
+
+      if(currentPlayer == black){
+        currentPlayer = white;
+
+      } else {
+        currentPlayer = black;
+
+      }
+
+      // // player makes move or passes, and sends that here
+      // currentPlayer.send("game_go");
+      // currentPlayer.send("game_" + round + "_" + board.prepareBoardString());
+      // String move = currentPlayer.await();
+      // System.out.println("game received " + move);
+
+      // // pass
+      // if (move.equals("move:pass")) {
+      //   System.out.println("1." + move);
+        
+      //   // if player passes, change the turn and go to next loop
+      //   if (currentPlayer == black) {
+      //     currentPlayer = white;
+      //   } else {
+      //     currentPlayer = black;
+      //   }
+      // } else {
+      //   System.out.println("1." + move);
+      //   // move format is "move:x y"
+      //   move = move.substring("move:".length());
+      //   System.out.println("2." + move);
+
+      //   try {
+      //     int x = Integer.parseInt(move.split(" ")[0]);
+      //     int y = Integer.parseInt(move.split(" ")[1]);
+
+      //     // check move for correctness
+      //     boolean correct = board.correctMove(x, y, turn);
+
+      //     if (correct) {
+      //       System.out.println("this is a test");
+
+      //       if (currentPlayer == black) {
+      //         board.putBlack(x, y);
+      //         currentPlayer = white;
+      //         turn = WHITE;
+      //       } else {
+      //         board.putWhite(x, y);
+      //         currentPlayer = black;
+      //         turn = BLACK;
+      //       }
+
+      //       // send correct signal: being the new board to display
+      //       String newBoard = board.prepareBoardString();
+      //       white.send("game_" + round + "_" + newBoard);
+      //       black.send("game_" + round + "_" + newBoard);
+
+      //       if(turn == WHITE){
+      //         round++;
+      //       }
+      //     } else {
+      //       // send incorrect signal - current player must go again
+      //       currentPlayer.send("_game_incorrect");
+      //       currentPlayer.send("game_goagain");
+      //     }
+      //   } catch (NumberFormatException e) {
+      //     // the transmitted move was somehow incorrect - current player must
+      //     // try again
+      //     currentPlayer.send("game_goagain");
+      //   }
+      // }
     }
   }
 }

@@ -32,14 +32,10 @@ public class Player {
     /**
      * Waits for a message back from the player app.
      * @return The received string, or "_failure" if an IOException occurred.
+     * @throws IOException
      */
-    public String await() {
-        try {
-            return in.readLine();
-        } catch (IOException e){
-            e.printStackTrace();
-            return "_failure";
-        }
+    public String await() throws IOException {
+        return in.readLine();
     }
 
     public Socket getSocket() {

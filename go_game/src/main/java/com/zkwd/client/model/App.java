@@ -59,6 +59,10 @@ public class App extends Application
         return hook.transmit(message);
     }
 
+    public static void send(String message){
+        hook.send(message);
+    }
+
     /**
      * Wait for a message from the server.
      * @return The message, once it is delivered.

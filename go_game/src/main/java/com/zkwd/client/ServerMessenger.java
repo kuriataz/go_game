@@ -35,6 +35,14 @@ public class ServerMessenger {
   }
 
   /**
+   * Sends a message without waiting for a response.
+   * @param message The string being sent to the server.
+   */
+  public void send(String message) {
+    out.println(message);
+  }
+
+  /**
    * Await for a message from the server.
    * @return The message, once it is delivered.
    * @throws IOException

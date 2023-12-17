@@ -1,11 +1,9 @@
 package com.zkwd.client.screens.ingame;
 
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -24,7 +22,7 @@ public class GUIBoardBuilder {
   final double CircleSize = 12;
   final double GridPadding = 3;
 
-  Group DisplayBoard(String boardState, EventHandler<MouseEvent> clickHandler) {
+  Group DisplayBoard(String boardState) {
     Group out = new Group();
 
     String[] lines = boardState.split("\\|");
@@ -80,7 +78,6 @@ public class GUIBoardBuilder {
           shape.setFill(Color.TRANSPARENT);
           shape.setStroke(Color.TRANSPARENT);
         }
-        shape.setOnMouseClicked(clickHandler);
         gp.add(shape, i, j);
       }
     }

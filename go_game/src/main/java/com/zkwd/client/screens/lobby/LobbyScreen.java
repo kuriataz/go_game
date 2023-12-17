@@ -5,7 +5,6 @@ import com.zkwd.client.model.AppState;
 import com.zkwd.client.model.IScreen;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -85,8 +84,8 @@ public class LobbyScreen extends BorderPane implements IScreen {
     protected void succeeded() {
       super.succeeded();
 
-      // change state to ingame
-      App.changeState(AppState.INGAME);
+      if(this.getValue().equals("_connect"))
+        App.changeState(AppState.INGAME);
     }
 
     @Override

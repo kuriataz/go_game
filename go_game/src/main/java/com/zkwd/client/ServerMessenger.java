@@ -6,12 +6,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class Player {
+public class ServerMessenger {
   private Socket socket;
   private BufferedReader in;
   private PrintWriter out;
 
-  public Player(String serverAddress, int serverPort) throws IOException {
+  public ServerMessenger(String serverAddress, int serverPort) throws IOException {
     socket = new Socket(serverAddress, serverPort);
     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     out = new PrintWriter(socket.getOutputStream(), true);
@@ -26,10 +26,20 @@ public class Player {
   public String transmit(String message) {
     out.println(message);
     try {
-      return in.readLine();
+      String a = in.readLine();
+      System.out.println(a);
+      return a;
     } catch (IOException e) {
       return null;
     }
+  }
+
+  /**
+   * Sends a message without waiting for a response.
+   * @param message The string being sent to the server.
+   */
+  public void send(String message) {
+    out.println(message);
   }
 
   /**
@@ -39,7 +49,9 @@ public class Player {
    */
   public String await() {
     try {
-      return in.readLine();
+      String a = in.readLine();
+      System.out.println(a);
+      return a;
     } catch (IOException e) {
       return null;
     }

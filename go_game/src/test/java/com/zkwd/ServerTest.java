@@ -2,7 +2,7 @@ package com.zkwd;
 
 import java.io.IOException;
 
-import com.zkwd.client.Player;
+import com.zkwd.client.ServerMessenger;
 import com.zkwd.server.GoServer;
 
 /**

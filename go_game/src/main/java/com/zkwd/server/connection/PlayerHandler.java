@@ -2,6 +2,7 @@ package com.zkwd.server.connection;
 
 import com.zkwd.server.Commands.Command;
 import com.zkwd.server.GoServer;
+import com.zkwd.server.game.GoGame;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,9 +12,16 @@ import java.util.ArrayList;
 
 public class PlayerHandler implements Runnable {
 
+  /**
+   * Communication
+   */
   private Socket playerSocket;
   private BufferedReader in;
   private PrintWriter out;
+
+  /**
+   * this is a command log i think? correct me
+   */
   private ArrayList<Command> commands;
 
   public PlayerHandler(Socket socket) throws IOException {
@@ -32,38 +40,36 @@ public class PlayerHandler implements Runnable {
         // TODO : IMPLEMENT A COMMAND SYSTEM
 
         if (clientMessage.startsWith("joinlobby:")) {
-          // check lobby
+
+          // find out if the lobby code is taken
           String arg = clientMessage.substring("joinlobby:".length());
           Socket opponent = GoServer.tryJoin(arg);
-          if (opponent != null) {
-            // create a game here
 
-            // send out messages to both players that they've been connected
-            new PrintWriter(opponent.getOutputStream(), true)
-                .println("_connect");
-            out.println("_connect");
+          // if so, start a game
+          if (opponent != null) {
+            //
+            GoServer.createNewGame(opponent, playerSocket);
+            //
           } else {
+            // lobby is not taken, so take the lobby
             // add yourself to waiting list
             GoServer.waitForGame(arg, playerSocket);
             out.println("_wait");
           }
-        } else if (clientMessage.startsWith("makemove:")) {
-          String arg = clientMessage.substring("makemove:".length());
-          String[] coordinates = arg.split(" ");
 
-          // Convert the coordinates to integers
-          if (coordinates.length == 2) {
-            try {
-              int clickedX = Integer.parseInt(coordinates[0]);
-              int clickedY = Integer.parseInt(coordinates[1]);
+          while(true);
 
-              // TODO :  CHECK IF IT IS CORRECT, SAVE BOARD CHANGES, GENERATE
-              // STRING FOR BUILDER
+          /**
+           * have this thread wait on something that gogame has access to?
+           * 
+           * if we have it wait on the player socket,
+           * we can both send notify from the app (cancel queue),
+           * or gogame (when the game is finished). it seems like the best option to me, even if its a bit clunky
+           */
 
-            } catch (NumberFormatException e) {
-              e.printStackTrace();
-            }
-          }
+        } else {
+          // default response
+          out.println("_unknowncmd");
         }
       }
     } catch (IOException e) {

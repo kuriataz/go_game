@@ -2,7 +2,7 @@ package com.zkwd.client.model;
 
 import java.io.IOException;
 
-import com.zkwd.client.Player;
+import com.zkwd.client.ServerMessenger;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -20,7 +20,7 @@ public class App extends Application
      */
     private static Scene scene;
 
-    private static Player hook;
+    private static ServerMessenger hook;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -28,7 +28,7 @@ public class App extends Application
         StackPane sp = new StackPane(new Text("loading"));
 
         //connect to server
-        hook = new Player("localhost", 8888);
+        hook = new ServerMessenger("localhost", 8888);
 
         scene = new Scene(sp, 600, 400);
 
@@ -46,7 +46,7 @@ public class App extends Application
         scene.setRoot(state.getState().launch());
     }
 
-    public static Player getServerHook() {
+    public static ServerMessenger getServerHook() {
         return hook;
     }
 
@@ -57,6 +57,10 @@ public class App extends Application
      */
     public static String transmit(String message){
         return hook.transmit(message);
+    }
+
+    public static void send(String message){
+        hook.send(message);
     }
 
     /**

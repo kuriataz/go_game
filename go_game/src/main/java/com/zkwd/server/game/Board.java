@@ -75,6 +75,12 @@ public class Board {
       board[x][y].setState(WHITE);
     }
   }
+
+  public void putStone(int x, int y, int playerColor) {
+    if (correctMove(x, y, playerColor)) {
+      board[x][y].setState(playerColor);
+    }
+  }
   // void putWhite(int x, int y) {
   //   if (validMove(board[x][y].getState())) {
   //     board[x][y].setState(WHITE);
@@ -91,14 +97,18 @@ public class Board {
   boolean validMove(int state) { return (state == FREE); }
 
   boolean correctMove(int x, int y, int playerColor) {
-    boolean free = (board[x][y].getState() == FREE);
-    boolean suicide = true;
-    for (Intersection i : board[x][y].neighbours) {
-      if (i.getState() != -(playerColor)) {
-        suicide = false;
-      }
-    }
-    return free && !suicide;
+    // boolean free = (board[x][y].getState() == FREE);
+    // boolean suicide = true;
+    // for (Intersection i : board[x][y].neighbours) {
+    //   if (i.getState() != -(playerColor)) {
+    //     suicide = false;
+    //   }
+    // }
+    // return free && !suicide;
+    return true;
+    /**
+     * TODO : testing - uncomment above
+     */
   }
 
   /**

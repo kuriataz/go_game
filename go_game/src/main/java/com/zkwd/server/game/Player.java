@@ -31,7 +31,7 @@ public class Player {
 
     /**
      * Waits for a message back from the player app.
-     * @return The received string, or "_failure" if an IOException occurred.
+     * @return The received string.
      * @throws IOException
      */
     public String await() throws IOException {

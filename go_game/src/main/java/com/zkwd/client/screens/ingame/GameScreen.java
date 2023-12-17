@@ -23,12 +23,13 @@ public class GameScreen extends BorderPane implements IScreen {
   Group board;
   Text txt = new Text("default text");
 
-  Text output = new Text("");
+  MessageLog log = new MessageLog();
+  
   TextField input = new TextField();
   Button btn = new Button("send");
 
   HBox hbox = new HBox(input, btn);
-  VBox vbox = new VBox(output, hbox);
+  VBox vbox = new VBox(log, hbox);
 
   public GameScreen() {
     super();
@@ -62,8 +63,15 @@ public class GameScreen extends BorderPane implements IScreen {
         String message = App.await();
         if (message.equals("game_black")) {
           txt.setText("black pieces");
+          // output.setText("type a message and send it to the other player!");
         } else {
           txt.setText("white pieces");
+          // output.setText("");
+          String oppUpdate = App.await();
+
+          Platform.runLater(() -> {
+            log.push(oppUpdate);
+          });
         }
 
         /**
@@ -75,13 +83,28 @@ public class GameScreen extends BorderPane implements IScreen {
             message = App.await();
           } while (!message.equals("game_go"));
 
-          String returnString = App.await();
+          String verdict;
+          // take inputs until server decides input is correct
+          do {
+            Platform.runLater(() -> {
+              input.setDisable(false);
+              btn.setDisable(false);
+            });
 
-          // update text, enable textfield
+            verdict = App.await();
+          } while (!verdict.equals("game_correct"));
+
+          // update text
+          String update = App.await();
+
           Platform.runLater(() -> {
-            output.setText(returnString);
-            input.setDisable(false);
-            btn.setDisable(false);
+            log.push(update);
+          });
+
+          String oppUpdate = App.await();
+
+          Platform.runLater(() -> {
+            log.push(oppUpdate);
           });
 
           // click handler handles sending messages

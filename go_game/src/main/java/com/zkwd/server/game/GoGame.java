@@ -52,11 +52,12 @@ public class GoGame {
     white.send("_connect");
 
     Player currentPlayer = black;
+    Player otherPlayer = white;
 
     black.send("game_black");
     white.send("game_white");
 
-    String response = "type a message and send it to the other client!";
+    boolean v = true;
 
     /**
      * !! GAME LOOP !!
@@ -64,24 +65,36 @@ public class GoGame {
     while (!currentPlayer.getSocket().isClosed()) {
 
       currentPlayer.send("game_go");
-      currentPlayer.send(response);
 
       try {
+        String input = currentPlayer.await();
 
-        response = currentPlayer.await();
+        // move validity
+        if(v){
+          currentPlayer.send("game_correct");
+
+          currentPlayer.send("you said: " + input);
+          otherPlayer.send("they said: " + input);
+
+        } else {
+          currentPlayer.send("game_incorrect");
+          continue;
+        }
 
       } catch (IOException e){
         e.printStackTrace();
         
-        response = "oops! an error occurred :(";
+        // make player redo turn
+        currentPlayer.send("game_incorrect");
       }
 
+      
       if(currentPlayer == black){
         currentPlayer = white;
-
+        otherPlayer = black;
       } else {
         currentPlayer = black;
-
+        otherPlayer = white;
       }
 
       // // player makes move or passes, and sends that here

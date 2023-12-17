@@ -1,14 +1,13 @@
 package com.zkwd.server.connection;
 
-import com.zkwd.server.Commands.Command;
+// import com.zkwd.server.Commands.Command;
 import com.zkwd.server.GoServer;
-import com.zkwd.server.game.GoGame;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
+// import java.util.ArrayList;
 
 public class PlayerHandler implements Runnable {
 
@@ -22,7 +21,7 @@ public class PlayerHandler implements Runnable {
   /**
    * this is a command log i think? correct me
    */
-  private ArrayList<Command> commands;
+  // private ArrayList<Command> commands;
 
   public PlayerHandler(Socket socket) throws IOException {
     this.playerSocket = socket;

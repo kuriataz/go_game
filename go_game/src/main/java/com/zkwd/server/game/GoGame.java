@@ -2,7 +2,6 @@ package com.zkwd.server.game;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
 
 /**
  * Master class for a singular game of Go.
@@ -19,15 +18,15 @@ public class GoGame {
   /**
    * Game state information
    */
-  private Board board = new Board(3);
+  //private Board board = new Board(3);
   //private ArrayList<Chain> blackChains;
   //private ArrayList<Chain> whiteChains;
 
   /**
    * Turn information
    */
-  private int round = 0;
-  private int turn = BLACK; // turn is -1 when black goes, 1 when white goes
+  //private int round = 0;
+  //private int turn = BLACK; // turn is -1 when black goes, 1 when white goes
 
   /**
    * GoGame uses sockets to communicate with player applications separately from the PlayerHandler class.
@@ -57,8 +56,6 @@ public class GoGame {
     black.send("game_black");
     white.send("game_white");
 
-    boolean v = true;
-
     /**
      * !! GAME LOOP !!
      */
@@ -70,7 +67,7 @@ public class GoGame {
         String input = currentPlayer.await();
 
         // move validity
-        if(v){
+        if(checkValidity(input)){
           currentPlayer.send("game_correct");
 
           currentPlayer.send("you said: " + input);
@@ -159,5 +156,9 @@ public class GoGame {
       //   }
       // }
     }
+  }
+
+  private boolean checkValidity(String input){
+    return !input.equals("12345");
   }
 }

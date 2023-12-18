@@ -31,12 +31,22 @@ public class PlayerHandler implements Runnable {
 
   @Override
   public void run() {
+    int boardSize = 0;
     try {
       String clientMessage;
       while ((clientMessage = in.readLine()) != null) {
         System.out.println("Received from client: " + clientMessage);
 
         // TODO : IMPLEMENT A COMMAND SYSTEM
+
+        if (clientMessage.startsWith("boardSize:")) {
+          String size = clientMessage.substring("boardSize:".length());
+          try {
+            boardSize = Integer.parseInt(size);
+            continue;
+          } catch (NumberFormatException e) {
+          }
+        }
 
         if (clientMessage.startsWith("joinlobby:")) {
 
@@ -47,7 +57,7 @@ public class PlayerHandler implements Runnable {
           // if so, start a game
           if (opponent != null) {
             //
-            GoServer.createNewGame(opponent, playerSocket);
+            GoServer.createNewGame(opponent, playerSocket, boardSize);
             //
           } else {
             // lobby is not taken, so take the lobby
@@ -56,14 +66,16 @@ public class PlayerHandler implements Runnable {
             out.println("_wait");
           }
 
-          while(true);
+          while (true)
+            ;
 
           /**
            * have this thread wait on something that gogame has access to?
-           * 
+           *
            * if we have it wait on the player socket,
            * we can both send notify from the app (cancel queue),
-           * or gogame (when the game is finished). it seems like the best option to me, even if its a bit clunky
+           * or gogame (when the game is finished). it seems like the best
+           * option to me, even if its a bit clunky
            */
 
         } else {

@@ -21,6 +21,8 @@ public class LobbyScreen extends BorderPane implements IScreen {
   Label join;
   TextField tf;
   Button btn;
+  Button three;
+  Button nine;
 
   public LobbyScreen() {
     super();
@@ -30,6 +32,10 @@ public class LobbyScreen extends BorderPane implements IScreen {
     this.tf = new TextField();
     this.btn = new Button("start game");
     btn.setOnAction(this::handleButtonAction);
+    this.three = new Button("3x3");
+    three.setOnAction(this::handleThreeBtn);
+    this.nine = new Button("9x9");
+    nine.setOnAction(this::handleNineBtn);
 
     HBox codeInput = new HBox(5);
     codeInput.getChildren().addAll(join, tf, btn);
@@ -38,7 +44,11 @@ public class LobbyScreen extends BorderPane implements IScreen {
     VBox vbox = new VBox(txt, codeInput);
     vbox.setAlignment(Pos.CENTER);
 
+    HBox boardSize = new HBox(3);
+    boardSize.getChildren().addAll(three, nine);
+
     this.setCenter(vbox);
+    this.setBottom(boardSize);
   }
 
   // Event handler for the button
@@ -69,6 +79,11 @@ public class LobbyScreen extends BorderPane implements IScreen {
     }
   }
 
+  private void handleThreeBtn(ActionEvent event) {
+    App.send("boardSize: " + 3);
+  }
+  private void handleNineBtn(ActionEvent event) { App.send("boardSize: " + 9); }
+
   public Pane launch() { return this; }
 
   /**
@@ -84,7 +99,7 @@ public class LobbyScreen extends BorderPane implements IScreen {
     protected void succeeded() {
       super.succeeded();
 
-      if(this.getValue().equals("_connect"))
+      if (this.getValue().equals("_connect"))
         App.changeState(AppState.INGAME);
     }
 

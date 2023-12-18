@@ -1,18 +1,18 @@
 package com.zkwd.server;
 
+import com.zkwd.server.connection.Lobby;
+import com.zkwd.server.connection.PlayerHandler;
+import com.zkwd.server.game.GoGame;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import com.zkwd.server.connection.Lobby;
-import com.zkwd.server.connection.PlayerHandler;
-import com.zkwd.server.game.GoGame;
-
 public class GoServer {
   private ServerSocket serverSocket;
 
-  // will contain a list of codes, under which some player is awaiting an opponent
+  // will contain a list of codes, under which some player is awaiting an
+  // opponent
   private static ArrayList<Lobby> pendingGames = new ArrayList<Lobby>();
 
   public GoServer(int port) throws IOException {
@@ -31,32 +31,35 @@ public class GoServer {
     }
   }
 
-  public static Socket tryJoin(String code){
-    for(Lobby l : pendingGames){
-      if(l.getCode().equals(code)){
+  public static Socket tryJoin(String code) {
+    for (Lobby l : pendingGames) {
+      if (l.getCode().equals(code)) {
         // take the lobby off the pending list
         pendingGames.remove(l);
         //
         return l.getSocket();
       }
     }
-    //not found
+    // not found
     return null;
   }
 
-  public static void waitForGame(String code, Socket socket){
+  public static void waitForGame(String code, Socket socket) {
     pendingGames.add(new Lobby(code, socket));
   }
 
-  public static void createNewGame(Socket host, Socket joinee) {
+  public static void createNewGame(Socket host, Socket joinee, int boardSize) {
     new Thread() {
-      @Override public void run() {
+      @Override
+      public void run() {
         try {
-          new GoGame(host, joinee).run();
-        } catch (Exception e){
+          new GoGame(host, joinee, boardSize).run();
+        } catch (Exception e) {
           /**
-           * TODO : in GoGame, exceptions should be thrown that should end the game (one of the players disconnects, something goes very wrong)
-           * because here both players (or the remaining player) can be safely disconnected into the lobby screen
+           * TODO : in GoGame, exceptions should be thrown that should end the
+           * game (one of the players disconnects, something goes very wrong)
+           * because here both players (or the remaining player) can be safely
+           * disconnected into the lobby screen
            */
         }
       }

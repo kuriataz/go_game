@@ -19,7 +19,7 @@ public class GoGame {
   /**
    * Game state information
    */
-  private Board board = new Board(3);
+  private Board board;
   private ArrayList<Chain> blackChains;
   private ArrayList<Chain> whiteChains;
 
@@ -36,9 +36,10 @@ public class GoGame {
    * @param joinee white pieces
    * @exception IOException pass this back to player handler
    */
-  public GoGame(Socket host, Socket joinee) throws IOException {
+  public GoGame(Socket host, Socket joinee, int boardSize) throws IOException {
     black = new Player(host);
     white = new Player(joinee);
+    this.board = new Board(boardSize);
   }
 
   /**

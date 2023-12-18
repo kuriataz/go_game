@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Intersection {
   private int state;
   private Boolean breath = true;
-  public ArrayList<Intersection> neighbours;
+  public ArrayList<Intersection> neighbours = new ArrayList<Intersection>();
 
   Intersection(int state) { this.state = state; }
 

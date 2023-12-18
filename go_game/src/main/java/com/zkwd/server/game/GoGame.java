@@ -36,10 +36,10 @@ public class GoGame {
    * @param joinee white pieces
    * @exception IOException pass this back to player handler
    */
-  public GoGame(Socket host, Socket joinee, int boardSize) throws IOException {
+  public GoGame(Socket host, Socket joinee) throws IOException {
     black = new Player(host);
     white = new Player(joinee);
-    this.board = new Board(boardSize);
+    this.board = new Board(3);
   }
 
   /**

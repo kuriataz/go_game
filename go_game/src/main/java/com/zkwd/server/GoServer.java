@@ -48,12 +48,13 @@ public class GoServer {
     pendingGames.add(new Lobby(code, socket));
   }
 
-  public static void createNewGame(Socket host, Socket joinee, int boardSize) {
+  public static void createNewGame(Socket host, Socket joinee) {
     new Thread() {
       @Override
       public void run() {
         try {
-          new GoGame(host, joinee, boardSize).run();
+          new GoGame(host, joinee).run();
+          // new GoGame(host, joinee, boardSize).run();
         } catch (Exception e) {
           /**
            * TODO : in GoGame, exceptions should be thrown that should end the

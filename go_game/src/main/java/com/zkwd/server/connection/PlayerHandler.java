@@ -39,14 +39,14 @@ public class PlayerHandler implements Runnable {
 
         // TODO : IMPLEMENT A COMMAND SYSTEM
 
-        if (clientMessage.startsWith("boardSize:")) {
-          String size = clientMessage.substring("boardSize:".length());
-          try {
-            boardSize = Integer.parseInt(size);
-            continue;
-          } catch (NumberFormatException e) {
-          }
-        }
+        // if (clientMessage.startsWith("boardSize:")) {
+        //   String size = clientMessage.substring("boardSize:".length());
+        //   try {
+        //     boardSize = Integer.parseInt(size);
+        //     continue;
+        //   } catch (NumberFormatException e) {
+        //   }
+        // }
 
         if (clientMessage.startsWith("joinlobby:")) {
 
@@ -57,7 +57,8 @@ public class PlayerHandler implements Runnable {
           // if so, start a game
           if (opponent != null) {
             //
-            GoServer.createNewGame(opponent, playerSocket, boardSize);
+            GoServer.createNewGame(opponent, playerSocket);
+            // GoServer.createNewGame(opponent, playerSocket, boardSize);
             //
           } else {
             // lobby is not taken, so take the lobby

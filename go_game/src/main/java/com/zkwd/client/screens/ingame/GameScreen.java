@@ -20,8 +20,8 @@ public class GameScreen extends BorderPane implements IScreen {
   GUIBoardBuilder boardBuilder;
 
   Group board;
-  String boardString;
-  Text txt;
+  String boardString = "EEE|EEE|EEE";
+  Text txt = new Text();
 
   public GameScreen() {
     super();
@@ -51,9 +51,12 @@ public class GameScreen extends BorderPane implements IScreen {
 
           // String oppUpdate = App.await(); // later it will be sent to db
 
-          // Platform.runLater(() -> {
-          //   // log.push(oppUpdate);
-          // });
+          boardString = App.await();
+
+          Platform.runLater(() -> {
+            updateBoard(boardString);
+            // log.push(boardString);
+          });
         }
 
         /**
@@ -63,7 +66,6 @@ public class GameScreen extends BorderPane implements IScreen {
           // wait for your round
           do {
             message = App.await();
-            Platform.runLater(() -> { disableInput(); });
           } while (!message.equals("game_go"));
 
           String verdict;
@@ -73,6 +75,13 @@ public class GameScreen extends BorderPane implements IScreen {
 
             verdict = App.await();
           } while (!verdict.equals("game_correct"));
+
+          boardString = App.await();
+
+          Platform.runLater(() -> {
+            updateBoard(boardString);
+            // log.push(boardString);
+          });
 
           boardString = App.await();
 
@@ -106,17 +115,20 @@ public class GameScreen extends BorderPane implements IScreen {
    */
   EventHandler<MouseEvent> clickHandler = event -> {
 
+    disableInput();
+
     double mouseX = event.getX();
     double mouseY = event.getY();
 
     double circleSize = boardBuilder.CircleSize;
     double gridPadding = boardBuilder.GridPadding;
 
-    int clickedX = (int)((mouseX - gridPadding) / (2 * circleSize + 1));
-    int clickedY = (int)((mouseY - gridPadding) / (2 * circleSize + 1));
+    int clickedX = (int)((mouseX) / (2.0 * circleSize + 2.0 * gridPadding));
+    int clickedY = (int)((mouseY) / (2.0 * circleSize + 2.0 * gridPadding));
 
     // Convert the coordinates to a string format and send it
-    String clickedPosition = clickedX + " " + clickedY;
+    String clickedPosition =
+        clickedX + " " + clickedY + " " + mouseX + " " + mouseY;
 
     App.send(clickedPosition);
   };

@@ -44,16 +44,20 @@ public class GoServer {
     return null;
   }
 
-  public static void waitForGame(String code, Socket socket) {
-    pendingGames.add(new Lobby(code, socket));
+  public static Lobby waitForGame(String code, Socket socket, int size) {
+    Lobby l = new Lobby(code, socket, size);
+    pendingGames.add(l);
+    return l;
   }
+
+  public static void unwait(Lobby l) { pendingGames.remove(l); }
 
   public static void createNewGame(Socket host, Socket joinee, int size) {
     new Thread() {
       @Override
       public void run() {
         try {
-          new GoGame(host, joinee).run();
+          new GoGame(host, joinee, size).run();
         } catch (Exception e) {
           /**
            * TODO : in GoGame, exceptions should be thrown that should end the

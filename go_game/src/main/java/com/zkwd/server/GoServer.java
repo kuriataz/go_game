@@ -31,13 +31,13 @@ public class GoServer {
     }
   }
 
-  public static Socket tryJoin(String code) {
+  public static Lobby tryJoin(String code) {
     for (Lobby l : pendingGames) {
       if (l.getCode().equals(code)) {
         // take the lobby off the pending list
         pendingGames.remove(l);
         //
-        return l.getSocket();
+        return l;
       }
     }
     // not found
@@ -48,13 +48,12 @@ public class GoServer {
     pendingGames.add(new Lobby(code, socket));
   }
 
-  public static void createNewGame(Socket host, Socket joinee) {
+  public static void createNewGame(Socket host, Socket joinee, int size) {
     new Thread() {
       @Override
       public void run() {
         try {
           new GoGame(host, joinee).run();
-          // new GoGame(host, joinee, boardSize).run();
         } catch (Exception e) {
           /**
            * TODO : in GoGame, exceptions should be thrown that should end the

@@ -10,7 +10,7 @@ public class ResultsScreen extends BorderPane implements IScreen {
     
     public ResultsScreen() {
         super();
-        Text txt = new Text("this is the results screen.");
+        Text txt = new Text("this is the results screen. (currently unused)");
 
         this.setCenter(txt);
     }

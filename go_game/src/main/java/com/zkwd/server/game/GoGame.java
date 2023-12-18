@@ -36,10 +36,11 @@ public class GoGame {
    * @param joinee white pieces
    * @exception IOException pass this back to player handler
    */
-  public GoGame(Socket host, Socket joinee) throws IOException {
+  public GoGame(Socket host, Socket joinee, int boardSize) throws IOException {
     black = new Player(host);
     white = new Player(joinee);
-    this.board = new Board(3);
+
+    board = new Board(boardSize);
   }
 
   /**
@@ -49,7 +50,6 @@ public class GoGame {
     /**
      * Make both players enter the game state on client-side.
      */
-    System.out.println("sending!!");
     black.send("_connect");
     white.send("_connect");
 
@@ -58,6 +58,9 @@ public class GoGame {
 
     black.send("game_black");
     white.send("game_white");
+
+    black.send(board.prepareBoardString());
+    white.send(board.prepareBoardString());
 
     /**
      * !! GAME LOOP !!

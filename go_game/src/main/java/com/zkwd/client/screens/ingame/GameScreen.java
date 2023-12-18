@@ -20,16 +20,16 @@ public class GameScreen extends BorderPane implements IScreen {
   GUIBoardBuilder boardBuilder;
 
   Group board;
-  String boardString = "EEE|EEE|EEE";
+  String boardString;
   Text txt = new Text();
+
+  int boardsize;
 
   public GameScreen() {
     super();
 
     this.boardBuilder = new GUIBoardBuilder();
-    this.board = boardBuilder.DisplayBoard(boardString);
     this.setBottom(txt);
-    this.setCenter(board);
 
     // begin game
     runGame();
@@ -47,6 +47,8 @@ public class GameScreen extends BorderPane implements IScreen {
         // 2nd message is starting board
         String startBoard = App.await();
         Platform.runLater(() -> {
+          System.out.println(startBoard.split("\\|")[0]);
+          boardsize = startBoard.split("\\|")[0].length();
           updateBoard(startBoard);
         });
 
@@ -120,6 +122,7 @@ public class GameScreen extends BorderPane implements IScreen {
    */
   EventHandler<MouseEvent> clickHandler = event -> {
 
+    System.out.println("works");
     disableInput();
 
     double mouseX = event.getX();
@@ -128,12 +131,14 @@ public class GameScreen extends BorderPane implements IScreen {
     double circleSize = boardBuilder.CircleSize;
     double gridPadding = boardBuilder.GridPadding;
 
-    int clickedX = (int)((mouseX) / (2.0 * circleSize + 2.0 * gridPadding));
-    int clickedY = (int)((mouseY) / (2.0 * circleSize + 2.0 * gridPadding));
+    int clickedX = Math.min((int)((mouseX) / (2.0 * circleSize + 2.0 * gridPadding)), boardsize - 1);
+    int clickedY = Math.min((int)((mouseY) / (2.0 * circleSize + 2.0 * gridPadding)), boardsize - 1);
 
     // Convert the coordinates to a string format and send it
     String clickedPosition =
         clickedX + " " + clickedY + " " + mouseX + " " + mouseY;
+
+    System.out.println("sending move at: " + clickedPosition + " bs: " + boardsize);
 
     App.send(clickedPosition);
   };

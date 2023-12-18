@@ -28,7 +28,7 @@ public class LobbyScreen extends BorderPane implements IScreen {
   TextField tf;
   Button btn;
 
-  int boardsize = 5;
+  int boardsize = 7;
 
   public LobbyScreen() {
     super();
@@ -77,6 +77,7 @@ public class LobbyScreen extends BorderPane implements IScreen {
       // put up like a loading wheel or something would be neat
 
     } else if (result.equals("_connect")) {
+      App.send("connecting");
       App.changeState(AppState.INGAME);
     } else {
       // incorrect result

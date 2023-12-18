@@ -11,7 +11,8 @@ public class ServerMessenger {
   private BufferedReader in;
   private PrintWriter out;
 
-  public ServerMessenger(String serverAddress, int serverPort) throws IOException {
+  public ServerMessenger(String serverAddress, int serverPort)
+      throws IOException {
     socket = new Socket(serverAddress, serverPort);
     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     out = new PrintWriter(socket.getOutputStream(), true);
@@ -38,9 +39,7 @@ public class ServerMessenger {
    * Sends a message without waiting for a response.
    * @param message The string being sent to the server.
    */
-  public void send(String message) {
-    out.println(message);
-  }
+  public void send(String message) { out.println(message); }
 
   /**
    * Await for a message from the server.
@@ -50,7 +49,7 @@ public class ServerMessenger {
   public String await() {
     try {
       String a = in.readLine();
-      System.out.println(a);
+      System.out.println("received: " + a);
       return a;
     } catch (IOException e) {
       return null;

@@ -2,6 +2,7 @@ package com.zkwd.server.connection;
 
 // import com.zkwd.server.Commands.Command;
 import com.zkwd.server.GoServer;
+import com.zkwd.server.game.GoGame;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,6 +19,8 @@ public class PlayerHandler implements Runnable {
   private BufferedReader in;
   private PrintWriter out;
 
+  private int boardsize;
+
   /**
    * this is a command log i think? correct me
    */
@@ -31,39 +34,67 @@ public class PlayerHandler implements Runnable {
 
   @Override
   public void run() {
+    int boardSize = 0;
     try {
       String clientMessage;
       while ((clientMessage = in.readLine()) != null) {
         System.out.println("Received from client: " + clientMessage);
 
-        // TODO : IMPLEMENT A COMMAND SYSTEM
+        // TODO : IMPLEMENT A (proper) COMMAND SYSTEM
+
+        // if (clientMessage.startsWith("boardSize:")) {
+        //   String size = clientMessage.substring("boardSize:".length());
+        //   try {
+        //     boardSize = Integer.parseInt(size);
+        //     continue;
+        //   } catch (NumberFormatException e) {
+        //   }
+        // }
 
         if (clientMessage.startsWith("joinlobby:")) {
 
           // find out if the lobby code is taken
-          String arg = clientMessage.substring("joinlobby:".length());
-          Socket opponent = GoServer.tryJoin(arg);
+          boardsize = Integer.parseInt(clientMessage.split(":")[1]);
+          String arg = clientMessage.split(":")[2].substring(1);
+
+          Lobby foundLobby = GoServer.tryJoin(arg);
 
           // if so, start a game
-          if (opponent != null) {
+          if (foundLobby != null) {
             //
-            GoServer.createNewGame(opponent, playerSocket);
+            GoServer.createNewGame(foundLobby.getSocket(), playerSocket,
+                                   foundLobby.getBoardSize());
             //
           } else {
             // lobby is not taken, so take the lobby
             // add yourself to waiting list
-            GoServer.waitForGame(arg, playerSocket);
+            foundLobby = GoServer.waitForGame(arg, playerSocket, boardsize);
             out.println("_wait");
           }
 
-          while(true);
+          // wait for a message from app telling if it connected to a match or
+          // cancelled
+          String waitResult = in.readLine();
+
+          System.out.println("res: " + waitResult);
+
+          if (waitResult.equals("unwait")) {
+            GoServer.unwait(foundLobby);
+
+            // this is trash :(
+            out.println("success");
+
+          } else if (waitResult.equals("connecting")) {
+
+            // pause this thread to prevent it from reading the inputstream
+            // (indefinitely, for now)
+            while (true)
+              ;
+          }
 
           /**
-           * have this thread wait on something that gogame has access to?
-           * 
-           * if we have it wait on the player socket,
-           * we can both send notify from the app (cancel queue),
-           * or gogame (when the game is finished). it seems like the best option to me, even if its a bit clunky
+           * TODO : implement - wait until game concluded or one of the players
+           * has exited.
            */
 
         } else {

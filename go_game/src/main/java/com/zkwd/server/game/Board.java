@@ -23,6 +23,7 @@ public class Board {
         board[i][j] = new Intersection(0);
       }
     }
+    setNeighbours();
   }
 
   /**
@@ -97,15 +98,15 @@ public class Board {
   boolean validMove(int state) { return (state == FREE); }
 
   boolean correctMove(int x, int y, int playerColor) {
-    // boolean free = (board[x][y].getState() == FREE);
-    // boolean suicide = true;
-    // for (Intersection i : board[x][y].neighbours) {
-    //   if (i.getState() != -(playerColor)) {
-    //     suicide = false;
-    //   }
-    // }
-    // return free && !suicide;
-    return true;
+    boolean free = (board[x][y].getState() == FREE);
+    boolean suicide = true;
+    for (Intersection i : board[x][y].neighbours) {
+      if (i.getState() != -(playerColor)) {
+        suicide = false;
+      }
+    }
+    return free && !suicide;
+    // return true;
     /**
      * TODO : testing - uncomment above
      */
@@ -114,9 +115,9 @@ public class Board {
   /**
    * Sets neighbours of each intersection.
    */
-  void setNeighbours() {
-    for (int i = 0; i != size; ++i) {
-      for (int j = 0; j != size; ++j) {
+  public void setNeighbours() {
+    for (int i = 0; i < size; ++i) {
+      for (int j = 0; j < size; ++j) {
         if (i + 1 < size) {
           board[i][j].neighbours.add(board[i + 1][j]);
         }

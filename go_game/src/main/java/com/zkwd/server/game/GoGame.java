@@ -46,7 +46,6 @@ public class GoGame {
     /**
      * Make both players enter the game state on client-side.
      */
-    System.out.println("sending!!");
     black.send("_connect");
     white.send("_connect");
 

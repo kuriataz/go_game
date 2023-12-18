@@ -5,10 +5,12 @@ import java.net.Socket;
 public class Lobby {
     private String code;
     private Socket playerSocket;
+    private int boardSize;
 
-    public Lobby(String code, Socket socket){
+    public Lobby(String code, Socket socket, int boardSize){
         this.code = code;
         this.playerSocket = socket;
+        this.boardSize = boardSize;
     }
 
     public String getCode() {
@@ -17,5 +19,9 @@ public class Lobby {
 
     public Socket getSocket() {
         return playerSocket;
+    }
+
+    public int getBoardSize () {
+        return boardSize;
     }
 }

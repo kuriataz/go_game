@@ -23,9 +23,9 @@ public class Board {
         board[i][j] = new Intersection(0);
       }
     }
-    System.out.println("HERE");
-    setNeighbours();
-    System.out.println("HERE2");
+    //System.out.println("HERE");
+    //setNeighbours();
+    //System.out.println("HERE2");
   }
 
   /**

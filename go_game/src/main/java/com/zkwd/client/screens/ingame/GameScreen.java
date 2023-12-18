@@ -44,12 +44,17 @@ public class GameScreen extends BorderPane implements IScreen {
 
         // first message is color
         String message = App.await();
+        // 2nd message is starting board
+        String startBoard = App.await();
+        Platform.runLater(() -> {
+          updateBoard(startBoard);
+        });
+
         if (message.equals("game_black")) {
           txt.setText("black pieces");
+
         } else {
           txt.setText("white pieces");
-
-          // String oppUpdate = App.await(); // later it will be sent to db
 
           boardString = App.await();
 

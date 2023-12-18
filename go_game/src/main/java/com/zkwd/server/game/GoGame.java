@@ -73,6 +73,7 @@ public class GoGame {
         if (board.correctMove(coordinates[0], coordinates[1], turn)) {
           currentPlayer.send("game_correct");
           board.putStone(coordinates[0], coordinates[1], turn);
+          System.out.println(coordinates[0] + " " + coordinates[1]);
           String updatedBoard = board.prepareBoardString();
 
           currentPlayer.send(updatedBoard);
@@ -97,6 +98,7 @@ public class GoGame {
         currentPlayer = black;
         otherPlayer = white;
       }
+      turn = -(turn);
     }
   }
 

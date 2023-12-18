@@ -23,6 +23,9 @@ public class Board {
         board[i][j] = new Intersection(0);
       }
     }
+    System.out.println("HERE");
+    setNeighbours();
+    System.out.println("HERE2");
   }
 
   /**
@@ -114,7 +117,7 @@ public class Board {
   /**
    * Sets neighbours of each intersection.
    */
-  void setNeighbours() {
+  public void setNeighbours() {
     for (int i = 0; i != size; ++i) {
       for (int j = 0; j != size; ++j) {
         if (i + 1 < size) {

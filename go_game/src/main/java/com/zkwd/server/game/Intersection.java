@@ -13,7 +13,7 @@ public class Intersection {
 
   public static final int FREE = 0;
   private int state;
-  private int liberty = 0;
+  private int liberty = 0; // is set by setNeighbours in Board's constructor
   public int chainId = 0;
   public ArrayList<Intersection> neighbours = new ArrayList<Intersection>();
 
@@ -54,7 +54,7 @@ public class Intersection {
   }
 
   /**
-   * Method to check if newly put stone becomes a part of any existing chain
+   * Checks if newly put stone becomes a part of any existing chain
    * @return ids - ArrayList of ids of chains that Intersection can join in
    *     ascending order
    */
@@ -62,12 +62,17 @@ public class Intersection {
     ArrayList<Integer> ids = new ArrayList<Integer>();
     for (Intersection i : neighbours) {
       if (i.getState() == this.state && i.chainId != 0) {
-        ids.add(chainId);
+        ids.add(i.chainId);
       }
     }
     Collections.sort(ids);
     return ids;
   }
+
+  /**
+   * Checks if there is any lonley (not in chain) stone in this.neighbours
+   * @return ArrayList of intersections' taken by the lonley stone
+   */
 
   public ArrayList<Intersection> gainToChain() {
     ArrayList<Intersection> toGain = new ArrayList<Intersection>();

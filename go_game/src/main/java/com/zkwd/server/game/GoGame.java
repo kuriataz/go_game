@@ -78,7 +78,9 @@ public class GoGame {
         if (board.correctMove(coordinates[0], coordinates[1], turn)) {
           currentPlayer.send("game_correct");
           board.putStone(coordinates[0], coordinates[1], turn);
-          board.removeCaptured();
+          board.removeCapturedStones();
+          // board.removeCapturedChains();
+          System.out.println("HERE");
           System.out.println(coordinates[0] + " " + coordinates[1]);
           String updatedBoard = board.prepareBoardString();
 

@@ -12,13 +12,14 @@ public class Board {
   public static final int WHITE = 1;
   public static final int FREE = 0;
 
-  int size;
+  private int size;
+  private int maxChainId;
   Intersection[][] board;
-  ArrayList<Chain> chains = new ArrayList<>();
-  private int maxChainId = 0;
+  ArrayList<Chain> chains = new ArrayList<Chain>();
 
   public Board(int size) {
     this.size = size;
+    this.maxChainId = 0;
     this.board =
         new Intersection[size][size]; // by default every cell is 0 = EMPTY
     for (int i = 0; i < size; ++i) {
@@ -63,45 +64,52 @@ public class Board {
    * @param x intersection's x coordinate
    * @param y intersection's y coordinate
    * @return state (0: free, 1: white, -1: black) of the intersection with
-   *     coordinates x,
-   *     y
+   *     coordinates x, y
    */
   int getValue(int x, int y) { return board[x][y].getState(); }
-
-  void putBlack(int x, int y) {
-    if (correctMove(x, y, BLACK)) {
-      board[x][y].setState(BLACK);
-    }
-  }
-
-  void putWhite(int x, int y) {
-    if (correctMove(x, y, WHITE)) {
-      board[x][y].setState(WHITE);
-    }
-  }
 
   public void putStone(int x, int y, int playerColor) {
     if (correctMove(x, y, playerColor)) {
       board[x][y].setState(playerColor);
-      // board[x][y].takeLiberties();
-      ArrayList<Integer> ids = board[x][y].findChain();
+      board[x][y].takeLiberties();
+
+      // NOT WORKING FROM HERE
+      // new stone joins existing chain
+      ArrayList<Integer> ids = new ArrayList<Integer>();
+      ids = board[x][y].findChain();
       if (!(ids.isEmpty())) {
         for (int i = 0; i < ids.size(); ++i) {
           if (i != 0) {
             changeChain(ids.get(i), ids.get(0));
-            removeChain(ids.get(i));
+            deleteChain(ids.get(i));
           } else {
             board[x][y].chainId = ids.get(0);
           }
         }
-      } else {
-        ArrayList<Intersection> toGain = board[x][y].gainToChain();
+      }
+      // gain all lonly stones around newly put stone and try to add them to
+      // chain
+      ArrayList<Intersection> toGain = board[x][y].gainToChain();
+      if (board[x][y].chainId == 0) {
         Chain newChain = createChain(playerColor);
         for (Intersection i : toGain) {
           newChain.addOne(i);
         }
+      } else if (findChain(board[x][y].chainId) != null) {
+        for (Intersection i : toGain) {
+          findChain(board[x][y].chainId).addOne(i);
+        }
       }
     }
+  }
+
+  private Chain findChain(int chainId) {
+    for (Chain ch : chains) {
+      if (ch.id == chainId) {
+        return ch;
+      }
+    }
+    return null;
   }
 
   private Chain createChain(int color) {
@@ -118,37 +126,49 @@ public class Board {
     }
   }
 
-  private void removeChain(int id) {
-    for (Chain ch : chains) {
-      if (ch.id == id) {
-        chains.remove(ch);
+  private void deleteChain(int id) {
+    if (!(chains.isEmpty())) {
+      for (Chain ch : chains) {
+        if (ch.id == id) {
+          chains.remove(ch);
+        }
       }
     }
   }
 
-  // it won't work for chains. we need something like chianId for each
-  // Intersection. I need to think more about
   void removeStone(int x, int y) {
     board[x][y].setState(FREE);
     board[x][y].returnLiberties();
   }
 
-  void removeCaptured() {
+  void removeChain(Chain chain) {
+    chain.removeStones();
+    deleteChain(chain.id);
+  }
+
+  void removeCapturedStones() {
     for (int i = 0; i != size; ++i) {
       for (int j = 0; j != size; ++j) {
-        if (board[i][j].getLiberty() <= 0) {
-          board[i][j].removeChain();
+        if (board[i][j].getLiberty() <= 0 && board[i][j].chainId == 0) {
+          removeStone(i, j);
         }
+      }
+    }
+  }
+
+  void removeCapturedChains() {
+    for (Chain ch : chains) {
+      if (ch.getLiberty() <= 0) {
+        removeChain(ch);
       }
     }
   }
 
   /**
    * Checks if the new stone can be put on the intersetion.
-   * @param state FREE, BLACK, WHITE
-   * @return true if the intersetion is FREE = 0
+   * @param payerColor BLACK, WHITE
+   * @return true if the intersetion is FREE and suicide isn't commited
    */
-  boolean validMove(int state) { return (state == FREE); }
 
   boolean correctMove(int x, int y, int playerColor) {
     boolean free = (board[x][y].getState() == FREE);

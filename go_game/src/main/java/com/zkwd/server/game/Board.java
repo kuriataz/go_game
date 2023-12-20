@@ -1,5 +1,6 @@
 package com.zkwd.server.game;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -13,6 +14,8 @@ public class Board {
 
   int size;
   Intersection[][] board;
+  ArrayList<Chain> chains = new ArrayList<>();
+  private int maxChainId = 0;
 
   public Board(int size) {
     this.size = size;
@@ -80,15 +83,65 @@ public class Board {
   public void putStone(int x, int y, int playerColor) {
     if (correctMove(x, y, playerColor)) {
       board[x][y].setState(playerColor);
+      // board[x][y].takeLiberties();
+      ArrayList<Integer> ids = board[x][y].findChain();
+      if (!(ids.isEmpty())) {
+        for (int i = 0; i < ids.size(); ++i) {
+          if (i != 0) {
+            changeChain(ids.get(i), ids.get(0));
+            removeChain(ids.get(i));
+          } else {
+            board[x][y].chainId = ids.get(0);
+          }
+        }
+      } else {
+        ArrayList<Intersection> toGain = board[x][y].gainToChain();
+        Chain newChain = createChain(playerColor);
+        for (Intersection i : toGain) {
+          newChain.addOne(i);
+        }
+      }
     }
   }
-  // void putWhite(int x, int y) {
-  //   if (validMove(board[x][y].getState())) {
-  //     board[x][y].setState(WHITE);
-  //   }
-  // }
 
-  void removeStone(int x, int y) { board[x][y].setState(FREE); }
+  private Chain createChain(int color) {
+    Chain newChain = new Chain(color, maxChainId + 1);
+    chains.add(newChain);
+    return newChain;
+  }
+
+  private void changeChain(int currentId, int newId) {
+    for (Chain ch : chains) {
+      if (ch.id == currentId) {
+        ch.changeId(newId);
+      }
+    }
+  }
+
+  private void removeChain(int id) {
+    for (Chain ch : chains) {
+      if (ch.id == id) {
+        chains.remove(ch);
+      }
+    }
+  }
+
+  // it won't work for chains. we need something like chianId for each
+  // Intersection. I need to think more about
+  void removeStone(int x, int y) {
+    board[x][y].setState(FREE);
+    board[x][y].returnLiberties();
+  }
+
+  void removeCaptured() {
+    for (int i = 0; i != size; ++i) {
+      for (int j = 0; j != size; ++j) {
+        if (board[i][j].getLiberty() <= 0) {
+          board[i][j].removeChain();
+        }
+      }
+    }
+  }
 
   /**
    * Checks if the new stone can be put on the intersetion.
@@ -106,29 +159,29 @@ public class Board {
       }
     }
     return free && !suicide;
-    // return true;
-    /**
-     * TODO : testing - uncomment above
-     */
   }
 
   /**
-   * Sets neighbours of each intersection.
+   * Sets neighbours of each intersection and gives them numbers of liberties.
    */
   public void setNeighbours() {
     for (int i = 0; i < size; ++i) {
       for (int j = 0; j < size; ++j) {
         if (i + 1 < size) {
           board[i][j].neighbours.add(board[i + 1][j]);
+          board[i][j].addLiberty();
         }
         if (i - 1 >= 0) {
           board[i][j].neighbours.add(board[i - 1][j]);
+          board[i][j].addLiberty();
         }
         if (j + 1 < size) {
           board[i][j].neighbours.add(board[i][j + 1]);
+          board[i][j].addLiberty();
         }
         if (j - 1 >= 0) {
           board[i][j].neighbours.add(board[i][j - 1]);
+          board[i][j].addLiberty();
         }
       }
     }

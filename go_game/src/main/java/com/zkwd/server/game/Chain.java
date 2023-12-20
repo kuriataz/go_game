@@ -4,16 +4,27 @@ import java.util.ArrayList;
 
 public class Chain {
   private int color;
-  private ArrayList<Intersection> chain;
+  private ArrayList<Intersection> chain = new ArrayList<Intersection>();
+  public int id;
+  public boolean alive;
 
-  public Chain(int color, Intersection first) {
+  public Chain(int color, int id) {
     this.color = color;
-    this.chain.add(first);
+    this.alive = true;
+    this.id = id;
+  }
+
+  public void changeId(int newId) {
+    this.id = newId;
+    for (Intersection i : chain) {
+      i.chainId = newId;
+    }
   }
 
   public void addOne(Intersection next) {
     if (checkAddOne(next)) {
       this.chain.add(next);
+      next.chainId = this.id;
     } else {
       // wrong color or place
       // maybe checkAddOne should throw sth

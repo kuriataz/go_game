@@ -20,8 +20,7 @@ public class Board {
   public Board(int size) {
     this.size = size;
     this.maxChainId = 0;
-    this.board =
-        new Intersection[size][size]; // by default every cell is 0 = EMPTY
+    this.board = new Intersection[size][size]; // by default every cell is 0
     for (int i = 0; i < size; ++i) {
       for (int j = 0; j < size; ++j) {
         board[i][j] = new Intersection(0);
@@ -34,7 +33,7 @@ public class Board {
    * Randomizes the board state. Mostly for debug purposes.
    * @return The board that has been randomized (this)
    */
-  public Board randomize() {
+  Board randomize() {
     Random r = new Random();
     for (int i = 0; i < size; ++i) {
       for (int j = 0; j < size; ++j) {
@@ -49,7 +48,7 @@ public class Board {
    * @param x row
    * @param y column
    */
-  public void flip(int x, int y) {
+  void flip(int x, int y) {
     board[y][x].setState((board[x][y].getState() + 2) % 3 - 1);
   }
 
@@ -68,12 +67,11 @@ public class Board {
    */
   int getValue(int x, int y) { return board[x][y].getState(); }
 
-  public void putStone(int x, int y, int playerColor) {
+  void putStone(int x, int y, int playerColor) {
     if (correctMove(x, y, playerColor)) {
       board[x][y].setState(playerColor);
       board[x][y].takeLiberties();
 
-      // NOT WORKING FROM HERE
       // new stone joins existing chain
       ArrayList<Integer> ids = new ArrayList<Integer>();
       ids = board[x][y].findChain();
@@ -84,20 +82,29 @@ public class Board {
             deleteChain(ids.get(i));
           } else {
             board[x][y].chainId = ids.get(0);
+            for (Chain ch : chains) {
+              if (ch.id == ids.get(0)) {
+                ch.addOne(board[x][y]);
+              }
+            }
           }
         }
       }
-      // gain all lonly stones around newly put stone and try to add them to
+      // gain all lonley stones around newly put stone and try to add them to
       // chain
       ArrayList<Intersection> toGain = board[x][y].gainToChain();
-      if (board[x][y].chainId == 0) {
-        Chain newChain = createChain(playerColor);
-        for (Intersection i : toGain) {
-          newChain.addOne(i);
-        }
-      } else if (findChain(board[x][y].chainId) != null) {
-        for (Intersection i : toGain) {
-          findChain(board[x][y].chainId).addOne(i);
+      if (!(toGain.isEmpty())) {
+        if (board[x][y].chainId == 0) {
+          Chain newChain = createChain(playerColor);
+          newChain.addOne(board[x][y]);
+          System.out.println("chainId: " + board[x][y].chainId);
+          for (Intersection i : toGain) {
+            newChain.addOne(i);
+          }
+        } else if (findChain(board[x][y].chainId) != null) {
+          for (Intersection i : toGain) {
+            findChain(board[x][y].chainId).addOne(i);
+          }
         }
       }
     }
@@ -114,14 +121,25 @@ public class Board {
 
   private Chain createChain(int color) {
     Chain newChain = new Chain(color, maxChainId + 1);
+    ++maxChainId;
     chains.add(newChain);
     return newChain;
   }
 
   private void changeChain(int currentId, int newId) {
+    ArrayList<Intersection> stones = new ArrayList<Intersection>();
     for (Chain ch : chains) {
       if (ch.id == currentId) {
         ch.changeId(newId);
+        stones = ch.chain;
+      }
+    }
+    // move stones to new chain
+    for (Chain ch : chains) {
+      if (ch.id == newId) {
+        for (Intersection i : stones) {
+          ch.addOne(i);
+        }
       }
     }
   }
@@ -155,9 +173,9 @@ public class Board {
       }
     }
   }
-
   void removeCapturedChains() {
     for (Chain ch : chains) {
+      ch.updateLiberty();
       if (ch.getLiberty() <= 0) {
         removeChain(ch);
       }
@@ -166,10 +184,11 @@ public class Board {
 
   /**
    * Checks if the new stone can be put on the intersetion.
+   * @param x - first coordinate of the intersection
+   * @param y - second coordinate of the intersection
    * @param payerColor BLACK, WHITE
    * @return true if the intersetion is FREE and suicide isn't commited
    */
-
   boolean correctMove(int x, int y, int playerColor) {
     boolean free = (board[x][y].getState() == FREE);
     boolean suicide = true;
@@ -184,7 +203,7 @@ public class Board {
   /**
    * Sets neighbours of each intersection and gives them numbers of liberties.
    */
-  public void setNeighbours() {
+  void setNeighbours() {
     for (int i = 0; i < size; ++i) {
       for (int j = 0; j < size; ++j) {
         if (i + 1 < size) {

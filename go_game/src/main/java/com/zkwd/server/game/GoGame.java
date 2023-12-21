@@ -20,9 +20,6 @@ public class GoGame {
    * Game state information
    */
   private Board board;
-  private ArrayList<Chain> blackChains;
-  private ArrayList<Chain> whiteChains;
-
   /**
    * Turn information
    */
@@ -74,14 +71,11 @@ public class GoGame {
         String clickedPosition = currentPlayer.await();
         int[] coordinates = splitMove(clickedPosition);
 
-        // move validity
         if (board.correctMove(coordinates[0], coordinates[1], turn)) {
           currentPlayer.send("game_correct");
           board.putStone(coordinates[0], coordinates[1], turn);
           board.removeCapturedStones();
-          // board.removeCapturedChains();
-          System.out.println("HERE");
-          System.out.println(coordinates[0] + " " + coordinates[1]);
+          board.removeCapturedChains();
           String updatedBoard = board.prepareBoardString();
 
           currentPlayer.send(updatedBoard);
@@ -102,6 +96,7 @@ public class GoGame {
       if (currentPlayer == black) {
         currentPlayer = white;
         otherPlayer = black;
+        ++round;
       } else {
         currentPlayer = black;
         otherPlayer = white;
@@ -131,20 +126,4 @@ public class GoGame {
 
     return coordinates;
   }
-
-  // private boolean checkValidity(String move) {
-  //   boolean valid = false;
-  //   try {
-  //     int x = Integer.parseInt(move.split(" ")[0]);
-  //     int y = Integer.parseInt(move.split(" ")[1]);
-
-  //     // check move for correctness
-  //     valid = board.correctMove(x, y, turn);
-
-  //   } catch (NumberFormatException e) {
-  //     // the transmitted move was somehow incorrect - current player must
-  //     // try again
-  //   }
-  //   return valid;
-  // }
 }

@@ -23,8 +23,8 @@ public class Intersection {
 
   int getState() { return this.state; }
 
-  public int getLiberty() { return this.liberty; }
-  public void setLiberty(int liberty) { this.liberty = liberty; }
+  int getLiberty() { return this.liberty; }
+  void setLiberty(int liberty) { this.liberty = liberty; }
 
   void addLiberty() { ++this.liberty; }
   void subLiberty() { --this.liberty; }
@@ -42,7 +42,6 @@ public class Intersection {
     }
   }
 
-  // not sure if it will work
   void removeChain() {
     for (Intersection i : neighbours) {
       if (i.getState() == this.state) {
@@ -58,7 +57,7 @@ public class Intersection {
    * @return ids - ArrayList of ids of chains that Intersection can join in
    *     ascending order
    */
-  public ArrayList<Integer> findChain() {
+  ArrayList<Integer> findChain() {
     ArrayList<Integer> ids = new ArrayList<Integer>();
     for (Intersection i : neighbours) {
       if (i.getState() == this.state && i.chainId != 0) {
@@ -73,8 +72,7 @@ public class Intersection {
    * Checks if there is any lonley (not in chain) stone in this.neighbours
    * @return ArrayList of intersections' taken by the lonley stone
    */
-
-  public ArrayList<Intersection> gainToChain() {
+  ArrayList<Intersection> gainToChain() {
     ArrayList<Intersection> toGain = new ArrayList<Intersection>();
     for (Intersection i : neighbours) {
       if (i.getState() == this.state && i.chainId == 0) {
@@ -83,20 +81,4 @@ public class Intersection {
     }
     return toGain;
   }
-  /**
-   *
-   * @return true if the intersection (or it's chain) has at least one breath,
-   *     false if not.
-   */
-
-  // void setLiberty() {
-  //   for (Intersection i : neighbours) {
-  //     if (i.getState() == 0) {
-  //       ++this.liberty;
-  //     }
-  //     if (i.getState() == this.state) {
-  //       i.setLiberty();
-  //     }
-  //   }
-  // }
 }

@@ -5,14 +5,12 @@ import java.util.ArrayList;
 public class Chain {
   public static final int FREE = 0;
   private int color;
-  public ArrayList<Intersection> chain = new ArrayList<Intersection>();
   private int liberty = 0;
+  public ArrayList<Intersection> chain = new ArrayList<Intersection>();
   public int id;
-  public boolean alive;
 
   public Chain(int color, int id) {
     this.color = color;
-    this.alive = true;
     this.id = id;
   }
 
@@ -33,6 +31,13 @@ public class Chain {
     }
   }
 
+  void updateLiberty() {
+    this.liberty = 0;
+    for (Intersection i : chain) {
+      this.liberty += i.getLiberty();
+    }
+  }
+
   public void addOne(Intersection next) {
     if (checkAddOne(next)) {
       this.chain.add(next);
@@ -40,39 +45,22 @@ public class Chain {
       this.liberty = this.liberty + next.getLiberty();
     }
   }
-  private boolean checkAddOne(Intersection next) {
-    if (next.getState() != this.color) {
-      return false;
-    }
-    for (Intersection i : chain) {
-      for (Intersection j : i.neighbours) {
-        if (j == next) { // will it work? shouldn't we check coordinates? if so,
-                         // this check must be done higher
-          return true;
-        }
-      }
-    }
-    return false;
-  }
 
-  // public void addWholeChain(ArrayList<Intersection> newChain) {
-  //   if (checkAddWholeChain(newChain)) {
-  //     this.chain.addAll(newChain);
-  //   }
-  // }
-  // private boolean checkAddWholeChain(ArrayList<Intersection> newChain) {
-  //   if (newChain.get(0).getState() != this.color) {
-  //     return false;
-  //   }
-  //   for (Intersection i : chain) {
-  //     for (Intersection j : i.neighbours) {
-  //       for (Intersection k : newChain) {
-  //         if (j == k) {
-  //           return true;
-  //         }
-  //       }
-  //     }
-  //   }
-  //   return false;
-  // }
+  // i think this check isn't neccssary
+  private boolean checkAddOne(Intersection next) {
+    // if (next.getState() != this.color) {
+    //   return false;
+    // }
+    // for (Intersection i : chain) {
+    //   for (Intersection j : i.neighbours) {
+    //     if (j == next) { // will it work? shouldn't we check coordinates? if
+    //     so,
+    //                      // this check must be done higher
+    //       return true;
+    //     }
+    //   }
+    // }
+    // return false;
+    return true;
+  }
 }

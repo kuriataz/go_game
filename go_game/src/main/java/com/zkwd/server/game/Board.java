@@ -192,6 +192,14 @@ public class Board {
   boolean correctMove(int x, int y, int playerColor) {
     boolean free = (board[x][y].getState() == FREE);
     boolean suicide = true;
+    // for (Intersection i : board[x][y].neighbours) {
+    //   if (i.getState() == FREE) {
+    //     suicide = false;
+    //   }
+    //   if (i.getState() == playerColor && i.getLiberty() > 0) {
+    //     suicide = false;
+    //   }
+    // }
     for (Intersection i : board[x][y].neighbours) {
       if (i.getState() != -(playerColor)) {
         suicide = false;

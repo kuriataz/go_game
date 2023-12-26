@@ -3,7 +3,6 @@ package com.zkwd.server.connection;
 // import com.zkwd.server.Commands.Command;
 import com.zkwd.server.GoServer;
 import com.zkwd.server.game.GoGame;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,7 +19,7 @@ public class PlayerHandler implements Runnable {
   private BufferedReader in;
   private PrintWriter out;
 
-  private int boardsize;
+  private int boardSize;
 
   /**
    * this is a command log i think? correct me
@@ -45,24 +44,26 @@ public class PlayerHandler implements Runnable {
         if (clientMessage.startsWith("joinlobby:")) {
 
           // find out if the lobby code is taken
-          boardsize = Integer.parseInt(clientMessage.split(":")[1]);
+          boardSize = Integer.parseInt(clientMessage.split(":")[1]);
           String arg = clientMessage.split(":")[2].substring(1);
 
-          Lobby foundLobby = GoServer.tryJoin(arg);
+          Lobby foundLobby = GoServer.tryJoin(arg, boardSize);
 
           // if so, start a game
           if (foundLobby != null) {
             //
-            GoServer.createNewGame(foundLobby.getSocket(), playerSocket, foundLobby.getBoardSize());
+            GoServer.createNewGame(foundLobby.getSocket(), playerSocket,
+                                   foundLobby.getBoardSize());
             //
           } else {
             // lobby is not taken, so take the lobby
             // add yourself to waiting list
-            foundLobby = GoServer.waitForGame(arg, playerSocket, boardsize);
+            foundLobby = GoServer.waitForGame(arg, playerSocket, boardSize);
             out.println("_wait");
           }
 
-          // wait for a message from app telling if it connected to a match or cancelled
+          // wait for a message from app telling if it connected to a match or
+          // cancelled
           String waitResult = in.readLine();
 
           System.out.println("res: " + waitResult);
@@ -75,12 +76,15 @@ public class PlayerHandler implements Runnable {
 
           } else if (waitResult.equals("connecting")) {
 
-            // pause this thread to prevent it from reading the inputstream (indefinitely, for now)
-            while(true);
+            // pause this thread to prevent it from reading the inputstream
+            // (indefinitely, for now)
+            while (true)
+              ;
           }
 
           /**
-           * TODO : implement - wait until game concluded or one of the players has exited.
+           * TODO : implement - wait until game concluded or one of the players
+           * has exited.
            */
 
         } else {

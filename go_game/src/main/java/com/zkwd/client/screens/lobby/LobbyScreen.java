@@ -3,10 +3,9 @@ package com.zkwd.client.screens.lobby;
 import com.zkwd.client.model.App;
 import com.zkwd.client.model.AppState;
 import com.zkwd.client.model.IScreen;
-
+import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker.State;
-import javafx.concurrent.Service;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -28,7 +27,12 @@ public class LobbyScreen extends BorderPane implements IScreen {
   TextField tf;
   Button btn;
 
-  int boardsize = 7;
+  Button nine;
+  Button thirteen;
+  Button nineteen;
+  HBox sizeBox;
+
+  int boardSize = 9;
 
   public LobbyScreen() {
     super();
@@ -54,7 +58,17 @@ public class LobbyScreen extends BorderPane implements IScreen {
     VBox vbox = new VBox(hbox, codeInput);
     vbox.setAlignment(Pos.CENTER);
 
+    nine = new Button("9");
+    nine.setOnAction(this::sizeNine);
+    thirteen = new Button("13");
+    thirteen.setOnAction(this::sizeThirteen);
+    nineteen = new Button("19");
+    nineteen.setOnAction(this::sizeNineteen);
+    sizeBox = new HBox(5);
+    sizeBox.getChildren().addAll(nine, thirteen, nineteen);
+
     this.setCenter(vbox);
+    this.setBottom(sizeBox);
   }
 
   // Event handler for the button
@@ -62,7 +76,7 @@ public class LobbyScreen extends BorderPane implements IScreen {
     String code = tf.getText();
 
     // send a command to the server to check if the code is taken
-    String result = App.transmit("joinlobby:" + boardsize + ":c" + code);
+    String result = App.transmit("joinlobby:" + boardSize + ":c" + code);
 
     if (result.equals("_wait")) {
       // waiting screen
@@ -90,12 +104,16 @@ public class LobbyScreen extends BorderPane implements IScreen {
     waitService.cancel();
     waitService.reset();
   }
+  private void sizeNine(ActionEvent event) { boardSize = 9; }
+  private void sizeThirteen(ActionEvent event) { boardSize = 13; }
+  private void sizeNineteen(ActionEvent event) { boardSize = 19; }
 
   /**
    * Waits for an opponent to join the lobby in the background
    */
   Service<String> waitService = new Service<String>() {
-    @Override public Task<String> createTask() {
+    @Override
+    public Task<String> createTask() {
       return new Task<String>() {
         @Override
         protected String call() {
@@ -106,9 +124,9 @@ public class LobbyScreen extends BorderPane implements IScreen {
         protected void succeeded() {
           super.succeeded();
 
-          if(this.getValue().equals("_connect"))
+          if (this.getValue().equals("_connect"))
             App.send("connecting");
-            App.changeState(AppState.INGAME);
+          App.changeState(AppState.INGAME);
         }
 
         @Override

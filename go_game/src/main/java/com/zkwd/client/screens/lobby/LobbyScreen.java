@@ -55,6 +55,8 @@ public class LobbyScreen extends BorderPane implements IScreen {
     VBox vbox = new VBox(hbox, codeInput);
     vbox.setAlignment(Pos.CENTER);
 
+    three = new Button("3");
+    nine = new Button("9");
     HBox boardSize = new HBox(3);
     boardSize.getChildren().addAll(three, nine);
 

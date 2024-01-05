@@ -2,6 +2,7 @@ package com.zkwd.server;
 
 import com.zkwd.server.connection.Lobby;
 import com.zkwd.server.connection.PlayerHandler;
+import com.zkwd.server.game.ClientPlayer;
 import com.zkwd.server.game.GoGame;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -57,7 +58,10 @@ public class GoServer {
       @Override
       public void run() {
         try {
-          new GoGame(host, joinee, size).run();
+          ClientPlayer a = new ClientPlayer(host);
+          ClientPlayer b = new ClientPlayer(joinee);
+          
+          new GoGame(a, b, size).run();
         } catch (Exception e) {
           /**
            * TODO : in GoGame, exceptions should be thrown that should end the

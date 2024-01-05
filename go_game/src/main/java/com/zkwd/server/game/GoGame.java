@@ -1,8 +1,8 @@
 package com.zkwd.server.game;
 
-import java.io.IOException;
-import java.net.Socket;
 import java.util.ArrayList;
+
+import javafx.util.Pair;
 
 /**
  * Master class for a singular game of Go.
@@ -34,11 +34,10 @@ public class GoGame {
    * the PlayerHandler class.
    * @param host black pieces
    * @param joinee white pieces
-   * @exception IOException pass this back to player handler
    */
-  public GoGame(Socket host, Socket joinee, int boardSize) throws IOException {
-    black = new Player(host);
-    white = new Player(joinee);
+  public GoGame(Player host, Player joinee, int boardSize) {
+    black = host;
+    white = joinee;
 
     board = new Board(boardSize);
   }
@@ -50,50 +49,53 @@ public class GoGame {
     /**
      * Make both players enter the game state on client-side.
      */
-    black.send("_connect");
-    white.send("_connect");
+    black.sendMessage("_connect");
+    white.sendMessage("_connect");
 
     Player currentPlayer = black;
     Player otherPlayer = white;
 
-    black.send("game_black");
-    white.send("game_white");
+    black.sendMessage("game_black");
+    white.sendMessage("game_white");
 
-    black.send(board.prepareBoardString());
-    white.send(board.prepareBoardString());
+    black.sendMessage(board.prepareBoardString());
+    white.sendMessage(board.prepareBoardString());
 
     /**
      * !! GAME LOOP !!
      */
-    while (!currentPlayer.getSocket().isClosed()) {
+    while (true) {
 
-      currentPlayer.send("game_go");
+      currentPlayer.sendMessage("game_go");
 
       try {
-        // clickedPosition has format "x y"
-        String clickedPosition = currentPlayer.await();
-        int[] coordinates = splitMove(clickedPosition);
+        Pair<Integer, Integer> move = currentPlayer.getMove();
 
         // move validity
-        if (board.correctMove(coordinates[0], coordinates[1], turn)) {
-          currentPlayer.send("game_correct");
-          board.putStone(coordinates[0], coordinates[1], turn);
-          System.out.println(coordinates[0] + " " + coordinates[1]);
+        if (board.correctMove(move.getKey(), move.getValue(), turn)) {
+
+          currentPlayer.sendMessage("game_correct");
+          board.putStone(move.getKey(), move.getValue(), turn);
+          System.out.println(move.getKey() + " " + move.getValue());
           String updatedBoard = board.prepareBoardString();
 
-          currentPlayer.send(updatedBoard);
-          otherPlayer.send(updatedBoard);
+          currentPlayer.sendMessage(updatedBoard);
+          otherPlayer.sendMessage(updatedBoard);
 
         } else {
-          currentPlayer.send("game_incorrect");
+          currentPlayer.sendMessage("game_incorrect");
           continue;
         }
 
-      } catch (IOException e) {
+      } catch (MoveException e) {
         e.printStackTrace();
 
         // make player redo turn
-        currentPlayer.send("game_incorrect");
+        currentPlayer.sendMessage("game_incorrect");
+      } catch (GameException e) {
+        e.printStackTrace();
+
+        // TODO : Exit game.
       }
 
       if (currentPlayer == black) {
@@ -106,42 +108,4 @@ public class GoGame {
       turn = -(turn);
     }
   }
-
-  private int[] splitMove(String clickedPosition) {
-    int[] coordinates = new int[2];
-
-    try {
-      String[] parts = clickedPosition.split(" ");
-      if (parts.length != 2) {
-        // error
-      }
-
-      int x = Integer.parseInt(parts[0]);
-      int y = Integer.parseInt(parts[1]);
-
-      coordinates[0] = x;
-      coordinates[1] = y;
-
-    } catch (NumberFormatException e) {
-      // The transmitted move was incorrect - current player must try again
-    }
-
-    return coordinates;
-  }
-
-  // private boolean checkValidity(String move) {
-  //   boolean valid = false;
-  //   try {
-  //     int x = Integer.parseInt(move.split(" ")[0]);
-  //     int y = Integer.parseInt(move.split(" ")[1]);
-
-  //     // check move for correctness
-  //     valid = board.correctMove(x, y, turn);
-
-  //   } catch (NumberFormatException e) {
-  //     // the transmitted move was somehow incorrect - current player must
-  //     // try again
-  //   }
-  //   return valid;
-  // }
 }

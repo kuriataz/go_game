@@ -2,8 +2,9 @@ package com.zkwd.server;
 
 import com.zkwd.server.connection.Lobby;
 import com.zkwd.server.connection.PlayerHandler;
-import com.zkwd.server.game.ClientPlayer;
 import com.zkwd.server.game.GoGame;
+import com.zkwd.server.game.players.ClientPlayer;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;

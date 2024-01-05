@@ -1,10 +1,13 @@
-package com.zkwd.server.game;
+package com.zkwd.server.game.players;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+
+import com.zkwd.server.game.exceptions.GameException;
+import com.zkwd.server.game.exceptions.MoveException;
 
 import javafx.util.Pair;
 

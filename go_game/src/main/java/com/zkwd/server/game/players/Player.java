@@ -1,4 +1,7 @@
-package com.zkwd.server.game;
+package com.zkwd.server.game.players;
+
+import com.zkwd.server.game.exceptions.GameException;
+import com.zkwd.server.game.exceptions.MoveException;
 
 import javafx.util.Pair;
 

@@ -1,4 +1,4 @@
-package com.zkwd.server.game;
+package com.zkwd.server.game.gamestate;
 
 import java.util.Random;
 
@@ -97,7 +97,7 @@ public class Board {
    */
   boolean validMove(int state) { return (state == FREE); }
 
-  boolean correctMove(int x, int y, int playerColor) {
+  public boolean correctMove(int x, int y, int playerColor) {
     boolean free = (board[x][y].getState() == FREE);
     boolean suicide = true;
     for (Intersection i : board[x][y].neighbours) {
@@ -106,10 +106,6 @@ public class Board {
       }
     }
     return free && !suicide;
-    // return true;
-    /**
-     * TODO : testing - uncomment above
-     */
   }
 
   /**

@@ -2,6 +2,8 @@ package com.zkwd.server.game.gamestate;
 
 import java.util.Random;
 
+import com.zkwd.server.game.exceptions.MoveException;
+
 /**
  * Stores game information: the size of the board and placement of pieces on it.
  */
@@ -27,7 +29,7 @@ public class Board {
   }
 
   /**
-   * Randomizes the board state. Mostly for debug purposes.
+   * Randomizes the board state. For debug purposes.
    * @return The board that has been randomized (this)
    */
   public Board randomize() {
@@ -38,15 +40,6 @@ public class Board {
       }
     }
     return this;
-  }
-
-  /**
-   * Cycle between values (debug).
-   * @param x row
-   * @param y column
-   */
-  public void flip(int x, int y) {
-    board[y][x].setState((board[x][y].getState() + 2) % 3 - 1);
   }
 
   /**
@@ -65,39 +58,40 @@ public class Board {
    */
   int getValue(int x, int y) { return board[x][y].getState(); }
 
-  void putBlack(int x, int y) {
-    if (correctMove(x, y, BLACK)) {
-      board[x][y].setState(BLACK);
-    }
-  }
-
-  void putWhite(int x, int y) {
-    if (correctMove(x, y, WHITE)) {
-      board[x][y].setState(WHITE);
-    }
-  }
-
-  public void putStone(int x, int y, int playerColor) {
+  /**
+   * Commits the move specified by location and player color, if said move is valid.
+   * @param x coordinate
+   * @param y coordinate
+   * @param playerColor -1 for black, 1 for white
+   * @throws MoveException if the specified move is invalid.
+   */
+  public void putStone(int x, int y, int playerColor) throws MoveException {
     if (correctMove(x, y, playerColor)) {
       board[x][y].setState(playerColor);
+    } else {
+      throw new MoveException();
     }
   }
-  // void putWhite(int x, int y) {
-  //   if (validMove(board[x][y].getState())) {
-  //     board[x][y].setState(WHITE);
-  //   }
-  // }
 
+  /**
+   * Removes a stone from the board, if one exists.
+   * @param x coordinate
+   * @param y coordinate
+   */
   void removeStone(int x, int y) { board[x][y].setState(FREE); }
 
   /**
-   * Checks if the new stone can be put on the intersetion.
-   * @param state FREE, BLACK, WHITE
-   * @return true if the intersetion is FREE = 0
+   * Checks for move validity.
+   * @param x coordinate
+   * @param y coordinate
+   * @param playerColor -1 for black, 1 for white
+   * @return true if the player's stone can be put on the intersection.
    */
-  boolean validMove(int state) { return (state == FREE); }
-
   public boolean correctMove(int x, int y, int playerColor) {
+    
+    boolean inbounds = (x < size && x >= 0 && y < size && y >= 0);
+    if (!inbounds) return false;
+
     boolean free = (board[x][y].getState() == FREE);
     boolean suicide = true;
     for (Intersection i : board[x][y].neighbours) {
@@ -131,11 +125,14 @@ public class Board {
   }
 
   /**
-   * FORMATTING OF THE OUTPUT STRING
-   * white -> W
-   * black -> B
-   * empty -> E
-   * printed column by column, columns divided by |
+   * Returns the board in a String format. The encoding is specified as following:
+   * <pre>
+   *white -> W
+   *black -> B
+   *free  -> E
+   * </pre>
+   * The board is scanned column by column, and columns are divided by a "|" symbol
+   * @return a String object that describes the current board state
    */
   public String prepareBoardString() {
     String out = "";

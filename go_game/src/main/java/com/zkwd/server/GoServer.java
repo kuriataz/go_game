@@ -4,7 +4,6 @@ import com.zkwd.server.connection.Lobby;
 import com.zkwd.server.connection.PlayerHandler;
 import com.zkwd.server.game.GoGame;
 import com.zkwd.server.game.players.ClientPlayer;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -33,9 +32,12 @@ public class GoServer {
     }
   }
 
-  public static Lobby tryJoin(String code) {
+  // public static Lobby tryJoin(String code) {
+  //   for (Lobby l : pendingGames) {
+  //     if (l.getCode().equals(code)) {
+  public static Lobby tryJoin(String code, int boardSize) {
     for (Lobby l : pendingGames) {
-      if (l.getCode().equals(code)) {
+      if (l.getCode().equals(code) && l.getBoardSize() == boardSize) {
         // take the lobby off the pending list
         pendingGames.remove(l);
         //
@@ -61,7 +63,7 @@ public class GoServer {
         try {
           ClientPlayer a = new ClientPlayer(host);
           ClientPlayer b = new ClientPlayer(joinee);
-          
+
           new GoGame(a, b, size).run();
         } catch (Exception e) {
           /**

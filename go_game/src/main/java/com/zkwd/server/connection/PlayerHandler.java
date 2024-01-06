@@ -19,7 +19,7 @@ public class PlayerHandler implements Runnable {
   private BufferedReader in;
   private PrintWriter out;
 
-  private int boardsize;
+  private int boardSize;
 
   /**
    * this is a command log i think? correct me
@@ -54,10 +54,10 @@ public class PlayerHandler implements Runnable {
         if (clientMessage.startsWith("joinlobby:")) {
 
           // find out if the lobby code is taken
-          boardsize = Integer.parseInt(clientMessage.split(":")[1]);
+          boardSize = Integer.parseInt(clientMessage.split(":")[1]);
           String arg = clientMessage.split(":")[2].substring(1);
 
-          Lobby foundLobby = GoServer.tryJoin(arg);
+          Lobby foundLobby = GoServer.tryJoin(arg, boardSize);
 
           // if so, start a game
           if (foundLobby != null) {
@@ -68,7 +68,7 @@ public class PlayerHandler implements Runnable {
           } else {
             // lobby is not taken, so take the lobby
             // add yourself to waiting list
-            foundLobby = GoServer.waitForGame(arg, playerSocket, boardsize);
+            foundLobby = GoServer.waitForGame(arg, playerSocket, boardSize);
             out.println("_wait");
           }
 

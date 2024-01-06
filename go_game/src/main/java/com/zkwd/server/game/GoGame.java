@@ -1,13 +1,11 @@
 package com.zkwd.server.game;
 
-import java.util.ArrayList;
-
 import com.zkwd.server.game.exceptions.GameException;
 import com.zkwd.server.game.exceptions.MoveException;
 import com.zkwd.server.game.gamestate.Board;
 import com.zkwd.server.game.gamestate.Chain;
 import com.zkwd.server.game.players.Player;
-
+import java.util.ArrayList;
 import javafx.util.Pair;
 
 /**
@@ -26,9 +24,6 @@ public class GoGame {
    * Game state information
    */
   private Board board;
-  private ArrayList<Chain> blackChains;
-  private ArrayList<Chain> whiteChains;
-
   /**
    * Turn information
    */
@@ -83,12 +78,17 @@ public class GoGame {
           currentPlayer.sendMessage("game_correct");
           board.putStone(move.getKey(), move.getValue(), turn);
           System.out.println(move.getKey() + " " + move.getValue());
-          String updatedBoard = board.prepareBoardString();
+          // if (board.correctMove(coordinates[0], coordinates[1], turn)) {
+          //   currentPlayer.send("game_correct");
+          //   board.putStone(coordinates[0], coordinates[1], turn);
+          //   board.removeCapturedStones();
+          //   board.removeCapturedChains();
+          //   String updatedBoard = board.prepareBoardString();
 
-          currentPlayer.sendMessage(updatedBoard);
-          otherPlayer.sendMessage(updatedBoard);
+          //   currentPlayer.sendMessage(updatedBoard);
+          //   otherPlayer.sendMessage(updatedBoard);
 
-        } else {
+          // } else {
           currentPlayer.sendMessage("game_incorrect");
           continue;
         }
@@ -107,11 +107,34 @@ public class GoGame {
       if (currentPlayer == black) {
         currentPlayer = white;
         otherPlayer = black;
+        ++round;
       } else {
         currentPlayer = black;
         otherPlayer = white;
       }
       turn = -(turn);
     }
+  }
+
+  private int[] splitMove(String clickedPosition) {
+    int[] coordinates = new int[2];
+
+    try {
+      String[] parts = clickedPosition.split(" ");
+      if (parts.length != 2) {
+        // error
+      }
+
+      int x = Integer.parseInt(parts[0]);
+      int y = Integer.parseInt(parts[1]);
+
+      coordinates[0] = x;
+      coordinates[1] = y;
+
+    } catch (NumberFormatException e) {
+      // The transmitted move was incorrect - current player must try again
+    }
+
+    return coordinates;
   }
 }

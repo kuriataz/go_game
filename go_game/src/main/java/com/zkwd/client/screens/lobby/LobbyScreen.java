@@ -29,7 +29,11 @@ public class LobbyScreen extends BorderPane implements IScreen {
   Button three;
   Button nine;
 
-  int boardsize = 7;
+  Button thirteen;
+  Button nineteen;
+  HBox sizeBox;
+
+  int boardSize = 9;
 
   public LobbyScreen() {
     super();
@@ -55,13 +59,17 @@ public class LobbyScreen extends BorderPane implements IScreen {
     VBox vbox = new VBox(hbox, codeInput);
     vbox.setAlignment(Pos.CENTER);
 
-    three = new Button("3");
     nine = new Button("9");
-    HBox boardSize = new HBox(3);
-    boardSize.getChildren().addAll(three, nine);
+    nine.setOnAction(this::sizeNine);
+    thirteen = new Button("13");
+    thirteen.setOnAction(this::sizeThirteen);
+    nineteen = new Button("19");
+    nineteen.setOnAction(this::sizeNineteen);
+    sizeBox = new HBox(5);
+    sizeBox.getChildren().addAll(nine, thirteen, nineteen);
 
     this.setCenter(vbox);
-    this.setBottom(boardSize);
+    this.setBottom(sizeBox);
   }
 
   // Event handler for the button
@@ -69,7 +77,7 @@ public class LobbyScreen extends BorderPane implements IScreen {
     String code = tf.getText();
 
     // send a command to the server to check if the code is taken
-    String result = App.transmit("joinlobby:" + boardsize + ":c" + code);
+    String result = App.transmit("joinlobby:" + boardSize + ":c" + code);
 
     if (result.equals("_wait")) {
       // waiting screen
@@ -97,6 +105,9 @@ public class LobbyScreen extends BorderPane implements IScreen {
     waitService.cancel();
     waitService.reset();
   }
+  private void sizeNine(ActionEvent event) { boardSize = 9; }
+  private void sizeThirteen(ActionEvent event) { boardSize = 13; }
+  private void sizeNineteen(ActionEvent event) { boardSize = 19; }
 
   /**
    * Waits for an opponent to join the lobby in the background

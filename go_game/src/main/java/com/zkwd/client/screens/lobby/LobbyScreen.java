@@ -3,6 +3,9 @@ package com.zkwd.client.screens.lobby;
 import com.zkwd.client.model.App;
 import com.zkwd.client.model.AppState;
 import com.zkwd.client.model.IScreen;
+import com.zkwd.client.util.ConfirmPane;
+
+import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker.State;
@@ -33,10 +36,32 @@ public class LobbyScreen extends BorderPane implements IScreen {
   Button nineteen;
   HBox sizeBox;
 
+  VBox vbox;
+
   int boardSize = 9;
 
   public LobbyScreen() {
     super();
+
+    Button exitBtn = new Button("exit");
+    this.setTop(exitBtn);
+    exitBtn.setOnMouseClicked((event) -> {
+      // show modal
+      ConfirmPane c = new ConfirmPane("are you sure you want to exit?");
+
+      c.yes.setOnMouseClicked((e_yes) -> {
+        Platform.exit();
+
+        // remove self from waiting queue if necessary
+        waitService.cancel();
+        System.exit(0);
+      });
+      c.no.setOnMouseClicked((e_no) -> {
+        this.setCenter(vbox);
+      });
+
+      this.setCenter(c);
+    });
 
     join = new Label("join game:");
     tf = new TextField();
@@ -56,9 +81,6 @@ public class LobbyScreen extends BorderPane implements IScreen {
     codeInput.getChildren().addAll(join, tf, btn);
     codeInput.setAlignment(Pos.CENTER);
 
-    VBox vbox = new VBox(hbox, codeInput);
-    vbox.setAlignment(Pos.CENTER);
-
     nine = new Button("9");
     nine.setOnAction(this::sizeNine);
     thirteen = new Button("13");
@@ -67,9 +89,12 @@ public class LobbyScreen extends BorderPane implements IScreen {
     nineteen.setOnAction(this::sizeNineteen);
     sizeBox = new HBox(5);
     sizeBox.getChildren().addAll(nine, thirteen, nineteen);
+    sizeBox.setAlignment(Pos.CENTER);
+
+    vbox = new VBox(5, hbox, codeInput, sizeBox);
+    vbox.setAlignment(Pos.CENTER);
 
     this.setCenter(vbox);
-    this.setBottom(sizeBox);
   }
 
   // Event handler for the button

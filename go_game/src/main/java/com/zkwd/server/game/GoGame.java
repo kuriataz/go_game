@@ -115,26 +115,4 @@ public class GoGame {
       turn = -(turn);
     }
   }
-
-  private int[] splitMove(String clickedPosition) {
-    int[] coordinates = new int[2];
-
-    try {
-      String[] parts = clickedPosition.split(" ");
-      if (parts.length != 2) {
-        // error
-      }
-
-      int x = Integer.parseInt(parts[0]);
-      int y = Integer.parseInt(parts[1]);
-
-      coordinates[0] = x;
-      coordinates[1] = y;
-
-    } catch (NumberFormatException e) {
-      // The transmitted move was incorrect - current player must try again
-    }
-
-    return coordinates;
-  }
 }

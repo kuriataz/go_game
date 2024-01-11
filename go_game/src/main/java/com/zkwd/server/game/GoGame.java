@@ -50,8 +50,7 @@ public class GoGame {
     /**
      * Make both players enter the game state on client-side.
      */
-    black.sendMessage("_connect");
-    white.sendMessage("_connect");
+    broadcast("_connect");
 
     Player currentPlayer = black;
     Player otherPlayer = white;
@@ -59,8 +58,7 @@ public class GoGame {
     black.sendMessage("game_black");
     white.sendMessage("game_white");
 
-    black.sendMessage(board.prepareBoardString());
-    white.sendMessage(board.prepareBoardString());
+    broadcast(board.prepareBoardString());
 
     /**
      * !! GAME LOOP !!
@@ -71,6 +69,24 @@ public class GoGame {
 
       try {
         Pair<Integer, Integer> move = currentPlayer.getMove();
+
+        // !! CURRENT PLAYER REQUESTED END
+        if (move.getKey() == -1 && move.getValue() == -1) {
+          otherPlayer.sendMessage(board.prepareBoardString());
+          otherPlayer.sendMessage("game_req");
+
+          Pair<Integer, Integer> resp = otherPlayer.getMove();
+          if (resp.getKey() == -1 && resp.getValue() == -1) {
+            // exit game
+            broadcast("game_exit");
+            break;
+            //
+          } else {
+            // proceed as normal. do not change player
+            continue;
+            //
+          }
+        }
 
         // move validity
         if (board.correctMove(move.getKey(), move.getValue(), turn)) {
@@ -85,8 +101,7 @@ public class GoGame {
           //   board.removeCapturedChains();
           String updatedBoard = board.prepareBoardString();
 
-          currentPlayer.sendMessage(updatedBoard);
-          otherPlayer.sendMessage(updatedBoard);
+          broadcast(updatedBoard);
 
         } else {
           currentPlayer.sendMessage("game_incorrect");
@@ -101,7 +116,11 @@ public class GoGame {
       } catch (GameException e) {
         e.printStackTrace();
 
-        // TODO : Exit game.
+        // tell players to exit to lobby
+        broadcast("game_err");
+
+        // self destruct ig
+        return;
       }
 
       if (currentPlayer == black) {
@@ -114,5 +133,12 @@ public class GoGame {
       }
       turn = -(turn);
     }
+
+    // TODO : figure out who won
+  }
+
+  void broadcast(String message) {
+    black.sendMessage(message);
+    white.sendMessage(message);
   }
 }

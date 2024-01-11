@@ -35,7 +35,7 @@ public class ClientPlayer implements Player{
     }
 
     /**
-     * Waits for a message back from the player app.
+     * Waits for a message back from the player app, and converts it into a move.
      * @return The received string.
      * @throws IOException
      */
@@ -46,6 +46,8 @@ public class ClientPlayer implements Player{
             String[] parts = rl.split(" ");
             if (parts.length != 2) {
                 // error
+
+                // parts length is normally 4 but change that later
             }
 
             int x = Integer.parseInt(parts[0]);

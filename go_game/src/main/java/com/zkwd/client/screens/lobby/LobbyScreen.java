@@ -47,6 +47,7 @@ public class LobbyScreen extends BorderPane implements IScreen {
     exitBtn.setOnMouseClicked((event) -> {
       // show modal
       ConfirmPane c = new ConfirmPane("are you sure you want to exit?");
+      exitBtn.setDisable(true);
 
       c.yes.setOnMouseClicked((e_yes) -> {
         Platform.exit();
@@ -56,6 +57,7 @@ public class LobbyScreen extends BorderPane implements IScreen {
       });
       c.no.setOnMouseClicked((e_no) -> {
         this.setCenter(vbox);
+        exitBtn.setDisable(false);
       });
 
       this.setCenter(c);

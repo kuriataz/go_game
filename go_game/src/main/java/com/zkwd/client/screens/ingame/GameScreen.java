@@ -1,6 +1,11 @@
 package com.zkwd.client.screens.ingame;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.zkwd.client.model.App;
+import com.zkwd.client.model.AppState;
 import com.zkwd.client.model.IScreen;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -67,35 +72,53 @@ public class GameScreen extends BorderPane implements IScreen {
         }
 
         /**
+         * Contains the codes that the app responds to.
+         * game_go  - it is this user's round
+         * game_req - the other player has requested to end the game
+         * game_err - there was an error that required the game be ended
+         */
+        Set<String> validCodes = new HashSet<String>(Arrays.asList("game_go", "game_req", "game_err"));
+
+        /**
          * Game loop
          */
         while (true) {
           // wait for your round
           do {
             message = App.await();
-          } while (!message.equals("game_go"));
+          } while (!validCodes.contains(message));
 
-          String verdict;
-          // take inputs until server decides input is correct
-          do {
-            Platform.runLater(() -> { enableInput(); });
+          if (message.equals("game_go")) {
+            String verdict;
+            // take inputs until server decides input is correct
+            do {
+              Platform.runLater(() -> { enableInput(); });
 
-            verdict = App.await();
-          } while (!verdict.equals("game_correct"));
+              verdict = App.await();
+            } while (!verdict.equals("game_correct"));
 
-          boardString = App.await();
+            boardString = App.await();
 
-          Platform.runLater(() -> {
-            updateBoard(boardString);
-            // log.push(boardString);
-          });
+            Platform.runLater(() -> {
+              updateBoard(boardString);
+              // log.push(boardString);
+            });
 
-          boardString = App.await();
+            boardString = App.await();
 
-          Platform.runLater(() -> {
-            updateBoard(boardString);
-            // log.push(boardString);
-          });
+            Platform.runLater(() -> {
+              updateBoard(boardString);
+              // log.push(boardString);
+            });
+          } else if (message.equals("game_req")) {
+            // TODO : implement
+
+          } else if (message.equals("game_err")) {
+            // TODO : implement
+
+            // go back to lobby
+            App.changeState(AppState.LOBBY);
+          }
         }
       }
     }.start();

@@ -83,12 +83,12 @@ public class GoGame {
           //   board.putStone(coordinates[0], coordinates[1], turn);
           //   board.removeCapturedStones();
           //   board.removeCapturedChains();
-          //   String updatedBoard = board.prepareBoardString();
+          String updatedBoard = board.prepareBoardString();
 
-          //   currentPlayer.sendMessage(updatedBoard);
-          //   otherPlayer.sendMessage(updatedBoard);
+          currentPlayer.sendMessage(updatedBoard);
+          otherPlayer.sendMessage(updatedBoard);
 
-          // } else {
+        } else {
           currentPlayer.sendMessage("game_incorrect");
           continue;
         }

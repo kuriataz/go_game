@@ -2,7 +2,6 @@ package com.zkwd.server.connection;
 
 // import com.zkwd.server.Commands.Command;
 import com.zkwd.server.GoServer;
-import com.zkwd.server.game.GoGame;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

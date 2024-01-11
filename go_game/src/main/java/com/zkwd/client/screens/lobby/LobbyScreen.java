@@ -8,7 +8,6 @@ import com.zkwd.client.util.ConfirmPane;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -51,7 +50,6 @@ public class LobbyScreen extends BorderPane implements IScreen {
 
       c.yes.setOnMouseClicked((e_yes) -> {
         Platform.exit();
-
         // remove self from waiting queue if necessary
         waitService.cancel();
         System.exit(0);

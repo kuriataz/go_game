@@ -13,10 +13,10 @@ import javafx.scene.layout.VBox;
 /**
  * Utility Pane that displays a label and two buttons under it, for confirming or declining something.
  */
-public class ConfirmPane extends StackPane implements IScreen {
+public class ConfirmPane extends StackPane {
 
     /**
-     * TODO: probably make these private and add functions to apply event handlers
+     * TODO: probably make these private and add functions to apply event handlers?
      */
     public Button yes;
     public Button no;
@@ -40,7 +40,4 @@ public class ConfirmPane extends StackPane implements IScreen {
     public ConfirmPane() {
         this("testing!");
     }
-
-    // TEMPORARY
-    public Pane launch() { return this; }
 }

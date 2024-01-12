@@ -45,26 +45,20 @@ public class LobbyInterpreter implements Runnable {
             receiver.send("_wait");
           }
 
-          // // wait for a message from app telling if it connected to a match or
-          // // cancelled
-          // String waitResult = receiver.getNextMessage();
+          // wait for a message from app telling if it connected to a match or
+          // cancelled
+          String waitResult = receiver.getNextMessage();
 
-          // System.out.println("res: " + waitResult);
+          System.out.println("res: " + waitResult);
 
-          // if (waitResult.equals("unwait")) {
-          //   GoServer.unwait(foundLobby);
+          if (waitResult.equals("unwait")) {
+            GoServer.unwait(foundLobby);
 
-          //   // this is trash :(
-          //   receiver.send("success");
+            // this is trash :(
+            receiver.send("success");
 
-          // } else if (waitResult.equals("connecting")) {
-
-          //   // pause this thread to prevent it from reading the inputstream
-          //   // (indefinitely, for now)
-          //   while (true)
-          //     ;
-          // }
-
+          }
+          
           // we no longer care if the app connected or not. we will keep receiving commands, but they will just be ignored
 
         } else {

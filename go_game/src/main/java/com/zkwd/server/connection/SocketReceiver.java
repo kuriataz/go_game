@@ -39,7 +39,6 @@ public class SocketReceiver implements Runnable{
                     // wake up threads waiting for new message
                     notifyAll();
                 }
-                System.out.println("lock released");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -63,12 +62,12 @@ public class SocketReceiver implements Runnable{
      */
     public String getNextMessage() {
         try {
-            System.out.println("lock taken by foreign thread");
+            System.out.println("a thread is waiting");
             // god help me
             synchronized(this) {
                 wait();
             }
-            System.out.println("lock released by foreign thread");
+            System.out.println("sending");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

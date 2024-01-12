@@ -11,14 +11,12 @@ import com.zkwd.client.util.ConfirmPane;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 public class GameScreen extends BorderPane implements IScreen {
@@ -30,17 +28,23 @@ public class GameScreen extends BorderPane implements IScreen {
   Text txt = new Text();
 
   Button rbtn;
+  Button exitbtn;
 
   int boardsize;
 
   public GameScreen() {
     super();
 
+    exitbtn = new Button("exit");
+    this.setTop(exitbtn);
+    exitbtn.setOnMouseClicked(abdHandler);
+
     this.boardBuilder = new GUIBoardBuilder();
 
     rbtn = new Button("end game");
     rbtn.setOnMouseClicked(reqHandler);
     rbtn.setDisable(true);
+
 
     HBox hbox = new HBox(5, txt, rbtn);
     this.setBottom(hbox);
@@ -86,7 +90,8 @@ public class GameScreen extends BorderPane implements IScreen {
          * game_req   - the other player has requested to end the game
          * game_exit  - exit the game
          */
-        Set<String> validCodes = new HashSet<String>(Arrays.asList("game_go", "game_req", "game_err", "game_exit"));
+        Set<String> validCodes = new HashSet<String>(Arrays.asList("game_go", "game_req", "game_exit", "game_err"));
+        Set<String> exitCodes = new HashSet<String>(Arrays.asList("game_exit", "game_err"));
 
         /**
          * Game loop
@@ -105,38 +110,48 @@ public class GameScreen extends BorderPane implements IScreen {
               Platform.runLater(() -> { enableInput(); });
 
               verdict = App.await();
-            } while (!verdict.equals("game_correct") && !verdict.equals("game_exit"));
-            if(verdict.equals("game_exit")) break;
+            } while (!verdict.equals("game_correct") && !exitCodes.contains(verdict));
+            if (exitCodes.contains(verdict)) {
+              // exit the loop
+              message = verdict;
+              break;
+              //
+            } else {
+              boardString = App.await();
 
-            boardString = App.await();
+              Platform.runLater(() -> {
+                updateBoard(boardString);
+                // log.push(boardString);
+              });
 
-            Platform.runLater(() -> {
-              updateBoard(boardString);
-              // log.push(boardString);
-            });
+              boardString = App.await();
 
-            boardString = App.await();
-
-            Platform.runLater(() -> {
-              updateBoard(boardString);
-              // log.push(boardString);
-            });
+              Platform.runLater(() -> {
+                updateBoard(boardString);
+                // log.push(boardString);
+              });
+            }
           } else if (message.equals("game_req")) {
             // put up confirmation screen
             Platform.runLater(() -> {
               reqConfirm();
             });
             //
-          } else if (message.equals("game_exit")) {
+          } else {
+            // game_exit or game_err
             break;
-          } else if (message.equals("game_err")) {
-            App.changeState(AppState.LOBBY);
           }
         }
 
-        Platform.runLater(() -> {
-          App.changeState(AppState.RESULTS);
-        });
+        if(message.equals("game_exit")) {
+          Platform.runLater(() -> {
+            App.changeState(AppState.RESULTS);
+          });
+        } else {
+          Platform.runLater(() -> {
+            App.changeState(AppState.LOBBY);
+          });
+        }
       }
     }.start();
   }
@@ -148,7 +163,8 @@ public class GameScreen extends BorderPane implements IScreen {
       App.send("-1 -1");
     });
     c.no.setOnMouseClicked((e) -> {
-      App.send("00 00");
+      // send any normal code
+      App.send("0 0");
       this.setCenter(board);
     });
 
@@ -160,13 +176,18 @@ public class GameScreen extends BorderPane implements IScreen {
     this.setCenter(board);
   }
 
+  /**
+   * Enables the player to input a move.
+   */
   private void enableInput() {
     System.out.println("awaiting user input");
     board.setOnMouseClicked(clickHandler);
     rbtn.setDisable(false);
   }
 
-  // not sure this is the proper way to do this
+  /**
+   * Prevents the player from inputting a move.
+   */
   private void disableInput() { 
     board.setOnMouseClicked(null);
     rbtn.setDisable(true);
@@ -200,13 +221,38 @@ public class GameScreen extends BorderPane implements IScreen {
   };
 
   /**
-   * The move for requesting the game be ended is (-1, -1).
+   * The move for requesting the game be ended is (-1, x).
    */
   EventHandler<MouseEvent> reqHandler = event -> {
     System.out.println("requesting game end");
     disableInput();
 
-    App.send("-1 -1");
+    App.send("-1 0");
+  };
+
+  /**
+   * The code for signaling we've abandoned the game is (-2, 0)
+   */
+  EventHandler<MouseEvent> abdHandler = event -> {
+    ConfirmPane c = new ConfirmPane("are you sure you want to abandon the game?");
+    exitbtn.setDisable(true);
+
+    c.yes.setOnMouseClicked((e_yes) -> {
+      //
+      System.out.println("abandoning game");
+      disableInput();
+      // send server the exit code
+      App.send("-2 0");
+      //
+    });
+    c.no.setOnMouseClicked((e_no) -> {
+      //
+      this.setCenter(board);
+      exitbtn.setDisable(false);
+      //
+    });
+
+    this.setCenter(c);
   };
 
   public Pane launch() { return this; }

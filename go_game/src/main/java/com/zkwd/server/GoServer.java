@@ -1,5 +1,6 @@
 package com.zkwd.server;
 
+import com.zkwd.server.connection.SocketReceiver;
 import com.zkwd.server.connection.Lobby;
 import com.zkwd.server.connection.PlayerHandler;
 import com.zkwd.server.game.GoGame;
@@ -24,17 +25,21 @@ public class GoServer {
     while (true) {
       try {
         Socket playerSocket = serverSocket.accept();
+        SocketReceiver cr = new SocketReceiver(playerSocket);
         // Handle the client connection, create a new thread for each client
-        new Thread(new PlayerHandler(playerSocket)).start();
+        new Thread(new PlayerHandler(cr)).start();
       } catch (IOException e) {
         e.printStackTrace();
       }
     }
   }
 
-  // public static Lobby tryJoin(String code) {
-  //   for (Lobby l : pendingGames) {
-  //     if (l.getCode().equals(code)) {
+  /**
+   * C.
+   * @param code
+   * @param boardSize
+   * @return
+   */
   public static Lobby tryJoin(String code, int boardSize) {
     for (Lobby l : pendingGames) {
       if (l.getCode().equals(code) && l.getBoardSize() == boardSize) {
@@ -48,15 +53,32 @@ public class GoServer {
     return null;
   }
 
-  public static Lobby waitForGame(String code, Socket socket, int size) {
-    Lobby l = new Lobby(code, socket, size);
+  /**
+   * C.
+   * @param code
+   * @param socket
+   * @param size
+   * @return
+   */
+  public static Lobby waitForGame(String code, SocketReceiver sr, int size) {
+    Lobby l = new Lobby(code, sr, size);
     pendingGames.add(l);
     return l;
   }
 
+  /**
+   * 
+   * @param l
+   */
   public static void unwait(Lobby l) { pendingGames.remove(l); }
 
-  public static void createNewGame(Socket host, Socket joinee, int size) {
+  /**
+   * 
+   * @param host
+   * @param joinee
+   * @param size
+   */
+  public static void createNewGame(SocketReceiver host, SocketReceiver joinee, int size) {
     new Thread() {
       @Override
       public void run() {

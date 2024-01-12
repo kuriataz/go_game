@@ -19,6 +19,7 @@ public class App extends Application
      * Holds the current scene. Is important
      */
     private static Scene scene;
+    private static AppState currentState;
 
     private static ServerMessenger hook;
 
@@ -36,6 +37,17 @@ public class App extends Application
         stage.show();
 
         changeState(AppState.LOBBY);
+    }
+
+    @Override
+    public void stop() {
+
+        // if we are in game, tell server that we are abandoning the game.
+        if(currentState == AppState.INGAME) {
+            App.send("-2 0");
+        }
+
+        System.exit(0);
     }
 
     /**

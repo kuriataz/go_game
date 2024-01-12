@@ -52,6 +52,7 @@ public class ServerMessenger {
       System.out.println("received: " + a);
       return a;
     } catch (IOException e) {
+      e.printStackTrace();
       return null;
     }
   }

@@ -3,7 +3,6 @@ package com.zkwd.server.game;
 import com.zkwd.server.game.exceptions.GameException;
 import com.zkwd.server.game.exceptions.MoveException;
 import com.zkwd.server.game.gamestate.Board;
-import com.zkwd.server.game.gamestate.Chain;
 import com.zkwd.server.game.players.Player;
 import java.util.ArrayList;
 import javafx.util.Pair;
@@ -70,13 +69,14 @@ public class GoGame {
       try {
         Pair<Integer, Integer> move = currentPlayer.getMove();
 
-        // !! CURRENT PLAYER REQUESTED END
-        if (move.getKey() == -1 && move.getValue() == -1) {
+        if (move.getKey() == -1) {
+          // !! CURRENT PLAYER REQUESTED END
+          
           otherPlayer.sendMessage(board.prepareBoardString());
           otherPlayer.sendMessage("game_req");
 
           Pair<Integer, Integer> resp = otherPlayer.getMove();
-          if (resp.getKey() == -1 && resp.getValue() == -1) {
+          if (resp.getKey() == -1) {
             // exit game
             broadcast("game_exit");
             break;
@@ -86,10 +86,14 @@ public class GoGame {
             continue;
             //
           }
-        }
+        } else if (move.getKey() == -2) {
+          // !! CURRENT PLAYER HAS LEFT
 
-        // move validity
-        if (board.correctMove(move.getKey(), move.getValue(), turn)) {
+          otherPlayer.sendMessage(board.prepareBoardString());
+          broadcast("game_err");
+
+        } else if (board.correctMove(move.getKey(), move.getValue(), turn)) {
+          // !! VALID MOVE
 
           currentPlayer.sendMessage("game_correct");
           board.putStone(move.getKey(), move.getValue(), turn);
@@ -104,6 +108,8 @@ public class GoGame {
           broadcast(updatedBoard);
 
         } else {
+          // !! INVALID MOVE
+
           currentPlayer.sendMessage("game_incorrect");
           continue;
         }

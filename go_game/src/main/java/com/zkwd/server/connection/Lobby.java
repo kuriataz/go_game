@@ -1,15 +1,13 @@
 package com.zkwd.server.connection;
 
-import java.net.Socket;
-
 public class Lobby {
     private String code;
-    private Socket playerSocket;
+    private SocketReceiver sr;
     private int boardSize;
 
-    public Lobby(String code, Socket socket, int boardSize){
+    public Lobby(String code, SocketReceiver sr, int boardSize){
         this.code = code;
-        this.playerSocket = socket;
+        this.sr = sr;
         this.boardSize = boardSize;
     }
 
@@ -17,8 +15,8 @@ public class Lobby {
         return code;
     }
 
-    public Socket getSocket() {
-        return playerSocket;
+    public SocketReceiver getReceiver() {
+        return sr;
     }
 
     public int getBoardSize () {

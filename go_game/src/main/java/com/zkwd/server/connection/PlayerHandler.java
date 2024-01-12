@@ -1,34 +1,19 @@
 package com.zkwd.server.connection;
 
-// import com.zkwd.server.Commands.Command;
 import com.zkwd.server.GoServer;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-// import java.util.ArrayList;
 
 public class PlayerHandler implements Runnable {
 
   /**
-   * Communication
+   * Communication with user.
    */
-  private Socket playerSocket;
-  private BufferedReader in;
-  private PrintWriter out;
+  private SocketReceiver receiver;
 
-  private int boardSize;
+  //private int boardSize;
 
-  /**
-   * this is a command log i think? correct me
-   */
-  // private ArrayList<Command> commands;
-
-  public PlayerHandler(Socket socket) throws IOException {
-    this.playerSocket = socket;
-    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-    out = new PrintWriter(socket.getOutputStream(), true);
+  public PlayerHandler(SocketReceiver r) throws IOException {
+    this.receiver = r;
   }
 
   @Override
@@ -36,7 +21,7 @@ public class PlayerHandler implements Runnable {
     int boardSize = 0;
     try {
       String clientMessage;
-      while ((clientMessage = in.readLine()) != null) {
+      while ((clientMessage = receiver.getNextMessage()) != null) {
         System.out.println("Received from client: " + clientMessage);
 
         // TODO : IMPLEMENT A (proper) COMMAND SYSTEM
@@ -61,51 +46,49 @@ public class PlayerHandler implements Runnable {
           // if so, start a game
           if (foundLobby != null) {
             //
-            GoServer.createNewGame(foundLobby.getSocket(), playerSocket,
+            GoServer.createNewGame(foundLobby.getReceiver(), receiver,
                                    foundLobby.getBoardSize());
             //
           } else {
             // lobby is not taken, so take the lobby
             // add yourself to waiting list
-            foundLobby = GoServer.waitForGame(arg, playerSocket, boardSize);
-            out.println("_wait");
+            foundLobby = GoServer.waitForGame(arg, receiver, boardSize);
+            receiver.send("_wait");
           }
 
-          // wait for a message from app telling if it connected to a match or
-          // cancelled
-          String waitResult = in.readLine();
+          // // wait for a message from app telling if it connected to a match or
+          // // cancelled
+          // String waitResult = receiver.getNextMessage();
 
-          System.out.println("res: " + waitResult);
+          // System.out.println("res: " + waitResult);
 
-          if (waitResult.equals("unwait")) {
-            GoServer.unwait(foundLobby);
+          // if (waitResult.equals("unwait")) {
+          //   GoServer.unwait(foundLobby);
 
-            // this is trash :(
-            out.println("success");
+          //   // this is trash :(
+          //   receiver.send("success");
 
-          } else if (waitResult.equals("connecting")) {
+          // } else if (waitResult.equals("connecting")) {
 
-            // pause this thread to prevent it from reading the inputstream
-            // (indefinitely, for now)
-            while (true)
-              ;
-          }
+          //   // pause this thread to prevent it from reading the inputstream
+          //   // (indefinitely, for now)
+          //   while (true)
+          //     ;
+          // }
 
-          /**
-           * TODO : implement - wait until game concluded or one of the players
-           * has exited.
-           */
+          // we no longer care if the app connected or not. we will keep receiving commands, but they will be ignored
+
 
         } else {
           // default response
-          out.println("_unknowncmd");
+          receiver.send("_unknowncmd");
         }
       }
-    } catch (IOException e) {
+    } catch (Exception e) {
       e.printStackTrace();
     } finally {
       try {
-        playerSocket.close();
+        receiver.close();
       } catch (IOException e) {
         e.printStackTrace();
       }

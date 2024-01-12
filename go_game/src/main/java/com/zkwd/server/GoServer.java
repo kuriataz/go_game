@@ -2,7 +2,7 @@ package com.zkwd.server;
 
 import com.zkwd.server.connection.SocketReceiver;
 import com.zkwd.server.connection.Lobby;
-import com.zkwd.server.connection.PlayerHandler;
+import com.zkwd.server.connection.LobbyInterpreter;
 import com.zkwd.server.game.GoGame;
 import com.zkwd.server.game.players.ClientPlayer;
 import java.io.IOException;
@@ -24,10 +24,12 @@ public class GoServer {
   public void start() {
     while (true) {
       try {
+
         Socket playerSocket = serverSocket.accept();
         SocketReceiver cr = new SocketReceiver(playerSocket);
-        // Handle the client connection, create a new thread for each client
-        new Thread(new PlayerHandler(cr)).start();
+        new Thread(cr).start();
+        new Thread(new LobbyInterpreter(cr)).start();
+        
       } catch (IOException e) {
         e.printStackTrace();
       }

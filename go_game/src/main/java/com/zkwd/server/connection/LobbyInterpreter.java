@@ -3,7 +3,7 @@ package com.zkwd.server.connection;
 import com.zkwd.server.GoServer;
 import java.io.IOException;
 
-public class PlayerHandler implements Runnable {
+public class LobbyInterpreter implements Runnable {
 
   /**
    * Communication with user.
@@ -12,7 +12,7 @@ public class PlayerHandler implements Runnable {
 
   //private int boardSize;
 
-  public PlayerHandler(SocketReceiver r) throws IOException {
+  public LobbyInterpreter(SocketReceiver r) throws IOException {
     this.receiver = r;
   }
 
@@ -22,18 +22,7 @@ public class PlayerHandler implements Runnable {
     try {
       String clientMessage;
       while ((clientMessage = receiver.getNextMessage()) != null) {
-        System.out.println("Received from client: " + clientMessage);
-
-        // TODO : IMPLEMENT A (proper) COMMAND SYSTEM
-
-        // if (clientMessage.startsWith("boardSize:")) {
-        //   String size = clientMessage.substring("boardSize:".length());
-        //   try {
-        //     boardSize = Integer.parseInt(size);
-        //     continue;
-        //   } catch (NumberFormatException e) {
-        //   }
-        // }
+        System.out.println("lobby thread received: " + clientMessage);
 
         if (clientMessage.startsWith("joinlobby:")) {
 
@@ -76,8 +65,7 @@ public class PlayerHandler implements Runnable {
           //     ;
           // }
 
-          // we no longer care if the app connected or not. we will keep receiving commands, but they will be ignored
-
+          // we no longer care if the app connected or not. we will keep receiving commands, but they will just be ignored
 
         } else {
           // default response

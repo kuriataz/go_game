@@ -16,6 +16,7 @@ public class SocketReceiver implements Runnable{
     private PrintWriter out;
 
     private String currentMessage;
+    private boolean closed = false;
 
     public SocketReceiver(Socket s) throws IOException {
         this.s = s;
@@ -28,16 +29,24 @@ public class SocketReceiver implements Runnable{
      * so multiple classes will be able to access it without losing it.
      */
     public void run() {
-        while(true){
+        while(!s.isClosed()){
             try {
+                System.out.println("socket is waiting");
+                currentMessage = in.readLine();
+
                 synchronized(this){
-                    currentMessage = in.readLine();
+                    System.out.println("socket received: " + currentMessage);
+                    // wake up threads waiting for new message
                     notifyAll();
                 }
+                System.out.println("lock released");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
+        // do something when socket closes? maybe
+        closed = true;
     }
 
     /**
@@ -50,14 +59,16 @@ public class SocketReceiver implements Runnable{
     /**
      * Hopefully, any threads calling this method begin to wait for this object.
      * When the message gets updated (another message is read), they are all woken up and the new message is sent out.
-     * @return
+     * @return new message
      */
     public String getNextMessage() {
         try {
+            System.out.println("lock taken by foreign thread");
             // god help me
             synchronized(this) {
                 wait();
             }
+            System.out.println("lock released by foreign thread");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -71,5 +82,9 @@ public class SocketReceiver implements Runnable{
 
     public void close() throws IOException {
         s.close();
+    }
+
+    public boolean isClosed() {
+        return closed;
     }
 }

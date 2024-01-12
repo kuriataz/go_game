@@ -36,6 +36,7 @@ public class ClientPlayer implements Player{
         try {
 
             String rl = socket.getNextMessage();
+            System.out.println("player move is: " + rl);
             String[] parts = rl.split(" ");
             if (parts.length != 2) {
                 // error

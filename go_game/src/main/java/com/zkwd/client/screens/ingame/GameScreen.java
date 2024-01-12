@@ -210,8 +210,8 @@ public class GameScreen extends BorderPane implements IScreen {
     double circleSize = boardBuilder.CircleSize;
     double gridPadding = boardBuilder.GridPadding;
 
-    int clickedX = Math.min((int)((mouseX) / (2.0 * circleSize + 2.0 * gridPadding)), boardsize - 1);
-    int clickedY = Math.min((int)((mouseY) / (2.0 * circleSize + 2.0 * gridPadding)), boardsize - 1);
+    int clickedX = Math.min((int)((mouseX) / (2.0 * circleSize + 2.0 * gridPadding + 2)), boardsize - 1);
+    int clickedY = Math.min((int)((mouseY) / (2.0 * circleSize + 2.0 * gridPadding + 2)), boardsize - 1);
 
     // Convert the coordinates to a string format and send it
     String clickedPosition =

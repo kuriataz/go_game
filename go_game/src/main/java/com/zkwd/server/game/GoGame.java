@@ -119,6 +119,7 @@ public class GoGame {
 
         // make player redo turn
         currentPlayer.sendMessage("game_incorrect");
+        continue;
       } catch (GameException e) {
         e.printStackTrace();
 

@@ -43,7 +43,6 @@ public class GameScreen extends BorderPane implements IScreen {
 
     rbtn = new Button("end game");
     rbtn.setOnMouseClicked(reqHandler);
-    rbtn.setDisable(true);
 
 
     HBox hbox = new HBox(5, txt, rbtn);
@@ -76,6 +75,8 @@ public class GameScreen extends BorderPane implements IScreen {
         } else {
           txt.setText("white pieces");
 
+          rbtn.setDisable(true);
+
           boardString = App.await();
 
           Platform.runLater(() -> {
@@ -88,7 +89,8 @@ public class GameScreen extends BorderPane implements IScreen {
          * Contains the codes that the app responds to.
          * game_go    - it is this user's round
          * game_req   - the other player has requested to end the game
-         * game_exit  - exit the game
+         * game_exit  - exit the game into results screen
+         * game_err   - exit the game into lobby screen
          */
         Set<String> validCodes = new HashSet<String>(Arrays.asList("game_go", "game_req", "game_exit", "game_err"));
         Set<String> exitCodes = new HashSet<String>(Arrays.asList("game_exit", "game_err"));
@@ -145,7 +147,7 @@ public class GameScreen extends BorderPane implements IScreen {
 
         if(message.equals("game_exit")) {
           Platform.runLater(() -> {
-            App.changeState(AppState.RESULTS);
+            App.changeState(AppState.LOBBY);
           });
         } else {
           Platform.runLater(() -> {

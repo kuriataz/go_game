@@ -31,7 +31,7 @@ public class SocketReceiver implements Runnable{
     public void run() {
         while(!s.isClosed()){
             try {
-                System.out.println("socket is waiting");
+                // System.out.println("socket is waiting");
                 currentMessage = in.readLine();
 
                 synchronized(this){
@@ -49,7 +49,7 @@ public class SocketReceiver implements Runnable{
     }
 
     /**
-     * @return the latest message in the input stream.
+     * @return the last message in the input stream.
      */
     public String getLastMessage() {
         return currentMessage;
@@ -67,7 +67,6 @@ public class SocketReceiver implements Runnable{
             synchronized(this) {
                 wait();
             }
-            System.out.println("sending");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -128,7 +128,6 @@ public class LobbyScreen extends BorderPane implements IScreen {
   private void cancelLobby(ActionEvent event) {
     // send message to waiter
     waitService.cancel();
-    waitService.reset();
   }
   private void sizeNine(ActionEvent event) { boardSize = 9; }
   private void sizeThirteen(ActionEvent event) { boardSize = 13; }

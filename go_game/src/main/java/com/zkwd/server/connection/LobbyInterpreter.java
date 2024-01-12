@@ -39,6 +39,7 @@ public class LobbyInterpreter implements Runnable {
                                    foundLobby.getBoardSize());
             //
           } else {
+            System.out.println("lobby not found: waiting for code " + arg);
             // lobby is not taken, so take the lobby
             // add yourself to waiting list
             foundLobby = GoServer.waitForGame(arg, receiver, boardSize);
@@ -53,17 +54,15 @@ public class LobbyInterpreter implements Runnable {
 
           if (waitResult.equals("unwait")) {
             GoServer.unwait(foundLobby);
-
-            // this is trash :(
             receiver.send("success");
-
+            System.out.println("no longer waiting for code " + foundLobby.getCode());
           }
-          
+
           // we no longer care if the app connected or not. we will keep receiving commands, but they will just be ignored
 
         } else {
           // default response
-          receiver.send("_unknowncmd");
+          // receiver.send("_unknowncmd");
         }
       }
     } catch (Exception e) {

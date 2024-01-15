@@ -21,7 +21,7 @@ public class Intersection {
 
   void setState(int state) { this.state = state; }
 
-  int getState() { return this.state; }
+  public int getState() { return this.state; }
 
   int getLiberty() { return this.liberty; }
   void setLiberty(int liberty) { this.liberty = liberty; }

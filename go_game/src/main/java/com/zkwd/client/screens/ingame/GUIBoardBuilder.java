@@ -22,7 +22,7 @@ public class GUIBoardBuilder {
   final double CircleSize = 12;
   final double GridPadding = 3;
 
-  Group DisplayBoard(String boardState) {
+  public Group DisplayBoard(String boardState) {
     Group out = new Group();
 
     String[] lines = boardState.split("\\|");

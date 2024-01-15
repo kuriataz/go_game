@@ -15,7 +15,7 @@ public class Board {
 
   private int size;
   private int maxChainId;
-  Intersection[][] board;
+  public Intersection[][] board;
   ArrayList<Chain> chains = new ArrayList<Chain>();
 
   public Board(int size) {
@@ -44,6 +44,28 @@ public class Board {
     return this;
   }
 
+  public Board setBoard(String boardString) {
+
+    int index = 0;
+
+    for (int i = 0; i < size; ++i) {
+      for (int j = 0; j < size; ++j) {
+        char currentChar = boardString.charAt(index++);
+
+        if (currentChar == 'W') {
+          board[i][j].setState(1); // Assuming 1 represents the state for 'W'
+        } else if (currentChar == 'B') {
+          board[i][j].setState(-1); // Assuming -1 represents the state for 'B'
+        } else {
+          board[i][j].setState(0); // Assuming 0 represents the state for 'E'
+        }
+      }
+      // Skip the '|' separator
+      index++;
+    }
+
+    return this; // Assuming that you want to return the modified Board object
+  }
   /**
    * Gets the size of the board.
    * @return The size of the board
@@ -90,15 +112,15 @@ public class Board {
    * @param playerColor -1 for black, 1 for white
    * @return true if the player's stone can be put on the intersection.
    */
-  public boolean correctMove(int x, int y, int playerColor) {
+  // public boolean correctMove(int x, int y, int playerColor) {
 
-    boolean inbounds = (x < size && x >= 0 && y < size && y >= 0);
-    if (!inbounds) {
-      return false;
-    } else {
-      return true;
-    }
-  }
+  //   boolean inbounds = (x < size && x >= 0 && y < size && y >= 0);
+  //   if (!inbounds) {
+  //     return false;
+  //   } else {
+  //     return true;
+  //   }
+  // }
   // Z's
   public void putStone(int x, int y, int playerColor) throws MoveException {
     if (correctMove(x, y, playerColor)) {
@@ -199,7 +221,7 @@ public class Board {
     deleteChain(chain.id);
   }
 
-  void removeCapturedStones() {
+  public void removeCapturedStones() {
     for (int i = 0; i != size; ++i) {
       for (int j = 0; j != size; ++j) {
         if (board[i][j].getLiberty() <= 0 && board[i][j].chainId == 0) {
@@ -208,7 +230,7 @@ public class Board {
       }
     }
   }
-  void removeCapturedChains() {
+  public void removeCapturedChains() {
     for (Chain ch : chains) {
       ch.updateLiberty();
       if (ch.getLiberty() <= 0) {
@@ -224,25 +246,26 @@ public class Board {
    * @param payerColor BLACK, WHITE
    * @return true if the intersetion is FREE and suicide isn't commited
    */
-  // Z's
-  // boolean correctMove(int x, int y, int playerColor) {
-  //   boolean free = (board[x][y].getState() == FREE);
-  //   boolean suicide = true;
-  //   // for (Intersection i : board[x][y].neighbours) {
-  //   //   if (i.getState() == FREE) {
-  //   //     suicide = false;
-  //   //   }
-  //   //   if (i.getState() == playerColor && i.getLiberty() > 0) {
-  //   //     suicide = false;
-  //   //   }
-  //   // }
-  //   for (Intersection i : board[x][y].neighbours) {
-  //     if (i.getState() != -(playerColor)) {
-  //       suicide = false;
-  //     }
-  //   }
-  //   return free && !suicide;
-  // }
+  public // Z's
+      boolean
+      correctMove(int x, int y, int playerColor) {
+    boolean free = (board[x][y].getState() == FREE);
+    boolean suicide = true;
+    for (Intersection i : board[x][y].neighbours) {
+      if (i.getState() == FREE) {
+        suicide = false;
+      }
+      if (i.getState() == playerColor && i.getLiberty() > 1) {
+        suicide = false;
+      }
+    }
+    // for (Intersection i : board[x][y].neighbours) {
+    //   if (i.getState() != -(playerColor)) {
+    //     suicide = false;
+    //   }
+    // }
+    return free && !suicide;
+  }
 
   /**
    * Sets neighbours of each intersection and gives them numbers of liberties.

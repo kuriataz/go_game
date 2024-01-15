@@ -71,7 +71,7 @@ public class GoGame {
 
         if (move.getKey() == -1) {
           // !! CURRENT PLAYER REQUESTED END
-          
+
           otherPlayer.sendMessage(board.prepareBoardString());
           otherPlayer.sendMessage("game_req");
 
@@ -101,8 +101,8 @@ public class GoGame {
           // if (board.correctMove(coordinates[0], coordinates[1], turn)) {
           //   currentPlayer.send("game_correct");
           //   board.putStone(coordinates[0], coordinates[1], turn);
-          //   board.removeCapturedStones();
-          //   board.removeCapturedChains();
+          board.removeCapturedStones();
+          board.removeCapturedChains();
           String updatedBoard = board.prepareBoardString();
 
           broadcast(updatedBoard);

@@ -15,6 +15,7 @@ public class Intersection {
   private int state;
   private int liberty = 0; // is set by setNeighbours in Board's constructor
   public int chainId = 0;
+  public double priority = 0;
   public ArrayList<Intersection> neighbours = new ArrayList<Intersection>();
 
   Intersection(int state) { this.state = state; }
@@ -81,4 +82,6 @@ public class Intersection {
     }
     return toGain;
   }
+
+  public void setPriority(double priority) { this.priority = priority; }
 }

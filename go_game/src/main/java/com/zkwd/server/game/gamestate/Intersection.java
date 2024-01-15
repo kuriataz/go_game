@@ -23,7 +23,7 @@ public class Intersection {
 
   public int getState() { return this.state; }
 
-  int getLiberty() { return this.liberty; }
+  public int getLiberty() { return this.liberty; }
   void setLiberty(int liberty) { this.liberty = liberty; }
 
   void addLiberty() { ++this.liberty; }

@@ -16,12 +16,14 @@ public class Board {
   private int size;
   private int maxChainId;
   public Intersection[][] board;
-  ArrayList<Chain> chains = new ArrayList<Chain>();
+  ArrayList<Chain> chains;
+  // ArrayList<Chain> chains = new ArrayList<Chain>();
 
   public Board(int size) {
     this.size = size;
     this.maxChainId = 0;
     this.board = new Intersection[size][size]; // by default every cell is 0
+    this.chains = new ArrayList<Chain>();
     for (int i = 0; i < size; ++i) {
       for (int j = 0; j < size; ++j) {
         board[i][j] = new Intersection(0);
@@ -203,9 +205,13 @@ public class Board {
 
   private void deleteChain(int id) {
     if (!(chains.isEmpty())) {
+      System.out.println("one");
       for (Chain ch : chains) {
+        System.out.println("two");
         if (ch.id == id) {
+          System.out.println("three");
           chains.remove(ch);
+          System.out.println("four");
         }
       }
     }
@@ -218,7 +224,8 @@ public class Board {
 
   void removeChain(Chain chain) {
     chain.removeStones();
-    deleteChain(chain.id);
+    // deleteChain(chain.id);
+    chains.remove(chain);
   }
 
   public void removeCapturedStones() {
@@ -235,6 +242,7 @@ public class Board {
       ch.updateLiberty();
       if (ch.getLiberty() <= 0) {
         removeChain(ch);
+        System.out.println("after removechain");
       }
     }
   }
@@ -246,9 +254,7 @@ public class Board {
    * @param payerColor BLACK, WHITE
    * @return true if the intersetion is FREE and suicide isn't commited
    */
-  public // Z's
-      boolean
-      correctMove(int x, int y, int playerColor) {
+  public boolean correctMove(int x, int y, int playerColor) {
     boolean free = (board[x][y].getState() == FREE);
     boolean suicide = true;
     for (Intersection i : board[x][y].neighbours) {

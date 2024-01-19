@@ -257,6 +257,7 @@ public class Board {
     boolean free = (board[x][y].getState() == FREE);
     boolean suicide = true;
     boolean capturing = false;
+    boolean ko = Ko(x, y, playerColor);
     for (Intersection i : board[x][y].neighbours) {
       if (i.getState() == FREE) {
         suicide = false;
@@ -268,12 +269,21 @@ public class Board {
         capturing = true;
       }
     }
-    // for (Intersection i : board[x][y].neighbours) {
-    //   if (i.getState() != -(playerColor)) {
-    //     suicide = false;
-    //   }
-    // }
-    return free && (!suicide || capturing);
+    return free && (!suicide || capturing) && !ko;
+  }
+
+  public boolean Ko(int x, int y, int playerColor) {
+    int neighboursCounter = 0;
+    boolean captureKo = false;
+    for (Intersection i : board[x][y].neighbours) {
+      if (i.getState() == -playerColor) {
+        ++neighboursCounter;
+        if (i.getLiberty() == 1 && i.chainId == 0) {
+          captureKo = true;
+        }
+      }
+    }
+    return captureKo && neighboursCounter == 4;
   }
 
   /**

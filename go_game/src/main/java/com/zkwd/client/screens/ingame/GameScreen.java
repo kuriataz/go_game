@@ -1,14 +1,12 @@
 package com.zkwd.client.screens.ingame;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import com.zkwd.client.model.App;
 import com.zkwd.client.model.AppState;
 import com.zkwd.client.model.IScreen;
 import com.zkwd.client.util.ConfirmPane;
-
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -43,7 +41,6 @@ public class GameScreen extends BorderPane implements IScreen {
 
     rbtn = new Button("end game");
     rbtn.setOnMouseClicked(reqHandler);
-
 
     HBox hbox = new HBox(5, txt, rbtn);
     this.setBottom(hbox);
@@ -92,8 +89,10 @@ public class GameScreen extends BorderPane implements IScreen {
          * game_exit  - exit the game into results screen
          * game_err   - exit the game into lobby screen
          */
-        Set<String> validCodes = new HashSet<String>(Arrays.asList("game_go", "game_req", "game_exit", "game_err"));
-        Set<String> exitCodes = new HashSet<String>(Arrays.asList("game_exit", "game_err"));
+        Set<String> validCodes = new HashSet<String>(
+            Arrays.asList("game_go", "game_req", "game_exit", "game_err"));
+        Set<String> exitCodes =
+            new HashSet<String>(Arrays.asList("game_exit", "game_err"));
 
         /**
          * Game loop
@@ -112,7 +111,8 @@ public class GameScreen extends BorderPane implements IScreen {
               Platform.runLater(() -> { enableInput(); });
 
               verdict = App.await();
-            } while (!verdict.equals("game_correct") && !exitCodes.contains(verdict));
+            } while (!verdict.equals("game_correct") &&
+                     !exitCodes.contains(verdict));
             if (exitCodes.contains(verdict)) {
               // exit the loop
               message = verdict;
@@ -135,9 +135,7 @@ public class GameScreen extends BorderPane implements IScreen {
             }
           } else if (message.equals("game_req")) {
             // put up confirmation screen
-            Platform.runLater(() -> {
-              reqConfirm();
-            });
+            Platform.runLater(() -> { reqConfirm(); });
             //
           } else {
             // game_exit or game_err
@@ -145,25 +143,20 @@ public class GameScreen extends BorderPane implements IScreen {
           }
         }
 
-        if(message.equals("game_exit")) {
-          Platform.runLater(() -> {
-            App.changeState(AppState.LOBBY);
-          });
+        if (message.equals("game_exit")) {
+          Platform.runLater(() -> { App.changeState(AppState.LOBBY); });
         } else {
-          Platform.runLater(() -> {
-            App.changeState(AppState.LOBBY);
-          });
+          Platform.runLater(() -> { App.changeState(AppState.LOBBY); });
         }
       }
     }.start();
   }
 
   private void reqConfirm() {
-    ConfirmPane c = new ConfirmPane("the other player has asked to end the game. do you accept?");
+    ConfirmPane c = new ConfirmPane(
+        "the other player has asked to end the game. do you accept?");
 
-    c.yes.setOnMouseClicked((e) -> {
-      App.send("-1 -1");
-    });
+    c.yes.setOnMouseClicked((e) -> { App.send("-1 -1"); });
     c.no.setOnMouseClicked((e) -> {
       // send any normal code
       App.send("0 0");
@@ -190,7 +183,7 @@ public class GameScreen extends BorderPane implements IScreen {
   /**
    * Prevents the player from inputting a move.
    */
-  private void disableInput() { 
+  private void disableInput() {
     board.setOnMouseClicked(null);
     rbtn.setDisable(true);
   }
@@ -201,7 +194,6 @@ public class GameScreen extends BorderPane implements IScreen {
    */
   EventHandler<MouseEvent> clickHandler = event -> {
 
-    System.out.println("works");
     disableInput();
 
     double mouseX = event.getX();
@@ -210,14 +202,19 @@ public class GameScreen extends BorderPane implements IScreen {
     double circleSize = boardBuilder.CircleSize;
     double gridPadding = boardBuilder.GridPadding;
 
-    int clickedX = Math.min((int)((mouseX) / (2.0 * circleSize + 2.0 * gridPadding + 2)), boardsize - 1);
-    int clickedY = Math.min((int)((mouseY) / (2.0 * circleSize + 2.0 * gridPadding + 2)), boardsize - 1);
+    int clickedX =
+        Math.min((int)((mouseX) / (2.0 * circleSize + 2.0 * gridPadding + 2)),
+                 boardsize - 1);
+    int clickedY =
+        Math.min((int)((mouseY) / (2.0 * circleSize + 2.0 * gridPadding + 2)),
+                 boardsize - 1);
 
     // Convert the coordinates to a string format and send it
     String clickedPosition =
         clickedX + " " + clickedY + " " + mouseX + " " + mouseY;
 
-    System.out.println("sending move at: " + clickedPosition + " bs: " + boardsize);
+    System.out.println("sending move at: " + clickedPosition +
+                       " bs: " + boardsize);
 
     App.send(clickedPosition);
   };
@@ -236,7 +233,8 @@ public class GameScreen extends BorderPane implements IScreen {
    * The code for signaling we've abandoned the game is (-2, 0)
    */
   EventHandler<MouseEvent> abdHandler = event -> {
-    ConfirmPane c = new ConfirmPane("are you sure you want to abandon the game?");
+    ConfirmPane c =
+        new ConfirmPane("are you sure you want to abandon the game?");
     exitbtn.setDisable(true);
 
     c.yes.setOnMouseClicked((e_yes) -> {

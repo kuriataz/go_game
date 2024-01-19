@@ -2,7 +2,6 @@ package com.zkwd.server.game.gamestate;
 
 import com.zkwd.server.game.exceptions.MoveException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Random;
 
 /**
@@ -18,7 +17,6 @@ public class Board {
   private int maxChainId;
   public Intersection[][] board;
   ArrayList<Chain> chains;
-  // ArrayList<Chain> chains = new ArrayList<Chain>();
 
   public Board(int size) {
     this.size = size;
@@ -254,6 +252,7 @@ public class Board {
    * @return true if the intersetion is FREE and suicide isn't commited
    */
   public boolean correctMove(int x, int y, int playerColor) {
+    boolean inbounds = (x < size && x >= 0 && y < size && y >= 0);
     boolean free = (board[x][y].getState() == FREE);
     boolean suicide = true;
     boolean capturing = false;
@@ -269,7 +268,7 @@ public class Board {
         capturing = true;
       }
     }
-    return free && (!suicide || capturing) && !ko;
+    return inbounds && free && (!suicide || capturing) && !ko;
   }
 
   public boolean Ko(int x, int y, int playerColor) {

@@ -55,7 +55,6 @@ public class CorrectMoveTest {
       b.putStone(1, 0, 1);
       b.putStone(3, 0, 1);
       b.putStone(2, 1, 1);
-      b.removeCapturedChains();
     } catch (MoveException e) {
       e.printStackTrace();
     }
@@ -67,6 +66,7 @@ public class CorrectMoveTest {
     try {
       b.putStone(5, 2, -1);
       b.putStone(4, 3, -1);
+      b.putStone(6, 3, -1);
       b.putStone(5, 3, 1);
       b.putStone(4, 4, 1);
       b.putStone(6, 4, 1);
@@ -75,6 +75,6 @@ public class CorrectMoveTest {
       e.printStackTrace();
     }
 
-    assert (b.correctMove(5, 4, -1) == false);
+    assert (b.Ko(5, 4, -1) == true);
   }
 }

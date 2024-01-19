@@ -4,7 +4,6 @@ import com.zkwd.server.game.exceptions.GameException;
 import com.zkwd.server.game.exceptions.MoveException;
 import com.zkwd.server.game.gamestate.Board;
 import com.zkwd.server.game.players.Player;
-import java.util.ArrayList;
 import javafx.util.Pair;
 
 /**
@@ -98,9 +97,6 @@ public class GoGame {
           currentPlayer.sendMessage("game_correct");
           board.putStone(move.getKey(), move.getValue(), turn);
           System.out.println(move.getKey() + " " + move.getValue());
-          // if (board.correctMove(coordinates[0], coordinates[1], turn)) {
-          //   currentPlayer.send("game_correct");
-          //   board.putStone(coordinates[0], coordinates[1], turn);
           board.removeCapturedStones();
           board.removeCapturedChains();
           String updatedBoard = board.prepareBoardString();

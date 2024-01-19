@@ -2,6 +2,7 @@ package com.zkwd.server.game.gamestate;
 
 import com.zkwd.server.game.exceptions.MoveException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 /**
@@ -205,13 +206,9 @@ public class Board {
 
   private void deleteChain(int id) {
     if (!(chains.isEmpty())) {
-      System.out.println("one");
       for (Chain ch : chains) {
-        System.out.println("two");
         if (ch.id == id) {
-          System.out.println("three");
           chains.remove(ch);
-          System.out.println("four");
         }
       }
     }
@@ -224,7 +221,6 @@ public class Board {
 
   void removeChain(Chain chain) {
     chain.removeStones();
-    // deleteChain(chain.id);
     chains.remove(chain);
   }
 
@@ -238,12 +234,15 @@ public class Board {
     }
   }
   public void removeCapturedChains() {
+    ArrayList<Chain> toRemove = new ArrayList<Chain>();
     for (Chain ch : chains) {
       ch.updateLiberty();
       if (ch.getLiberty() <= 0) {
-        removeChain(ch);
-        System.out.println("after removechain");
+        toRemove.add(ch);
       }
+    }
+    for (Chain ch : toRemove) {
+      removeChain(ch);
     }
   }
 
@@ -257,6 +256,7 @@ public class Board {
   public boolean correctMove(int x, int y, int playerColor) {
     boolean free = (board[x][y].getState() == FREE);
     boolean suicide = true;
+    boolean capturing = false;
     for (Intersection i : board[x][y].neighbours) {
       if (i.getState() == FREE) {
         suicide = false;
@@ -264,13 +264,16 @@ public class Board {
       if (i.getState() == playerColor && i.getLiberty() > 1) {
         suicide = false;
       }
+      if (i.getState() == -playerColor && i.getLiberty() == 1) {
+        capturing = true;
+      }
     }
     // for (Intersection i : board[x][y].neighbours) {
     //   if (i.getState() != -(playerColor)) {
     //     suicide = false;
     //   }
     // }
-    return free && !suicide;
+    return free && (!suicide || capturing);
   }
 
   /**

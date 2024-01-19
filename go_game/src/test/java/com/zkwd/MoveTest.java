@@ -1,31 +1,48 @@
 package com.zkwd;
 
+import com.zkwd.server.game.exceptions.MoveException;
 import com.zkwd.server.game.gamestate.Board;
 
 public class MoveTest {
   public void testSuicide() {
     Board b = new Board(9);
-    b = b.setBoard("EEEEEEEEE|EEEEEEEEE|EEWEEEEEE|EWEWEBEEE|EEWEBEBEE|"
-                   + "EEEEEBEEE|EEEEEEEEE|EEEEEEEEE|EEEEEEEEE|");
+    try {
+      b.putStone(2, 5, -1);
+      b.putStone(3, 4, -1);
+      b.putStone(3, 6, -1);
+      b.putStone(4, 5, -1);
+    } catch (MoveException e) {
+      e.printStackTrace();
+    }
 
-    assert (b.correctMove(3, 2, -1) == false);
-    assert (b.correctMove(4, 5, 1) == false);
+    assert (b.correctMove(3, 5, 1) == false);
   }
 
-  public void testSideSuicide() {
+  public void testCornerSuicide() {
     Board b = new Board(9);
-    b = b.setBoard("EWEEEEEBE|WEEEEEEEB|EEEEEEEEE|EEEEEEEEE|EEEEEEEEE|"
-                   + "EEEEEEEEE|EEEEEEEEE|EEEEEEEEE|EEEEEEEEE|");
+    try {
+      b.putStone(0, 1, -1);
+      b.putStone(1, 0, -1);
+    } catch (MoveException e) {
+      e.printStackTrace();
+    }
 
-    assert (b.correctMove(0, 0, -1) == false);
-    assert (b.correctMove(0, 8, 1) == false);
+    assert (b.correctMove(0, 0, 1) == false);
   }
   public void testChainSuicide() {
     Board b = new Board(9);
-    b = b.setBoard("EEEEEEEBW|EEEBBBEBE|EEEEEEEEB|EEEEEEEEE|EEEWEEEEE|" +
-                   "EEWBWEEEE|EEWEWEEEE|EEEWEEEEE|EEEEEEEEE|");
+    try {
+      b.putStone(2, 5, -1);
+      b.putStone(3, 4, -1);
+      b.putStone(3, 6, -1);
+      b.putStone(4, 5, 1);
+      b.putStone(4, 4, -1);
+      b.putStone(4, 6, -1);
+      b.putStone(5, 5, -1);
+    } catch (MoveException e) {
+      e.printStackTrace();
+    }
 
-    // assert (b.correctMove(7, 3, -1) == false);
-    // assert (b.correctMove(1, 8, 1) == false);
+    assert (b.correctMove(3, 5, 1) == false);
   }
 }

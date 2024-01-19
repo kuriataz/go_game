@@ -104,7 +104,6 @@ public class GoGame {
           board.removeCapturedStones();
           board.removeCapturedChains();
           String updatedBoard = board.prepareBoardString();
-          System.out.println("almost the end");
 
           broadcast(updatedBoard);
 

@@ -17,7 +17,7 @@ public class Intersection {
 
   Intersection(int state) { this.state = state; }
 
-  void setState(int state) { this.state = state; }
+  public void setState(int state) { this.state = state; }
 
   public int getState() { return this.state; }
 
@@ -55,7 +55,7 @@ public class Intersection {
    * @return ids - ArrayList of ids of chains that Intersection can join in
    *     ascending order
    */
-  ArrayList<Integer> findChain() {
+  public ArrayList<Integer> findChain() {
     ArrayList<Integer> ids = new ArrayList<Integer>();
     for (Intersection i : neighbours) {
       if (i.getState() == this.state && i.chainId != 0) {

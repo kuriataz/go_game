@@ -59,7 +59,8 @@ public class Intersection {
     ArrayList<Integer> ids = new ArrayList<Integer>();
     for (Intersection i : neighbours) {
       if (i.getState() == this.state && i.chainId != 0) {
-        ids.add(i.chainId);
+        if (!(ids.contains(i.chainId)))
+          ids.add(i.chainId);
       }
     }
     Collections.sort(ids);

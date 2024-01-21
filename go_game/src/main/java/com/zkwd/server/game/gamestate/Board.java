@@ -17,7 +17,7 @@ public class Board {
   private int size;
   private int maxChainId;
   public Intersection[][] board;
-  ArrayList<Chain> chains;
+  public ArrayList<Chain> chains;
 
   public Board(int size) {
     this.size = size;
@@ -286,6 +286,7 @@ public class Board {
     ArrayList<Chain> toRemove = new ArrayList<Chain>();
     for (Chain ch : chains) {
       ch.updateLiberty();
+      // System.out.println(ch.getLiberty() + "id: " + ch.id + " HERE3");
       if (ch.getLiberty() <= 0) {
         toRemove.add(ch);
       }
@@ -293,6 +294,7 @@ public class Board {
     for (Chain ch : toRemove) {
       removeChain(ch);
     }
+    // System.out.println(toRemove.size() + " HERE2");
   }
 
   public boolean Ko(int x, int y, int playerColor) {

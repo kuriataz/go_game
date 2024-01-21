@@ -176,6 +176,7 @@ public class Board {
           }
         }
       }
+      updateChainsLiberty();
     } else {
       throw new MoveException();
     }
@@ -209,8 +210,17 @@ public class Board {
       if (i.getState() == FREE) {
         suicide = false;
       }
-      if (i.getState() == playerColor && i.getLiberty() > 1) {
-        suicide = false;
+      if (i.getState() == playerColor) {
+        if (i.chainId != 0) {
+          for (Chain ch : chains) {
+            if (ch.id == i.chainId && ch.getLiberty() > 1) {
+              suicide = false;
+            }
+          }
+        } else if (i.getLiberty() > 1) {
+
+          suicide = false;
+        }
       }
       if (i.getState() == -playerColor && i.getLiberty() == 1) {
         capturing = true;
@@ -247,7 +257,6 @@ public class Board {
         iterator.remove();
       }
     }
-
     // Move stones to new chain
     for (Chain ch : chains) {
       if (ch.id == newId) {
@@ -297,6 +306,12 @@ public class Board {
     // System.out.println(toRemove.size() + " HERE2");
   }
 
+  public void updateChainsLiberty() {
+    for (Chain ch : chains) {
+      ch.updateLiberty();
+    }
+  }
+
   public boolean Ko(int x, int y, int playerColor) {
     int neighboursCounter = 0;
     boolean captureKo = false;
@@ -339,5 +354,14 @@ public class Board {
       }
     }
     return disSum;
+  }
+
+  public int getChainLiberty(int id) {
+    for (Chain ch : chains) {
+      if (ch.id == id) {
+        return ch.getLiberty();
+      }
+    }
+    return -1;
   }
 }

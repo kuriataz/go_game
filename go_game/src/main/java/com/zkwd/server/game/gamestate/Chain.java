@@ -42,7 +42,8 @@ public class Chain {
     if (checkAddOne(next)) {
       this.chain.add(next);
       next.chainId = this.id;
-      this.liberty = this.liberty + next.getLiberty();
+      // this.liberty = this.liberty + next.getLiberty();
+      updateLiberty();
     }
   }
 

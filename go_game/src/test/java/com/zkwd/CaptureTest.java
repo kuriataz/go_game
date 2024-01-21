@@ -61,4 +61,29 @@ public class CaptureTest {
     assert (b.board[4][5].getState() == 0);
     assert (b.board[3][5].getState() == 0);
   }
+  public void testCaptureSquareChain() {
+    Board b = new Board(9);
+
+    try {
+      b.putStone(2, 5, -1);
+      b.putStone(3, 4, -1);
+      b.putStone(3, 5, -1);
+      b.putStone(2, 4, -1);
+      b.putStone(3, 6, 1);
+      b.putStone(2, 6, 1);
+      b.putStone(1, 5, 1);
+      b.putStone(1, 4, 1);
+      b.putStone(2, 3, 1);
+      b.putStone(3, 3, 1);
+      b.putStone(4, 4, 1);
+      b.putStone(4, 5, 1);
+      b.removeCapturedChains();
+    } catch (MoveException e) {
+      e.printStackTrace();
+    }
+    assert (b.board[2][5].getState() == 0);
+    assert (b.board[3][5].getState() == 0);
+    assert (b.board[3][4].getState() == 0);
+    assert (b.board[2][4].getState() == 0);
+  }
 }

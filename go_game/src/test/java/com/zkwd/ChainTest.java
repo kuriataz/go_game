@@ -6,6 +6,10 @@ import java.util.ArrayList;
 
 public class ChainTest {
 
+  /**
+   * Check if after placing down two adjacent stones,
+   * they are formed into a chain.
+   */
   public void testNewChain() {
     Board b = new Board(9);
     try {
@@ -18,6 +22,10 @@ public class ChainTest {
     assert (b.board[2][4].chainId == 1);
   }
 
+  /**
+   * Check that after a chain is formed and another stone is placed
+   * adjacent to the chain, that stone becomes part of the chain.
+   */
   public void testAddToChain() {
     Board b = new Board(9);
     try {
@@ -36,6 +44,15 @@ public class ChainTest {
     assert (b.board[1][5].chainId == 1);
   }
 
+  /**
+   * Check if after placing a stone between multiple stones and connecting them,
+   * they start forming a chain.
+   * <pre>
+   *..B..    ..B..
+   *.B.B. -> .BBB.
+   *..B..    ..B..
+   * </pre>
+   */
   public void testGainToChain() {
     Board b = new Board(9);
     try {
@@ -62,6 +79,9 @@ public class ChainTest {
     assert (b.board[2][6].chainId == 1);
   }
 
+  /**
+   * Check that when two chains are connected, they merge into a single chain.
+   */
   public void testChangeChain() {
     Board b = new Board(9);
     try {
@@ -93,6 +113,9 @@ public class ChainTest {
     assert (b.board[1][5].chainId == 1);
   }
 
+  /**
+   * Test the chain detection method findChain.
+   */
   public void testFindChain() {
     Board b = new Board(9);
     try {

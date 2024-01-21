@@ -55,7 +55,7 @@ public class App extends Application
      * @param state The desired state.
      */
     public static void changeState(AppState state){
-        scene.setRoot(state.getState().launch());
+        scene.setRoot(state.getState());
     }
 
     public static ServerMessenger getServerHook() {

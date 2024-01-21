@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * Class for testing server connection.
  */
-public class ServerTest {
+public class ServerLauncher {
   public static void main(String[] args) {
     Thread serverThread = new Thread(() -> {
       try {

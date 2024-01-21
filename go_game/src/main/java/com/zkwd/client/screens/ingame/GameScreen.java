@@ -2,7 +2,6 @@ package com.zkwd.client.screens.ingame;
 
 import com.zkwd.client.model.App;
 import com.zkwd.client.model.AppState;
-import com.zkwd.client.model.IScreen;
 import com.zkwd.client.util.ConfirmPane;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,10 +13,9 @@ import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
-public class GameScreen extends BorderPane implements IScreen {
+public class GameScreen extends BorderPane {
 
   GUIBoardBuilder boardBuilder;
 
@@ -254,6 +252,4 @@ public class GameScreen extends BorderPane implements IScreen {
 
     this.setCenter(c);
   };
-
-  public Pane launch() { return this; }
 }

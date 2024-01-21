@@ -4,7 +4,16 @@ import com.zkwd.server.game.exceptions.MoveException;
 import com.zkwd.server.game.gamestate.Board;
 
 public class CaptureTest {
-  public void testCaptureStone() {
+
+  /**
+   * Test if white stone is captured in this position:
+   * <pre>
+   *.......BW
+   *........B
+   *.........
+   * </pre>
+   */
+  public void testCaptureStoneEdge() {
     Board b = new Board(9);
 
     try {
@@ -15,8 +24,23 @@ public class CaptureTest {
     } catch (MoveException e) {
       e.printStackTrace();
     }
-
     assert (b.board[8][0].getState() == 0);
+  }
+
+  /**
+   * Test if black stone is captured in this position:
+   * <pre>
+   *.........
+   *.........
+   *....W....
+   *...WBW...
+   *....W....
+   *.........
+   *.........
+   * </pre>
+   */
+  public void testCaptureStoneCenter() {
+    Board b = new Board(9);
     try {
       b.putStone(4, 4, 1);
       b.putStone(5, 3, 1);
@@ -29,7 +53,16 @@ public class CaptureTest {
     }
     assert (b.board[5][4].getState() == 0);
   }
-  public void testCaptureChain() {
+
+  /**
+   * Test if the white chain is captured in this position:
+   * <pre>
+   *WWB......
+   *BB.......
+   *.........
+   * </pre>
+   */
+  public void testCaptureChainEdge() {
     Board b = new Board(9);
 
     try {
@@ -42,9 +75,23 @@ public class CaptureTest {
     } catch (MoveException e) {
       e.printStackTrace();
     }
-
     assert (b.board[0][0].getState() == 0);
     assert (b.board[1][0].getState() == 0);
+  }
+
+  /**
+   * Test if the white chain is captured in this position:
+   * <pre>
+   *.........
+   *.........
+   *.........
+   *..BB.....
+   *.BWWB....
+   *..BB.....
+   * </pre>
+   */
+  public void testCaptureChainCenter() {
+    Board b = new Board(9);
     try {
       b.putStone(2, 5, -1);
       b.putStone(3, 4, -1);

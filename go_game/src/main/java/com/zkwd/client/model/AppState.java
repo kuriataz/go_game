@@ -4,6 +4,8 @@ import com.zkwd.client.screens.ingame.GameScreen;
 import com.zkwd.client.screens.lobby.LobbyScreen;
 import com.zkwd.client.screens.results.ResultsScreen;
 
+import javafx.scene.layout.Pane;
+
 /**
  * Each state corresponds to a separate part of the application the client can interact with and move between.
  */
@@ -12,13 +14,13 @@ public enum AppState {
     INGAME (GameScreen.class),
     RESULTS (ResultsScreen.class);
 
-    private Class<? extends IScreen> c;
+    private Class<? extends Pane> c;
 
-    private AppState(Class<? extends IScreen> c){
+    private AppState(Class<? extends Pane> c){
         this.c = c;
     }
 
-    public IScreen getState(){
+    public Pane getState(){
         try{
             return this.c.getConstructor().newInstance();
         } catch (Exception e){

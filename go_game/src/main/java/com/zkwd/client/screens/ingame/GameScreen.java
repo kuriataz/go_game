@@ -73,6 +73,10 @@ public class GameScreen extends BorderPane {
           rbtn.setDisable(true);
 
           boardString = App.await();
+          if(boardString.equals("game_err")) {
+            Platform.runLater(() -> { App.changeState(AppState.LOBBY); });
+            return;
+          }
 
           Platform.runLater(() -> {
             updateBoard(boardString);

@@ -98,12 +98,6 @@ public class GoGame {
             continue;
             //
           }
-        } else if (move.getKey() == -2) {
-          // !! CURRENT PLAYER HAS LEFT
-          System.out.println("!!!! exit !!!!");
-          otherPlayer.sendMessage(board.prepareBoardString());
-          broadcast("game_err");
-
         } else if (board.correctMove(move.getKey(), move.getValue(), turn)) {
           // !! VALID MOVE
 

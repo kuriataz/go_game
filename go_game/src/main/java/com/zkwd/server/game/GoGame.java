@@ -3,14 +3,16 @@ package com.zkwd.server.game;
 import com.zkwd.server.game.exceptions.GameException;
 import com.zkwd.server.game.exceptions.MoveException;
 import com.zkwd.server.game.gamestate.Board;
+import com.zkwd.server.game.players.ClientPlayer;
 import com.zkwd.server.game.players.Player;
+
 import javafx.util.Pair;
 
 /**
  * Master class for a singular game of Go.
  */
 public class GoGame {
-
+  // colors
   public static final int BLACK = -1;
   public static final int WHITE = 1;
   public static final int FREE = 0;
@@ -18,21 +20,17 @@ public class GoGame {
   private Player black;
   private Player white;
 
-  /**
-   * Game state information
-   */
+  // gamestate information
   private Board board;
-  /**
-   * Turn information
-   */
-  private int round = 0;
-  private int turn = BLACK; // turn is -1 when black goes, 1 when white goes
+  // turn information
+  //private int round = 0;
+  private int turn = BLACK;
 
   /**
    * GoGame uses sockets to communicate with player applications separately from
    * the PlayerHandler class.
-   * @param host black pieces
-   * @param joinee white pieces
+   * @param host The player object responsible for the black pieces
+   * @param joinee The player object responsible for the white pieces
    */
   public GoGame(Player host, Player joinee, int boardSize) {
     black = host;
@@ -44,15 +42,15 @@ public class GoGame {
   /**
    * Mediate a game of Go between the two players.
    */
-  public void run() {
-    /**
-     * Make both players enter the game state on client-side.
-     */
+  public void startGame() {
+
+    // tell both players to enter the ingame app state
     broadcast("_connect");
 
     Player currentPlayer = black;
     Player otherPlayer = white;
 
+    // tell players their respective colors
     black.sendMessage("game_black");
     white.sendMessage("game_white");
 
@@ -62,10 +60,24 @@ public class GoGame {
      * !! GAME LOOP !!
      */
     while (true) {
-
-      currentPlayer.sendMessage("game_go");
-
       try {
+        // check if either player abandoned match
+        // if they did, exit
+        if (currentPlayer instanceof ClientPlayer) {
+          if (((ClientPlayer)currentPlayer).hasExited()){
+            throw new GameException();
+          }
+          System.out.println("hi curr");
+        }
+        if (otherPlayer instanceof ClientPlayer) {
+          if (((ClientPlayer)otherPlayer).hasExited()){
+            throw new GameException();
+          }
+          System.out.println("hi other");
+        }
+
+        // tell current player it is their round
+        currentPlayer.sendMessage("game_go");
         Pair<Integer, Integer> move = currentPlayer.getMove();
 
         if (move.getKey() == -1) {
@@ -78,6 +90,7 @@ public class GoGame {
           if (resp.getKey() == -1) {
             // exit game
             broadcast("game_exit");
+            calculateScore();
             break;
             //
           } else {
@@ -87,7 +100,7 @@ public class GoGame {
           }
         } else if (move.getKey() == -2) {
           // !! CURRENT PLAYER HAS LEFT
-
+          System.out.println("!!!! exit !!!!");
           otherPlayer.sendMessage(board.prepareBoardString());
           broadcast("game_err");
 
@@ -126,22 +139,28 @@ public class GoGame {
         return;
       }
 
+      // switch players
       if (currentPlayer == black) {
         currentPlayer = white;
         otherPlayer = black;
-        ++round;
+        //++round;
       } else {
         currentPlayer = black;
         otherPlayer = white;
       }
       turn = -(turn);
     }
-
-    // TODO : figure out who won
   }
 
-  void broadcast(String message) {
+  private void broadcast(String message) {
     black.sendMessage(message);
     white.sendMessage(message);
+  }
+
+  /**
+   * Calculate game score. This method is called once both players agree to end the game.
+   */
+  private void calculateScore() {
+    // TODO : write
   }
 }

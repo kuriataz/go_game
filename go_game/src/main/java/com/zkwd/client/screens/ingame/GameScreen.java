@@ -118,6 +118,7 @@ public class GameScreen extends BorderPane {
               //
             } else {
               boardString = App.await();
+              if(boardString.equals("game_err")) { break; }
 
               Platform.runLater(() -> {
                 updateBoard(boardString);
@@ -125,6 +126,7 @@ public class GameScreen extends BorderPane {
               });
 
               boardString = App.await();
+              if(boardString.equals("game_err")) { break; }
 
               Platform.runLater(() -> {
                 updateBoard(boardString);
@@ -142,9 +144,11 @@ public class GameScreen extends BorderPane {
         }
 
         if (message.equals("game_exit")) {
-          Platform.runLater(() -> { App.changeState(AppState.LOBBY); });
+          Platform.runLater(() -> { App.changeState(AppState.RESULTS); });
+          return;
         } else {
           Platform.runLater(() -> { App.changeState(AppState.LOBBY); });
+          return;
         }
       }
     }.start();
@@ -240,7 +244,7 @@ public class GameScreen extends BorderPane {
       System.out.println("abandoning game");
       disableInput();
       // send server the exit code
-      App.send("-2 0");
+      App.send("exit");
       //
     });
     c.no.setOnMouseClicked((e_no) -> {

@@ -47,6 +47,11 @@ public class ClientPlayer implements Player{
             int x = Integer.parseInt(parts[0]);
             int y = Integer.parseInt(parts[1]);
 
+            if (x == -2) {
+                // EXIT GAME CODE
+                throw new GameException();
+            }
+
             System.out.println("received move: (" + x + ", " + y +")");
 
             Pair<Integer, Integer> coords = new Pair<Integer,Integer>(x, y);
@@ -59,7 +64,20 @@ public class ClientPlayer implements Player{
         }
     }
 
+
+    /**
+     * Gets the socket.
+     * @return socket
+     */
     public SocketReceiver getSocket() {
         return socket;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public boolean hasExited() {
+        return socket.hasExited();
     }
 }

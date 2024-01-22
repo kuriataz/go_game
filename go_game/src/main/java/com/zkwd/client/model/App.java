@@ -44,7 +44,8 @@ public class App extends Application
 
         // if we are in game, tell server that we are abandoning the game.
         if(currentState == AppState.INGAME) {
-            App.send("-2 0");
+            System.out.println("exiting");
+            App.send("exit");
         }
 
         System.exit(0);
@@ -56,6 +57,7 @@ public class App extends Application
      */
     public static void changeState(AppState state){
         scene.setRoot(state.getState());
+        currentState = state;
     }
 
     public static ServerMessenger getServerHook() {

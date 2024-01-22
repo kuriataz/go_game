@@ -18,6 +18,8 @@ public class SocketReceiver implements Runnable{
     private String currentMessage;
     private boolean closed = false;
 
+    private boolean exited = false;
+
     public SocketReceiver(Socket s) throws IOException {
         this.s = s;
         in = new BufferedReader(new InputStreamReader(s.getInputStream()));
@@ -34,9 +36,14 @@ public class SocketReceiver implements Runnable{
                 // System.out.println("socket is waiting");
                 currentMessage = in.readLine();
 
+                if (currentMessage.equals("exit")) {
+                    exited = true;
+                    System.out.println("someone exited");
+                }
+
+                // wake up threads waiting for new message
                 synchronized(this){
                     System.out.println("socket received: " + currentMessage);
-                    // wake up threads waiting for new message
                     notifyAll();
                 }
             } catch (IOException e) {
@@ -49,6 +56,21 @@ public class SocketReceiver implements Runnable{
     }
 
     /**
+     * Reset exit status. Should be done every time a game is started with this socket.
+     */
+    public void reset() {
+        exited = false;
+    }
+
+    /**
+     * Check if socket has received the exit signal during this game.
+     * @return true if an exit signal was detected.
+     */
+    public boolean hasExited() {
+        return exited;
+    }
+
+    /**
      * @return the last message in the input stream.
      */
     public String getLastMessage() {
@@ -56,7 +78,7 @@ public class SocketReceiver implements Runnable{
     }
 
     /**
-     * Hopefully, any threads calling this method begin to wait for this object.
+     * Any threads calling this method begin to wait for this object.
      * When the message gets updated (another message is read), they are all woken up and the new message is sent out.
      * @return new message
      */

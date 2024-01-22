@@ -85,10 +85,14 @@ public class GoServer {
       @Override
       public void run() {
         try {
+          host.reset();
+          joinee.reset();
+
           ClientPlayer a = new ClientPlayer(host);
           ClientPlayer b = new ClientPlayer(joinee);
 
-          new GoGame(a, b, size).run();
+          new GoGame(a, b, size).startGame();
+
         } catch (Exception e) {
           /**
            * TODO : in GoGame, exceptions should be thrown that should end the

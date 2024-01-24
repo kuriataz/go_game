@@ -21,7 +21,8 @@ public class LobbyInterpreter implements Runnable {
     int boardSize = 0;
     try {
       String clientMessage;
-      while ((clientMessage = receiver.getNextMessage()) != null) {
+      while (!receiver.isClosed()) {
+        clientMessage = receiver.getNextMessage();
         System.out.println("lobby thread received: " + clientMessage);
 
         if (clientMessage.startsWith("joinlobby:")) {

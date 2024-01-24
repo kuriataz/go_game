@@ -130,7 +130,7 @@ public class GoGame {
             //
           } else {
             // exit game
-            break;
+            return;
             //
           }
           //
@@ -154,7 +154,7 @@ public class GoGame {
             //
           } else {
             // exit game
-            break;
+            return;
             //
           }
           //
@@ -197,7 +197,7 @@ public class GoGame {
         e.printStackTrace();
         // something went wrong and the game must close
         broadcast("game_err");
-        break;
+        return;
       }
 
       System.out.println(turn + ": checking if players abandoned...");
@@ -221,7 +221,7 @@ public class GoGame {
           //
         } else {
           // exit game
-          break;
+          return;
           //
         }
       } else {
@@ -246,7 +246,7 @@ public class GoGame {
           //
         } else {
           // exit game
-          break;
+          return;
           //
         }
       } else {
@@ -276,7 +276,8 @@ public class GoGame {
       }
     }
 
-    System.out.println("game finished!");
+    System.out.println("game ended!");
+    calculateScore();
   }
 
   private void broadcast(String message) {

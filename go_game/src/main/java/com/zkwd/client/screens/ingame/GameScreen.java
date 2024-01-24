@@ -14,6 +14,8 @@ import javafx.scene.text.Text;
 
 public class GameScreen extends BorderPane {
 
+  private volatile int plrs = 2;
+
   GUIBoardBuilder boardBuilder;
 
   Group board;
@@ -27,6 +29,7 @@ public class GameScreen extends BorderPane {
 
   public GameScreen() {
     super();
+    System.out.println("!! creating new GameScreen");
 
     exitbtn = new Button("exit");
     this.setTop(exitbtn);
@@ -42,6 +45,7 @@ public class GameScreen extends BorderPane {
 
     // begin game
     runGame();
+    System.out.println("!! exiting GameScreen");
   }
 
   /**
@@ -70,11 +74,9 @@ public class GameScreen extends BorderPane {
           disableInput();
         });
 
-        // Set<String> turnSignals = new HashSet<>(Arrays.asList("game_go", "game_no"));
-
         boolean turn;
 
-        while(true) {
+        while(plrs > 0) {
           // await turn signal
           message = App.await();
 
@@ -125,6 +127,7 @@ public class GameScreen extends BorderPane {
             } while (!req.equals("game_abdn") && !req.equals("game_err") && !req.equals("game_vrfd"));
   
             if(req.equals("game_abdn")) {
+              plrs--;
               Platform.runLater(() -> {
                 reqBot();
               });
@@ -154,6 +157,7 @@ public class GameScreen extends BorderPane {
           System.out.println("\t awaiting final abdn info...");
           req = App.await();
           if (req.equals("game_abdn")) {
+            plrs--;
             reqBot();
           } else if (req.equals("game_err")) {
             App.changeState(AppState.LOBBY);
@@ -293,6 +297,7 @@ public class GameScreen extends BorderPane {
       // send server the exit code
       App.send("exit");
       App.changeState(AppState.LOBBY);
+      plrs = 0;
       //
     });
     c.no.setOnMouseClicked(e -> {

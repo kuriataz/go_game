@@ -94,6 +94,8 @@ public class GoServer {
           new GoGame(a, b, size).startGame();
 
           System.out.println("!!! game ended successfully !!!");
+          host.send("game_err");
+          joinee.send("game_err");
 
         } catch (Exception e) {
           /**

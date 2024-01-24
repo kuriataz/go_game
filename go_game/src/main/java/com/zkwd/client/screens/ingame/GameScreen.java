@@ -3,9 +3,6 @@ package com.zkwd.client.screens.ingame;
 import com.zkwd.client.model.App;
 import com.zkwd.client.model.AppState;
 import com.zkwd.client.util.ConfirmPane;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -53,7 +50,6 @@ public class GameScreen extends BorderPane {
   private void runGame() {
     new Thread() {
       public void run() {
-
         // first message is color
         String message = App.await();
         // 2nd message is starting board
@@ -66,119 +62,163 @@ public class GameScreen extends BorderPane {
 
         if (message.equals("game_black")) {
           txt.setText("black pieces");
-
         } else {
           txt.setText("white pieces");
+        }
 
-          rbtn.setDisable(true);
+        Platform.runLater(() -> {
+          disableInput();
+        });
 
-          boardString = App.await();
-          if(boardString.equals("game_err")) {
-            Platform.runLater(() -> { App.changeState(AppState.LOBBY); });
+        // Set<String> turnSignals = new HashSet<>(Arrays.asList("game_go", "game_no"));
+
+        boolean turn;
+
+        while(true) {
+          // await turn signal
+          message = App.await();
+
+          // check if this player's turn
+          turn = message.equals("game_go");
+
+          // loop:
+          if (turn) {
+            // !! PLAYER TURN
+            // listen for reqend/cont
+            // if reqend, ask
+            System.out.println("\t my turn! awaiting req info...");
+            if(App.await().equals("game_reqend")) {
+              // display choice pane
+              System.out.println("\t end requested! displaying...");
+              Platform.runLater(() -> {
+                reqEnd();
+              });
+            }
+
+            Platform.runLater(() -> {
+              enableInput();
+            });
+            // additionally, allow move input/reqend
+            // if move is reqend, display "awaiting response..."
+          }
+
+          System.out.println("\t awaiting end info...");
+          // listen for end/cont
+          // if received end, go to results
+          if(App.await().equals("game_end")) {
+            App.changeState(AppState.RESULTS);
             return;
           }
 
-          Platform.runLater(() -> {
-            updateBoard(boardString);
-            // log.push(boardString);
-          });
-        }
+          // if received cont, listen for err or abd
 
-        /**
-         * Contains the codes that the app responds to.
-         * game_go    - it is this user's round
-         * game_req   - the other player has requested to end the game
-         * game_exit  - exit the game into results screen
-         * game_err   - exit the game into lobby screen
-         */
-        Set<String> validCodes = new HashSet<String>(
-            Arrays.asList("game_go", "game_req", "game_exit", "game_err"));
-        Set<String> exitCodes =
-            new HashSet<String>(Arrays.asList("game_exit", "game_err"));
+          System.out.println("\t awaiting abdn/validity info..");
 
-        /**
-         * Game loop
-         */
-        while (true) {
-          // wait for your round
+          // if received abd, ask for bot
+          // if yes, send bot
+          // if received exit, quit
+
+          String req;
           do {
-            System.out.println("awaiting command");
-            message = App.await();
-          } while (!validCodes.contains(message));
+            req = App.await();
+          } while (!req.equals("game_abdn") && !req.equals("game_err") && !req.equals("game_vrfd"));
 
-          if (message.equals("game_go")) {
-            String verdict;
-            // take inputs until server decides input is correct
-            do {
-              Platform.runLater(() -> { enableInput(); });
-
-              verdict = App.await();
-            } while (!verdict.equals("game_correct") &&
-                     !exitCodes.contains(verdict));
-            if (exitCodes.contains(verdict)) {
-              // exit the loop
-              message = verdict;
-              break;
-              //
-            } else {
-              boardString = App.await();
-              if(boardString.equals("game_err")) { break; }
-
-              Platform.runLater(() -> {
-                updateBoard(boardString);
-                // log.push(boardString);
-              });
-
-              boardString = App.await();
-              if(boardString.equals("game_err")) { break; }
-
-              Platform.runLater(() -> {
-                updateBoard(boardString);
-                // log.push(boardString);
-              });
-            }
-          } else if (message.equals("game_req")) {
-            // put up confirmation screen
-            Platform.runLater(() -> { reqConfirm(); });
-            //
-          } else {
-            // game_exit or game_err
-            break;
+          if(req.equals("game_abdn")) {
+            Platform.runLater(() -> {
+              reqBot();
+            });
+          } else if(req.equals("game_err")) {
+            App.changeState(AppState.LOBBY);
+            return;
           }
-        }
+          // if invalid, ->loop
+          
+          // if valid, disable all input
+          disableInput();
 
-        if (message.equals("game_exit")) {
-          Platform.runLater(() -> { App.changeState(AppState.RESULTS); });
-          return;
-        } else {
-          Platform.runLater(() -> { App.changeState(AppState.LOBBY); });
-          return;
+          // there is a possibility the window is closed now
+          // if this happens, abd is sent anyway
+          // in which case, the receiver marks it down
+
+          // move validation (reqend is a valid move)
+          // after validaing gogame will recheck if an abd happened
+          
+          // await abd or err
+          // if abd, ask for bot
+          // if yes, send bot
+          // if err, quit
+          System.out.println("\t awaiting final abdn info...");
+          req = App.await();
+          if (req.equals("game_abdn")) {
+            reqBot();
+          } else if (req.equals("game_err")) {
+            App.changeState(AppState.LOBBY);
+            return;
+          }
+
+          System.out.println("\t awaiting board info...");
+          // wait for new board
+          String newBoard = App.await();
+          Platform.runLater(() -> {
+            updateBoard(newBoard);
+          });
         }
       }
     }.start();
   }
 
-  private void reqConfirm() {
-    ConfirmPane c = new ConfirmPane(
-        "the other player has asked to end the game. do you accept?");
+  /**
+   * Ask whether the player wants to end the game.
+   */
+  private void reqEnd() {
+    ConfirmPane c = new ConfirmPane("""
+      your opponent has requested to end the match. do you accept?
+    """);
 
-    c.yes.setOnMouseClicked((e) -> { App.send("-1 -1"); });
-    c.no.setOnMouseClicked((e) -> {
+    c.yes.setOnMouseClicked(e -> { 
+      App.send("yes");
+    });
+    c.no.setOnMouseClicked(e -> {
       // send any normal code
-      App.send("0 0");
+      App.send("no");
       this.setCenter(board);
     });
 
     this.setCenter(c);
   }
 
+  /**
+   * Asks whether the player wants to continue playing with a bot.
+   */
+  private void reqBot() {
+    ConfirmPane c = new ConfirmPane("""
+      your opponent abandoned the match. continue playing against a bot?
+    """);
+
+    c.yes.setOnMouseClicked(e -> { 
+      App.send("yes");
+      this.setCenter(board);
+    });
+    c.no.setOnMouseClicked(e -> {
+      // send any normal code
+      App.send("no");
+      App.changeState(AppState.LOBBY);
+    });
+
+    this.setCenter(c);
+  }
+
+  /**
+   * Update the board with a new board string.
+   * @param boardString string encoding a board.
+   */
   private void updateBoard(String boardString) {
     board = boardBuilder.DisplayBoard(boardString);
     this.setCenter(board);
   }
 
   /**
-   * Enables the player to input a move.
+   * Enable the player to input a move.
    */
   private void enableInput() {
     System.out.println("awaiting user input");
@@ -187,7 +227,7 @@ public class GameScreen extends BorderPane {
   }
 
   /**
-   * Prevents the player from inputting a move.
+   * Remove the player's ability to input a move.
    */
   private void disableInput() {
     board.setOnMouseClicked(null);
@@ -217,10 +257,9 @@ public class GameScreen extends BorderPane {
 
     // Convert the coordinates to a string format and send it
     String clickedPosition =
-        clickedX + " " + clickedY + " " + mouseX + " " + mouseY;
+        "move:" + clickedX + "," + clickedY;
 
-    System.out.println("sending move at: " + clickedPosition +
-                       " bs: " + boardsize);
+    System.out.println("sending: " + clickedPosition);
 
     App.send(clickedPosition);
   };
@@ -232,7 +271,7 @@ public class GameScreen extends BorderPane {
     System.out.println("requesting game end");
     disableInput();
 
-    App.send("-1 0");
+    App.send("move:-1,0");
   };
 
   /**
@@ -243,15 +282,16 @@ public class GameScreen extends BorderPane {
         new ConfirmPane("are you sure you want to abandon the game?");
     exitbtn.setDisable(true);
 
-    c.yes.setOnMouseClicked((e_yes) -> {
+    c.yes.setOnMouseClicked(e -> {
       //
       System.out.println("abandoning game");
       disableInput();
       // send server the exit code
       App.send("exit");
+      App.changeState(AppState.LOBBY);
       //
     });
-    c.no.setOnMouseClicked((e_no) -> {
+    c.no.setOnMouseClicked(e -> {
       //
       this.setCenter(board);
       exitbtn.setDisable(false);

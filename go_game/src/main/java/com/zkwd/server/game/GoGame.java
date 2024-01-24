@@ -113,6 +113,9 @@ public class GoGame {
         // parse signal - was it an abandonment, or a move?
         if (csig.equals("exit")) {
           // current player abandoned
+          if (isBotGame) {
+            return;
+          }
           otherPlayer.sendMessage("game_abdn");
           if (otherPlayer.requestConfirmation()) {
             // replace other player with CPU
@@ -123,6 +126,7 @@ public class GoGame {
             } else {
               white = currentPlayer;
             }
+            isBotGame = true;
             //
           } else {
             // exit game
@@ -132,6 +136,9 @@ public class GoGame {
           //
         } else if (osig.equals("exit")) {
           // other player abandoned
+          if (isBotGame) {
+            return;
+          }
           currentPlayer.sendMessage("game_abdn");
           if (currentPlayer.requestConfirmation()) {
             // replace other player with CPU
@@ -143,6 +150,7 @@ public class GoGame {
             } else {
               white = otherPlayer;
             }
+            isBotGame = true;
             //
           } else {
             // exit game
@@ -195,6 +203,9 @@ public class GoGame {
       System.out.println(turn + ": checking if players abandoned...");
       // check if either player has abandoned the match while we weren't listening
       if (checkAbandoned(otherPlayer)) {
+        if (isBotGame) {
+          return;
+        }
         currentPlayer.sendMessage("game_abdn");
         if (currentPlayer.requestConfirmation()) {
           // replace other player with CPU
@@ -206,6 +217,7 @@ public class GoGame {
           } else {
             white = otherPlayer;
           }
+          isBotGame = true;
           //
         } else {
           // exit game
@@ -217,6 +229,9 @@ public class GoGame {
       }
 
       if (checkAbandoned(currentPlayer)) {
+        if (isBotGame) {
+          return;
+        }
         otherPlayer.sendMessage("game_abdn");
         if (otherPlayer.requestConfirmation()) {
           System.out.println("\t\t REPLACING currentPlayer2");
@@ -227,6 +242,7 @@ public class GoGame {
           } else {
             white = currentPlayer;
           }
+          isBotGame = true;
           //
         } else {
           // exit game

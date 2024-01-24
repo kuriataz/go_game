@@ -93,6 +93,8 @@ public class GoServer {
 
           new GoGame(a, b, size).startGame();
 
+          System.out.println("!!! game ended successfully !!!");
+
         } catch (Exception e) {
           /**
            * TODO : in GoGame, exceptions should be thrown that should end the

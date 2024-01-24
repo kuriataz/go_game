@@ -72,7 +72,7 @@ public class Board {
    * Gets the size of the board.
    * @return The size of the board
    */
-  int getSize() { return this.size; }
+  public int getSize() { return this.size; }
 
   /**
    * Returns the state of the intersection (color).

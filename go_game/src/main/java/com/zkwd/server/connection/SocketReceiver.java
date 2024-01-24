@@ -15,7 +15,7 @@ public class SocketReceiver implements Runnable{
     private BufferedReader in;
     private PrintWriter out;
 
-    private String currentMessage;
+    private volatile String currentMessage;
     private boolean closed = false;
 
     private boolean exited = false;
@@ -36,7 +36,7 @@ public class SocketReceiver implements Runnable{
                 // System.out.println("socket is waiting");
                 currentMessage = in.readLine();
 
-                if (currentMessage.equals("exit")) {
+                if (currentMessage == null || currentMessage.equals("exit")) {
                     exited = true;
                     System.out.println("someone exited");
                 }
@@ -60,6 +60,10 @@ public class SocketReceiver implements Runnable{
      */
     public void reset() {
         exited = false;
+    }
+
+    public void clear() {
+        currentMessage = "";
     }
 
     /**

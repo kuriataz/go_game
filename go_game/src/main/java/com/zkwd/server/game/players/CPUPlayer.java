@@ -1,20 +1,20 @@
 package com.zkwd.server.game.players;
 
-import java.io.IOException;
+import java.util.Random;
 
-import com.zkwd.server.game.exceptions.GameException;
-import com.zkwd.server.game.exceptions.MoveException;
-
-import javafx.util.Pair;
+import com.zkwd.server.game.gamestate.Board;
 
 /**
  * Contains functionality for communication between game (on the server-side) and client application.
  */
 public class CPUPlayer implements Player{
 
-    // private Board board;
+    private Board board;
 
-    public CPUPlayer() throws IOException {
+    private String lastMove;
+
+    public CPUPlayer(Board board, int color) {
+        this.board = board;
     }
 
     /**
@@ -22,14 +22,46 @@ public class CPUPlayer implements Player{
      */
     public void sendMessage(String message){
         // the computer is going to get sent its color, and the board size. set those here
-        // also update board state
     }
 
     /**
      * Generate a random (but pretty good) move.
      */
-    public Pair<Integer, Integer> getMove() throws MoveException, GameException {
+    public void generateMove() {
+        System.out.println("!! \t generating bot move...");
+
+        Random r = new Random();
+
+        // TODO : better
+        int x = r.nextInt(0, board.getSize());
+        int y = r.nextInt(0, board.getSize());
         
-        return new Pair<Integer,Integer>(0, 0);
+        lastMove = "move:" + x + "," + y;
+    }
+
+    /**
+     * Generate a move and return it
+     */
+    public String getNextMessage() {
+        generateMove();
+        return lastMove;
+    }
+
+    /**
+     * Get the bot's last move.
+     */
+    public String getLastMessage() {
+        return lastMove;
+    }
+
+    /**
+     * The bot automatically responds true to game end requests.
+     */
+    public boolean requestConfirmation() {
+        return true;
+    }
+
+    // do nothing
+    public void clear() {
     }
 }

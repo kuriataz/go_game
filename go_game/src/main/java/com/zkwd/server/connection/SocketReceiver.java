@@ -15,7 +15,7 @@ public class SocketReceiver implements Runnable{
     private BufferedReader in;
     private PrintWriter out;
 
-    private String currentMessage;
+    private volatile String currentMessage;
     private boolean closed = false;
 
     private boolean exited = false;

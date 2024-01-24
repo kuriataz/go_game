@@ -19,6 +19,8 @@ public class GoGame {
   public static final int WHITE = 1;
   public static final int FREE = 0;
 
+  private boolean isBotGame = false;
+
   private Player black;
   private Player white;
 
@@ -86,115 +88,119 @@ public class GoGame {
         broadcast("game_noend");
       }
 
-      System.out.println(turn + ": checking input signals...");
       // listen for exit singals from both players, and move from current
       String csig, osig;
       
       currentPlayer.clear();
       otherPlayer.clear();
 
-      // if bot, generate move
-      if (currentPlayer instanceof CPUPlayer) {
-        ((CPUPlayer)currentPlayer).generateMove();
-      }
-
       do {
-        // important: get current messages without waiting.
-        csig = currentPlayer.getLastMessage();
-        osig = otherPlayer.getLastMessage();
-        // !!! LOADBEARING SOUT DO NOT DELETE
-        System.out.print("");
-      } while (!csig.equals("exit") && !osig.equals("exit") && !csig.startsWith("move:"));
-
-      System.out.println("received: " + csig + "|" + osig + ". parsing...");
-      // parse signal - was it an abandonment, or a move?
-      if (csig.equals("exit")) {
-        // current player abandoned
-        otherPlayer.sendMessage("game_abdn");
-        if (otherPlayer.requestConfirmation()) {
-          // replace other player with CPU
-          currentPlayer = new CPUPlayer(board, turn);
-          if (turn == -1) {
-            black = currentPlayer;
-          } else {
-            white = currentPlayer;
-          }
-          //
-        } else {
-          // exit game
-          otherPlayer.sendMessage("game_exit");
-          break;
-          //
+        System.out.println(turn + ": awaiting input signals...");
+        // if bot, generate move
+        if (currentPlayer instanceof CPUPlayer) {
+          ((CPUPlayer)currentPlayer).generateMove();
         }
-        //
-      } else if (osig.equals("exit")) {
-        // other player abandoned
-        currentPlayer.sendMessage("game_abdn");
-        if (currentPlayer.requestConfirmation()) {
-          // replace other player with CPU
-          otherPlayer = new CPUPlayer(board, -turn);
-          if (turn == 1) {
-            black = otherPlayer;
-          } else {
-            white = otherPlayer;
-          }
-          //
-        } else {
-          // exit game
-          currentPlayer.sendMessage("game_exit");
-          break;
-          //
-        }
-        //
-      } else {
-        // move
-        System.out.println(turn + ": detected a move! checking validity...");
 
-        try {
-          Pair<Integer, Integer> move = parseMove(csig);
-
-          if(move.getKey() == -1) {
-            // requested
-            requested = true;
-            System.out.println(turn + ": player requested end...");
-            broadcast("game_vrfd");
+        do {
+          // important: get current messages without waiting.
+          csig = currentPlayer.getLastMessage();
+          osig = otherPlayer.getLastMessage();
+          // !!! LOADBEARING SOUT DO NOT DELETE
+          System.out.print("");
+        } while (!csig.equals("exit") && !osig.equals("exit") && !csig.startsWith("move:"));
+  
+        System.out.println("received: " + csig + "|" + osig + ". parsing...");
+        // parse signal - was it an abandonment, or a move?
+        if (csig.equals("exit")) {
+          // current player abandoned
+          otherPlayer.sendMessage("game_abdn");
+          if (otherPlayer.requestConfirmation()) {
+            // replace other player with CPU
+            System.out.println("\t\t REPLACING currentPlayer");
+            currentPlayer = new CPUPlayer(board, turn);
+            if (turn == -1) {
+              black = currentPlayer;
+            } else {
+              white = currentPlayer;
+            }
             //
-          } else if (board.correctMove(move.getKey(), move.getValue(), turn)) {
-            board.putStone(move.getKey(), move.getValue(), turn);
-            board.removeCapturedStones();
-            board.removeCapturedChains();
-
-            System.out.println("valid move");
-            broadcast("game_vrfd");
           } else {
-            // tell current player their move is invalid.
-            System.out.println("invalid move");
-            broadcast("game_vrfd");
-            // continue without changing player
-            valid = false;
+            // exit game
+            break;
+            //
           }
+          //
+        } else if (osig.equals("exit")) {
+          // other player abandoned
+          currentPlayer.sendMessage("game_abdn");
+          if (currentPlayer.requestConfirmation()) {
+            // replace other player with CPU
+            System.out.println("\t\t REPLACING otherPlayer");
+            otherPlayer = new CPUPlayer(board, -turn);
+            ((CPUPlayer) otherPlayer).generateMove();
+            if (turn == 1) {
+              black = otherPlayer;
+            } else {
+              white = otherPlayer;
+            }
+            //
+          } else {
+            // exit game
+            break;
+            //
+          }
+          //
+        }
+      } while (!csig.startsWith("move:"));
 
-        } catch (MoveException e) {
-          // move was incorrect - try again
-          e.printStackTrace();
+      System.out.println(turn + ": detected a move! checking validity...");
+  
+      try {
+        Pair<Integer, Integer> move = parseMove(csig);
+
+        if(move.getKey() == -1) {
+          // requested
+          requested = true;
+          System.out.println(turn + ": player requested end...");
+          broadcast("game_vrfd");
+          //
+        } else if (board.correctMove(move.getKey(), move.getValue(), turn)) {
+          board.putStone(move.getKey(), move.getValue(), turn);
+          board.removeCapturedStones();
+          board.removeCapturedChains();
+
+          System.out.println("valid move");
+          broadcast("game_vrfd");
+        } else {
+          // tell current player their move is invalid.
+          System.out.println("invalid move");
+          broadcast("game_vrfd");
           // continue without changing player
           valid = false;
-
-        } catch (GameException e) {
-          e.printStackTrace();
-          // something went wrong and the game must close
-          broadcast("game_exit");
-          break;
         }
+
+      } catch (MoveException e) {
+        // move was incorrect - try again
+        e.printStackTrace();
+        // continue without changing player
+        valid = false;
+
+      } catch (GameException e) {
+        e.printStackTrace();
+        // something went wrong and the game must close
+        broadcast("game_err");
+        break;
       }
 
       System.out.println(turn + ": checking if players abandoned...");
       // check if either player has abandoned the match while we weren't listening
-      if (checkAbandoned(currentPlayer)) {
+      if (checkAbandoned(otherPlayer)) {
         currentPlayer.sendMessage("game_abdn");
         if (currentPlayer.requestConfirmation()) {
           // replace other player with CPU
+          System.out.println("\t\t REPLACING otherPlayer2");
           otherPlayer = new CPUPlayer(board, -turn);
+          ((CPUPlayer) otherPlayer).generateMove();
           if (turn == 1) {
             black = otherPlayer;
           } else {
@@ -203,7 +209,6 @@ public class GoGame {
           //
         } else {
           // exit game
-          currentPlayer.sendMessage("game_exit");
           break;
           //
         }
@@ -211,9 +216,10 @@ public class GoGame {
         currentPlayer.sendMessage("game_noabdn");
       }
 
-      if (checkAbandoned(otherPlayer)) {
+      if (checkAbandoned(currentPlayer)) {
         otherPlayer.sendMessage("game_abdn");
         if (otherPlayer.requestConfirmation()) {
+          System.out.println("\t\t REPLACING currentPlayer2");
           // replace other player with CPU
           currentPlayer = new CPUPlayer(board, turn);
           if (turn == -1) {
@@ -224,7 +230,6 @@ public class GoGame {
           //
         } else {
           // exit game
-          otherPlayer.sendMessage("game_exit");
           break;
           //
         }

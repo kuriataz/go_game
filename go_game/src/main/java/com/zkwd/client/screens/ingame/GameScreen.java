@@ -120,21 +120,25 @@ public class GameScreen extends BorderPane {
 
           String req;
           do {
-            req = App.await();
-          } while (!req.equals("game_abdn") && !req.equals("game_err") && !req.equals("game_vrfd"));
+            do {
+              req = App.await();
+            } while (!req.equals("game_abdn") && !req.equals("game_err") && !req.equals("game_vrfd"));
+  
+            if(req.equals("game_abdn")) {
+              Platform.runLater(() -> {
+                reqBot();
+              });
+            } else if(req.equals("game_err")) {
+              App.changeState(AppState.LOBBY);
+              return;
+            } 
+          } while(!req.equals("game_vrfd"));
 
-          if(req.equals("game_abdn")) {
-            Platform.runLater(() -> {
-              reqBot();
-            });
-          } else if(req.equals("game_err")) {
-            App.changeState(AppState.LOBBY);
-            return;
-          }
+          disableInput();
+          
           // if invalid, ->loop
           
           // if valid, disable all input
-          disableInput();
 
           // there is a possibility the window is closed now
           // if this happens, abd is sent anyway

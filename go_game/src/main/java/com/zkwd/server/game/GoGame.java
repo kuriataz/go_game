@@ -92,6 +92,12 @@ public class GoGame {
       
       currentPlayer.clear();
       otherPlayer.clear();
+
+      // if bot, generate move
+      if (currentPlayer instanceof CPUPlayer) {
+        ((CPUPlayer)currentPlayer).generateMove();
+      }
+
       do {
         // important: get current messages without waiting.
         csig = currentPlayer.getLastMessage();
@@ -108,6 +114,11 @@ public class GoGame {
         if (otherPlayer.requestConfirmation()) {
           // replace other player with CPU
           currentPlayer = new CPUPlayer(board, turn);
+          if (turn == -1) {
+            black = currentPlayer;
+          } else {
+            white = currentPlayer;
+          }
           //
         } else {
           // exit game
@@ -122,6 +133,11 @@ public class GoGame {
         if (currentPlayer.requestConfirmation()) {
           // replace other player with CPU
           otherPlayer = new CPUPlayer(board, -turn);
+          if (turn == 1) {
+            black = otherPlayer;
+          } else {
+            white = otherPlayer;
+          }
           //
         } else {
           // exit game
@@ -179,6 +195,11 @@ public class GoGame {
         if (currentPlayer.requestConfirmation()) {
           // replace other player with CPU
           otherPlayer = new CPUPlayer(board, -turn);
+          if (turn == 1) {
+            black = otherPlayer;
+          } else {
+            white = otherPlayer;
+          }
           //
         } else {
           // exit game
@@ -195,6 +216,11 @@ public class GoGame {
         if (otherPlayer.requestConfirmation()) {
           // replace other player with CPU
           currentPlayer = new CPUPlayer(board, turn);
+          if (turn == -1) {
+            black = currentPlayer;
+          } else {
+            white = currentPlayer;
+          }
           //
         } else {
           // exit game
@@ -215,11 +241,13 @@ public class GoGame {
         if(turn == -1) {
           white = otherPlayer;
           black = currentPlayer;
+          //
           currentPlayer = white;
           otherPlayer = black;
         } else {
           white = currentPlayer;
           black = otherPlayer;
+          //
           currentPlayer = black;
           otherPlayer = white;
         }

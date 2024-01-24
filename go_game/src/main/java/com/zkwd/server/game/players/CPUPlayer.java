@@ -27,16 +27,23 @@ public class CPUPlayer implements Player{
     /**
      * Generate a random (but pretty good) move.
      */
-    public String getNextMessage() {
+    public void generateMove() {
         System.out.println("!! \t generating bot move...");
 
         Random r = new Random();
 
         // TODO : better
-        int x = r.nextInt() % board.getSize();
-        int y = r.nextInt() % board.getSize();
+        int x = r.nextInt(0, board.getSize());
+        int y = r.nextInt(0, board.getSize());
         
         lastMove = "move:" + x + "," + y;
+    }
+
+    /**
+     * Generate a move and return it
+     */
+    public String getNextMessage() {
+        generateMove();
         return lastMove;
     }
 

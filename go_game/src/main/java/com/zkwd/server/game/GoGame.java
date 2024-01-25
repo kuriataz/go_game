@@ -108,13 +108,6 @@ public class GoGame {
 
       do {
         System.out.println(turn + ": awaiting input signals...");
-        // if bot, generate move
-        if (currentPlayer instanceof CPUPlayer) {
-          ((CPUPlayer)currentPlayer).generateMove();
-        }
-        if (otherPlayer instanceof CPUPlayer) {
-          ((CPUPlayer)otherPlayer).generateMove();
-        }
 
         do {
           // important: get current messages without waiting.
@@ -162,7 +155,6 @@ public class GoGame {
             // replace other player with CPU
             System.out.println("\t\t REPLACING otherPlayer");
             otherPlayer = new CPUPlayer(board, -turn);
-            ((CPUPlayer) otherPlayer).generateMove();
             if (turn == 1) {
               black = otherPlayer;
             } else {
@@ -231,7 +223,6 @@ public class GoGame {
           // replace other player with CPU
           System.out.println("\t\t REPLACING otherPlayer2");
           otherPlayer = new CPUPlayer(board, -turn);
-          ((CPUPlayer) otherPlayer).generateMove();
           if (turn == 1) {
             black = otherPlayer;
           } else {

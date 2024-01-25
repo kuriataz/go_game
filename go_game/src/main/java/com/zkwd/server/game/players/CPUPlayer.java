@@ -5,16 +5,28 @@ import java.util.Random;
 import com.zkwd.server.game.gamestate.Board;
 
 /**
- * Contains functionality for communication between game (on the server-side) and client application.
+ * A bot player that generates moves
  */
 public class CPUPlayer implements Player{
-
+    
+    // the bot's own board
     private Board board;
-
-    private String lastMove;
+    // last move
+    private String lastMove; // TODO : figure out how to store move priority list.
+    // player color
+    private int color;
+    // indicates whether it is the bot's turn or not
+    private boolean turn;
 
     public CPUPlayer(Board board, int color) {
         this.board = board;
+        this.color = color;
+            
+        generateMoveList();
+    }
+
+    public CPUPlayer(int color) {
+        this.color = color;
     }
 
     /**
@@ -23,28 +35,37 @@ public class CPUPlayer implements Player{
      */
     public void sendMessage(String message){
         System.out.println("bot received: " + message);
+        // have we received board string?
         if(message.endsWith("|")) {
-            System.out.println("message is a board. updating...");
             // if board is null, create new board
             if (board == null) {
                 board = new Board(message.indexOf("|"));
             }
             // set board
             board.setBoard(message);
+        } else if(message.equals("game_noend")) {
+            // this is the last signal thats sent before the game asks a player for a move.
+            // generate a move here 
+            if (turn) {
+                generateMoveList();
+            }
+        } else if(message.equals("game_go")) {
+            // bot round
+            turn = true;
+        } else if(message.equals("game_no")) {
+            // non-bot round
+            turn = false;
         }
-        // else ignore
-        System.out.println("updated :)");
     }
 
     /**
      * Generate a random (but pretty good) move.
      */
-    public void generateMove() {
+    public void generateMoveList() {
         System.out.println("!! \t generating bot move...");
 
         Random r = new Random();
 
-        // TODO : better
         int x = r.nextInt(0, board.getSize());
         int y = r.nextInt(0, board.getSize());
         
@@ -52,10 +73,10 @@ public class CPUPlayer implements Player{
     }
 
     /**
-     * Generate a move and return it
+     * (unused) Generate a new move and return it.
      */
     public String getNextMessage() {
-        generateMove();
+        generateMoveList();
         return lastMove;
     }
 
@@ -63,6 +84,10 @@ public class CPUPlayer implements Player{
      * Get the bot's last move.
      */
     public String getLastMessage() {
+        if(lastMove == null){
+            // for the first time this is called, a move may not have been generated yet
+            generateMoveList();
+        }
         return lastMove;
     }
 

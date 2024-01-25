@@ -124,10 +124,10 @@ public class GoServer {
           ClientPlayer a = new ClientPlayer(host);
 
           if(white) {
-            CPUPlayer b = new CPUPlayer(null, 1);
+            CPUPlayer b = new CPUPlayer(1);
             new GoGame(a, b, size).startGame();
           } else {
-            CPUPlayer b = new CPUPlayer(null, -1);
+            CPUPlayer b = new CPUPlayer(-1);
             new GoGame(b, a, size).startGame();
           }
 

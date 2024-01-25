@@ -18,10 +18,22 @@ public class CPUPlayer implements Player{
     }
 
     /**
-     * The computer receives a message and does something. Probably usually not much.
+     * The computer receives a message and does something.
+     * Update board if message is a board string.
      */
     public void sendMessage(String message){
-        // the computer is going to get sent its color, and the board size. set those here
+        System.out.println("bot received: " + message);
+        if(message.endsWith("|")) {
+            System.out.println("message is a board. updating...");
+            // if board is null, create new board
+            if (board == null) {
+                board = new Board(message.indexOf("|"));
+            }
+            // set board
+            board.setBoard(message);
+        }
+        // else ignore
+        System.out.println("updated :)");
     }
 
     /**

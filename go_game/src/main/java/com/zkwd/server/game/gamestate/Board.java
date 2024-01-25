@@ -48,11 +48,16 @@ public class Board {
 
   public Board setBoard(String boardString) {
 
+    // TODO : hey, can you set up chains here somehow? plss
+    // i think its necessary for bot
+
     int index = 0;
+    System.out.println("beginning");
 
     for (int i = 0; i < size; ++i) {
       for (int j = 0; j < size; ++j) {
         char currentChar = boardString.charAt(index++);
+        System.out.println("(" + index + "/" + boardString.length() + ")");
 
         if (currentChar == 'W') {
           board[i][j].setState(1); // Assuming 1 represents the state for 'W'
@@ -68,6 +73,7 @@ public class Board {
 
     return this; // Assuming that you want to return the modified Board object
   }
+  
   /**
    * Gets the size of the board.
    * @return The size of the board

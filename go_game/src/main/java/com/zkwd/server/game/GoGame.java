@@ -66,7 +66,7 @@ public class GoGame {
     /**
      * !! GAME LOOP !!
      */
-    while (true) {
+    while (currentPlayer instanceof ClientPlayer || otherPlayer instanceof ClientPlayer) {
       valid = true;
       // tell players whose turn it is
       currentPlayer.sendMessage("game_go");
@@ -111,6 +111,9 @@ public class GoGame {
         // if bot, generate move
         if (currentPlayer instanceof CPUPlayer) {
           ((CPUPlayer)currentPlayer).generateMove();
+        }
+        if (otherPlayer instanceof CPUPlayer) {
+          ((CPUPlayer)otherPlayer).generateMove();
         }
 
         do {

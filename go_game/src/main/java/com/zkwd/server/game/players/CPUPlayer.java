@@ -96,9 +96,12 @@ public class CPUPlayer implements Player {
           priority += 10000;
 
           if ((i % 8) == 0 || (j % 8) == 0) {
-              priority -= 5;
+            priority -= 5;
           }
-          //board.board[i][j].setPriority(priority);
+          
+          if (board.getValue(i, j) != 0) {
+            priority = Double.MIN_VALUE;
+          }
 
           // prepare value for storage
           String move = "move:" + i + "," + j;

@@ -85,7 +85,7 @@ public class Board {
    * @return state (0: free, 1: white, -1: black) of the intersection with
    *     coordinates x, y
    */
-  int getValue(int x, int y) { return board[x][y].getState(); }
+  public int getValue(int x, int y) { return board[x][y].getState(); }
 
   /**
    * Sets neighbours of each intersection and gives them numbers of liberties.

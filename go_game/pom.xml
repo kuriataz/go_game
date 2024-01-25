@@ -50,6 +50,8 @@
         <version>3.11.0</version>
         <configuration>
           <release>17</release>
+          <source>15</source> <!-- Specify your Java source version -->
+          <target>15</target> <!-- Specify your Java target version -->
         </configuration>
       </plugin>
 

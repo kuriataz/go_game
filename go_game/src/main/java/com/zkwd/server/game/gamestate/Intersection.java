@@ -40,6 +40,15 @@ public class Intersection {
     }
   }
 
+  void updateLiberty() {
+    this.liberty = 0;
+    for (Intersection i : neighbours) {
+      if (i.getState() == 0) {
+        ++this.liberty;
+      }
+    }
+  }
+
   void removeChain() {
     for (Intersection i : neighbours) {
       if (i.getState() == this.state) {

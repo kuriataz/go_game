@@ -49,6 +49,7 @@ public class CPUPlayer implements Player {
       board.setBoard(message);
     } else if(message.equals("game_noend")) {
       // last signal before move request. only reset on our first turn
+      System.out.println("turncounter: " + turnCounter);
       if (turn && turnCounter > 0) {
         generateMoveList();
       }
@@ -56,13 +57,13 @@ public class CPUPlayer implements Player {
       // bot round
       turn = true;
       turnCounter--;
-    } else if(message.equals("game_no")) {
+    } else if(message.equals("game_opp")) {
       // non-bot round
       turn = false;
       turnCounter = 2;
     } else if(message.equals("game_vrfd")) {
       bestMoves.remove(0);
-      if (bestMoves.get(0).getValue() < 0) {
+      if (bestMoves.isEmpty() || bestMoves.get(0).getValue() < 0) {
         // resign
         preferredMove = "move:-1,0";
       } else {
@@ -100,6 +101,7 @@ public class CPUPlayer implements Player {
           }
           
           if (board.getValue(i, j) != 0) {
+            System.out.println("zeroing " + i + " " + j);
             priority = Double.MIN_VALUE;
           }
 

@@ -4,6 +4,7 @@ import com.zkwd.server.connection.SocketReceiver;
 import com.zkwd.server.connection.Lobby;
 import com.zkwd.server.connection.LobbyInterpreter;
 import com.zkwd.server.game.GoGame;
+import com.zkwd.server.game.players.CPUPlayer;
 import com.zkwd.server.game.players.ClientPlayer;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -92,6 +93,43 @@ public class GoServer {
           ClientPlayer b = new ClientPlayer(joinee);
 
           new GoGame(a, b, size).startGame();
+
+          System.out.println("!!! game ended successfully !!!");
+
+        } catch (Exception e) {
+          /**
+           * TODO : in GoGame, exceptions should be thrown that should end the
+           * game (one of the players disconnects, something goes very wrong)
+           * because here both players (or the remaining player) can be safely
+           * disconnected into the lobby screen
+           */
+        }
+      }
+    }.start();
+  }
+
+  /**
+   * Create a new game against a CPU opponent.
+   * @param host host socket
+   * @param size board size
+   * @param white does host want to play white?
+   */
+  public static void createBotGame(SocketReceiver host, int size, boolean white) {
+    new Thread() {
+      @Override
+      public void run() {
+        try {
+          host.reset();
+
+          ClientPlayer a = new ClientPlayer(host);
+
+          if(white) {
+            CPUPlayer b = new CPUPlayer(null, 1);
+            new GoGame(a, b, size).startGame();
+          } else {
+            CPUPlayer b = new CPUPlayer(null, -1);
+            new GoGame(b, a, size).startGame();
+          }
 
           System.out.println("!!! game ended successfully !!!");
 

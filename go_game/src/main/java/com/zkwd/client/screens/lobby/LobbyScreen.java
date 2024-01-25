@@ -33,7 +33,10 @@ public class LobbyScreen extends BorderPane {
   Button nineteen;
   HBox sizeBox;
 
+  HBox botMenu;
   VBox vbox;
+
+  String a = "placeholder!";
 
   int boardSize = 9;
 
@@ -89,7 +92,17 @@ public class LobbyScreen extends BorderPane {
     sizeBox.getChildren().addAll(nine, thirteen, nineteen);
     sizeBox.setAlignment(Pos.CENTER);
 
-    vbox = new VBox(5, hbox, codeInput, sizeBox);
+    Label bot = new Label("play against CPU?: ");
+    Button bot1 = new Button("as white");
+    Button bot2 = new Button("as black");
+    bot1.setOnAction(this::enterBotAsWhite);
+    bot2.setOnAction(this::enterBotAsBlack);
+
+    botMenu = new HBox(10, bot, bot2, bot1);
+    botMenu.setAlignment(Pos.CENTER);
+    botMenu.setVisible(false);
+
+    vbox = new VBox(5, hbox, codeInput, sizeBox, botMenu);
     vbox.setAlignment(Pos.CENTER);
 
     this.setCenter(vbox);
@@ -108,6 +121,7 @@ public class LobbyScreen extends BorderPane {
       btn.setDisable(true);
       tf.setDisable(true);
       cancel.setVisible(true);
+      botMenu.setVisible(true);
 
       System.out.println("service");
       waitService.restart();
@@ -127,6 +141,13 @@ public class LobbyScreen extends BorderPane {
     // send message to waiter
     waitService.cancel();
   }
+  private void enterBotAsWhite(ActionEvent event) {
+    App.send("bot_white");
+  }
+  private void enterBotAsBlack(ActionEvent event) {
+    App.send("bot_black");
+  }
+
   private void sizeNine(ActionEvent event) { boardSize = 9; }
   private void sizeThirteen(ActionEvent event) { boardSize = 13; }
   private void sizeNineteen(ActionEvent event) { boardSize = 19; }
@@ -162,6 +183,7 @@ public class LobbyScreen extends BorderPane {
           btn.setDisable(false);
           tf.setDisable(false);
           cancel.setVisible(false);
+          botMenu.setVisible(false);
           txt.setText("this is the lobby screen.");
         }
       };

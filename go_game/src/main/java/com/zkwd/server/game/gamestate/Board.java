@@ -48,6 +48,9 @@ public class Board {
 
   public Board setBoard(String boardString) {
 
+    // TODO : hey, can you set up chains here somehow? plss
+    // i think its necessary for bot
+
     int index = 0;
 
     for (int i = 0; i < size; ++i) {
@@ -68,6 +71,7 @@ public class Board {
 
     return this; // Assuming that you want to return the modified Board object
   }
+  
   /**
    * Gets the size of the board.
    * @return The size of the board

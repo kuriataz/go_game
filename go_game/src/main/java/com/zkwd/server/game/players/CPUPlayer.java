@@ -25,10 +25,10 @@ public class CPUPlayer implements Player {
    * The computer receives a message and does something. Probably usually not
    * much.
    */
-  public void sendMessage(String message) {
-    // the computer is going to get sent its color, and the board size. set
-    // those here
-  }
+  //   public void sendMessage(String message) {
+  //     // the computer is going to get sent its color, and the board size. set
+  //     // those here
+  //   }
 
   /**
    * Generate a random (but pretty good) move.
@@ -82,39 +82,56 @@ public class CPUPlayer implements Player {
         }
         board.board[i][j].setPriority(priority);
       }
-    }
-  }
-
-  public double squareDistance(int x, int y, int playerColor) {
-    int disSum = 0;
-    for (int i = 0; i != board.getSize(); ++i) {
-      for (int j = 0; j != board.getSize(); ++j) {
-        if (board.board[i][j].getState() == -playerColor) {
-          disSum += Math.pow((i - x), 2) + Math.pow((j - y), 2);
+      /**
+       * The computer receives a message and does something.
+       * Update board if message is a board string.
+       */
+      public void sendMessage(String message) {
+        System.out.println("bot received: " + message);
+        if (message.endsWith("|")) {
+          System.out.println("message is a board. updating...");
+          // if board is null, create new board
+          if (board == null) {
+            board = new Board(message.indexOf("|"));
+          }
+          // set board
+          board.setBoard(message);
         }
+        // else ignore
+        System.out.println("updated :)");
       }
     }
-    return disSum;
+
+    public double squareDistance(int x, int y, int playerColor) {
+      int disSum = 0;
+      for (int i = 0; i != board.getSize(); ++i) {
+        for (int j = 0; j != board.getSize(); ++j) {
+          if (board.board[i][j].getState() == -playerColor) {
+            disSum += Math.pow((i - x), 2) + Math.pow((j - y), 2);
+          }
+        }
+      }
+      return disSum;
+    }
+
+    /**
+     * Generate a move and return it
+     */
+    public String getNextMessage() {
+      generateMove();
+      return lastMove;
+    }
+
+    /**
+     * Get the bot's last move.
+     */
+    public String getLastMessage() { return lastMove; }
+
+    /**
+     * The bot automatically responds true to game end requests.
+     */
+    public boolean requestConfirmation() { return true; }
+
+    // do nothing
+    public void clear() {}
   }
-
-  /**
-   * Generate a move and return it
-   */
-  public String getNextMessage() {
-    generateMove();
-    return lastMove;
-  }
-
-  /**
-   * Get the bot's last move.
-   */
-  public String getLastMessage() { return lastMove; }
-
-  /**
-   * The bot automatically responds true to game end requests.
-   */
-  public boolean requestConfirmation() { return true; }
-
-  // do nothing
-  public void clear() {}
-}

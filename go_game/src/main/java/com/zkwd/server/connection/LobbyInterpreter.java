@@ -57,6 +57,15 @@ public class LobbyInterpreter implements Runnable {
             GoServer.unwait(foundLobby);
             receiver.send("success");
             System.out.println("no longer waiting for code " + foundLobby.getCode());
+
+          } else if (waitResult.equals("bot_white")) {
+            GoServer.unwait(foundLobby);
+            System.out.println("starting a bot match as white");
+            GoServer.createBotGame(receiver, boardSize, false);
+          } else if (waitResult.equals("bot_black")) {
+            GoServer.unwait(foundLobby);
+            System.out.println("starting a bot match as black");
+            GoServer.createBotGame(receiver, boardSize, true);
           }
 
           // we no longer care if the app connected or not. we will keep receiving commands, but they will just be ignored

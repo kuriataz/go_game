@@ -1,104 +1,160 @@
 package com.zkwd.server.game.players;
 
-import java.util.Random;
+import java.util.ArrayList;
 
 import com.zkwd.server.game.gamestate.Board;
+import javafx.util.Pair;
 
 /**
  * A bot player that generates moves
  */
-public class CPUPlayer implements Player{
+public class CPUPlayer implements Player {
     
-    // the bot's own board
-    private Board board;
-    // last move
-    private String lastMove; // TODO : figure out how to store move priority list.
-    // player color
-    private int color;
-    // indicates whether it is the bot's turn or not
-    private boolean turn;
+  // the bot's own board
+  private Board board;
+  private String preferredMove;
+  // player color
+  private int color;
+  // indicates whether it is the bot's turn or not
+  private boolean turn;
+  private int turnCounter;
 
-    public CPUPlayer(Board board, int color) {
-        this.board = board;
-        this.color = color;
-            
+  // array that contains a list of the best moves together with their priority values
+  private ArrayList<Pair<String, Double>> bestMoves = new ArrayList<>();
+
+  public CPUPlayer(Board board, int color) {
+      this.board = board;
+      this.color = color;
+          
+      generateMoveList();
+  }
+
+  public CPUPlayer(int color) {
+      this.color = color;
+  }
+
+  /**
+   * The computer receives a message and does something.
+   * Update board if message is a board string.
+   */
+  public void sendMessage(String message) {
+    System.out.println("bot received: " + message);
+    // have we received board string?
+    if(message.endsWith("|")) {
+      // if board is null, create new board
+      if (board == null) {
+        board = new Board(message.indexOf("|"));
+      }
+      // set board
+      board.setBoard(message);
+    } else if(message.equals("game_noend")) {
+      // last signal before move request. only reset on our first turn
+      if (turn && turnCounter > 0) {
         generateMoveList();
+      }
+    } else if(message.equals("game_go")) {
+      // bot round
+      turn = true;
+      turnCounter--;
+    } else if(message.equals("game_no")) {
+      // non-bot round
+      turn = false;
+      turnCounter = 2;
+    } else if(message.equals("game_vrfd")) {
+      bestMoves.remove(0);
+      if (bestMoves.get(0).getValue() < 0) {
+        // resign
+        preferredMove = "move:-1,0";
+      } else {
+        // next best move
+        preferredMove = bestMoves.get(0).getKey();
+      }
     }
+  }
 
-    public CPUPlayer(int color) {
-        this.color = color;
-    }
+  /**
+   * Generate a random (but pretty good) move.
+   */
+  public void generateMoveList() {
+    System.out.println("!! \t generating bot move...");
+    priorityFunction(color);
+  }
 
-    /**
-     * The computer receives a message and does something.
-     * Update board if message is a board string.
-     */
-    public void sendMessage(String message){
-        System.out.println("bot received: " + message);
-        // have we received board string?
-        if(message.endsWith("|")) {
-            // if board is null, create new board
-            if (board == null) {
-                board = new Board(message.indexOf("|"));
-            }
-            // set board
-            board.setBoard(message);
-        } else if(message.equals("game_noend")) {
-            // this is the last signal thats sent before the game asks a player for a move.
-            // generate a move here 
-            if (turn) {
-                generateMoveList();
-            }
-        } else if(message.equals("game_go")) {
-            // bot round
-            turn = true;
-        } else if(message.equals("game_no")) {
-            // non-bot round
-            turn = false;
+  public void priorityFunction(int playerColor) {
+    try {
+      bestMoves.clear();
+
+      double disOpponent = 0;
+      double disPlayer = 0;
+      double priority = 0;
+      for (int i = 0; i != board.getSize(); ++i) {
+        for (int j = 0; j != board.getSize(); ++j) {
+          disOpponent = 1 / squareDistance(i, j, -playerColor);
+          disPlayer = squareDistance(i, j, playerColor) * 0.5;
+          priority = disOpponent + disPlayer;
+
+          priority += 10000;
+
+          if ((i % 8) == 0 || (j % 8) == 0) {
+              priority -= 5;
+          }
+          //board.board[i][j].setPriority(priority);
+
+          // prepare value for storage
+          String move = "move:" + i + "," + j;
+          Pair<String, Double> val = new Pair<String,Double>(move, priority);
+          // put value into sorted array
+          int index = 0;
+          while (index < bestMoves.size() && val.getValue() < bestMoves.get(index).getValue()) {
+            index++;
+          } // loop ends when val >= arr[index]. we want to insert val before that index. 
+          bestMoves.add(index, val);
+          // TODO : recheck my math pls loll
         }
+      }
+      // set best move as preferred move
+      preferredMove = bestMoves.get(0).getKey();
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+  }
 
-    /**
-     * Generate a random (but pretty good) move.
-     */
-    public void generateMoveList() {
-        System.out.println("!! \t generating bot move...");
-
-        Random r = new Random();
-
-        int x = r.nextInt(0, board.getSize());
-        int y = r.nextInt(0, board.getSize());
-        
-        lastMove = "move:" + x + "," + y;
-    }
-
-    /**
-     * (unused) Generate a new move and return it.
-     */
-    public String getNextMessage() {
-        generateMoveList();
-        return lastMove;
-    }
-
-    /**
-     * Get the bot's last move.
-     */
-    public String getLastMessage() {
-        if(lastMove == null){
-            // for the first time this is called, a move may not have been generated yet
-            generateMoveList();
+  public double squareDistance(int x, int y, int playerColor) {
+    int disSum = 0;
+    for (int i = 0; i != board.getSize(); ++i) {
+      for (int j = 0; j != board.getSize(); ++j) {
+        if (board.board[i][j].getState() == -playerColor) {
+          disSum += Math.pow((i - x), 2) + Math.pow((j - y), 2);
         }
-        return lastMove;
+      }
     }
+    return disSum;
+  }
 
-    /**
-     * The bot automatically responds true to game end requests.
-     */
-    public boolean requestConfirmation() {
-        return true;
-    }
+  /**
+   * (unused) Generate a new move and return it.
+   */
+  public String getNextMessage() {
+      generateMoveList();
+      return preferredMove;
+  }
 
-    // do nothing
-    public void clear() {
-    }
+  /**
+   * Get the bot's last move.
+   */
+  public String getLastMessage() {
+      if(bestMoves.isEmpty()){
+          // if moves havent been generated yet, do so.
+          generateMoveList();
+      }
+      return preferredMove;
+  }
+
+  /**
+   * The bot automatically responds true to game end requests.
+   */
+  public boolean requestConfirmation() { return true; }
+
+  // do nothing
+  public void clear() {}
 }

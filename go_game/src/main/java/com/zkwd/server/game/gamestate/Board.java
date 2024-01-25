@@ -180,9 +180,18 @@ public class Board {
           }
         }
       }
+      updateLiberties();
       updateChainsLiberty();
     } else {
       throw new MoveException();
+    }
+  }
+
+  private void updateLiberties() {
+    for (int i = 0; i != size; ++i) {
+      for (int j = 0; j != size; ++j) {
+        board[i][j].updateLiberty();
+      }
     }
   }
 
@@ -328,36 +337,6 @@ public class Board {
       }
     }
     return captureKo && neighboursCounter == 4;
-  }
-
-  public void priorityFunction(int playerColor) {
-    double disOpponent = 0;
-    double disPlayer = 0;
-    double priority = 0;
-    for (int i = 0; i < size; ++i) {
-      for (int j = 0; j < size; ++j) {
-        disOpponent = 1 / squareDistance(i, j, -playerColor);
-        disPlayer = squareDistance(i, j, playerColor) * 0.5;
-        priority = disOpponent + disPlayer;
-
-        if ((i % 8) == 0 || (j % 8) == 0) {
-          priority -= 5;
-        }
-        board[i][j].setPriority(priority);
-      }
-    }
-  }
-
-  public double squareDistance(int x, int y, int playerColor) {
-    int disSum = 0;
-    for (int i = 0; i < size; ++i) {
-      for (int j = 0; j < size; ++j) {
-        if (board[i][j].getState() == -playerColor) {
-          disSum += Math.pow((i - x), 2) + Math.pow((j - y), 2);
-        }
-      }
-    }
-    return disSum;
   }
 
   public int getChainLiberty(int id) {

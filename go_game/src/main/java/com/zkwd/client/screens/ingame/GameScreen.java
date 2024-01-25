@@ -14,7 +14,8 @@ import javafx.scene.text.Text;
 
 public class GameScreen extends BorderPane {
 
-  private volatile int plrs = 2;
+  private volatile boolean left = false;
+  private volatile boolean reqd = false;
 
   GUIBoardBuilder boardBuilder;
 
@@ -70,13 +71,12 @@ public class GameScreen extends BorderPane {
           txt.setText("white pieces");
         }
 
-        Platform.runLater(() -> {
-          disableInput();
-        });
-
         boolean turn;
 
-        while(plrs > 0) {
+        while(!left) {
+          Platform.runLater(() -> {
+            disableInput();
+          });
           // await turn signal
           message = App.await();
 
@@ -95,6 +95,7 @@ public class GameScreen extends BorderPane {
               Platform.runLater(() -> {
                 reqEnd();
               });
+              reqd = true;
             }
 
             Platform.runLater(() -> {
@@ -114,20 +115,28 @@ public class GameScreen extends BorderPane {
 
           // if received cont, listen for err or abd
 
-          System.out.println("\t awaiting abdn/validity info..");
+          if(reqd) {
+            reqd = false;
+            continue;
+          }
 
           // if received abd, ask for bot
           // if yes, send bot
           // if received exit, quit
 
+          System.out.println("\t awaiting abdn/validity info..");
           String req;
           do {
+            if (left) {
+              return;
+            }
+
             do {
               req = App.await();
+
             } while (!req.equals("game_abdn") && !req.equals("game_err") && !req.equals("game_vrfd"));
   
             if(req.equals("game_abdn")) {
-              plrs--;
               Platform.runLater(() -> {
                 reqBot();
               });
@@ -157,7 +166,6 @@ public class GameScreen extends BorderPane {
           System.out.println("\t awaiting final abdn info...");
           req = App.await();
           if (req.equals("game_abdn")) {
-            plrs--;
             reqBot();
           } else if (req.equals("game_err")) {
             App.changeState(AppState.LOBBY);
@@ -211,6 +219,7 @@ public class GameScreen extends BorderPane {
       // send any normal code
       App.send("no");
       App.changeState(AppState.LOBBY);
+      left = true;
     });
 
     this.setCenter(c);
@@ -279,6 +288,8 @@ public class GameScreen extends BorderPane {
     System.out.println("requesting game end");
     disableInput();
 
+    reqd = true;
+
     App.send("move:-1,0");
   };
 
@@ -297,7 +308,7 @@ public class GameScreen extends BorderPane {
       // send server the exit code
       App.send("exit");
       App.changeState(AppState.LOBBY);
-      plrs = 0;
+      left = true;
       //
     });
     c.no.setOnMouseClicked(e -> {

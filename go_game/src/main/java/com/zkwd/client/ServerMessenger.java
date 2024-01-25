@@ -27,6 +27,7 @@ public class ServerMessenger {
   public String transmit(String message) {
     out.println(message);
     try {
+      //socket.getInputStream().reset();
       String a = in.readLine();
       System.out.println(a);
       return a;

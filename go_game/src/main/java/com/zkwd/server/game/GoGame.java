@@ -80,8 +80,20 @@ public class GoGame {
           // go to results
           broadcast("game_end");
           break;
+        } else {
+          // skip to next round, switch players
+          broadcast("game_noend");
+          if(turn == -1) {
+            currentPlayer = white;
+            otherPlayer = black;
+          } else {
+            currentPlayer = black;
+            otherPlayer = white;
+          }
+          turn = -turn;
+          requested = false;
+          continue;
         }
-        requested = false;
       } else {
         // signal to players that there were no requests
         currentPlayer.sendMessage("game_noreq");
@@ -112,6 +124,7 @@ public class GoGame {
         System.out.println("received: " + csig + "|" + osig + ". parsing...");
         // parse signal - was it an abandonment, or a move?
         if (csig.equals("exit")) {
+          currentPlayer.sendMessage("game_err");
           // current player abandoned
           if (isBotGame) {
             return;
@@ -130,12 +143,14 @@ public class GoGame {
             //
           } else {
             // exit game
+            otherPlayer.sendMessage("game_err");
             return;
             //
           }
           //
         } else if (osig.equals("exit")) {
           // other player abandoned
+          otherPlayer.sendMessage("game_err");
           if (isBotGame) {
             return;
           }
@@ -154,6 +169,7 @@ public class GoGame {
             //
           } else {
             // exit game
+            currentPlayer.sendMessage("game_err");
             return;
             //
           }
@@ -203,6 +219,7 @@ public class GoGame {
       System.out.println(turn + ": checking if players abandoned...");
       // check if either player has abandoned the match while we weren't listening
       if (checkAbandoned(otherPlayer)) {
+        otherPlayer.sendMessage("game_err");
         if (isBotGame) {
           return;
         }
@@ -221,6 +238,7 @@ public class GoGame {
           //
         } else {
           // exit game
+          currentPlayer.sendMessage("game_err");
           return;
           //
         }
@@ -229,6 +247,7 @@ public class GoGame {
       }
 
       if (checkAbandoned(currentPlayer)) {
+        currentPlayer.sendMessage("game_err");
         if (isBotGame) {
           return;
         }
@@ -246,6 +265,7 @@ public class GoGame {
           //
         } else {
           // exit game
+          otherPlayer.sendMessage("game_err");
           return;
           //
         }
@@ -260,15 +280,9 @@ public class GoGame {
       // switch turns, if move was valid
       if(valid) {
         if(turn == -1) {
-          white = otherPlayer;
-          black = currentPlayer;
-          //
           currentPlayer = white;
           otherPlayer = black;
         } else {
-          white = currentPlayer;
-          black = otherPlayer;
-          //
           currentPlayer = black;
           otherPlayer = white;
         }

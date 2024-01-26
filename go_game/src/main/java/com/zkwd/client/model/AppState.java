@@ -2,6 +2,7 @@ package com.zkwd.client.model;
 
 import com.zkwd.client.screens.ingame.GameScreen;
 import com.zkwd.client.screens.lobby.LobbyScreen;
+import com.zkwd.client.screens.login.LoginScreen;
 import com.zkwd.client.screens.results.ResultsScreen;
 
 import javafx.scene.layout.Pane;
@@ -12,7 +13,8 @@ import javafx.scene.layout.Pane;
 public enum AppState {
     LOBBY (LobbyScreen.class),
     INGAME (GameScreen.class),
-    RESULTS (ResultsScreen.class);
+    RESULTS (ResultsScreen.class),
+    LOGIN (LoginScreen.class);
 
     private Class<? extends Pane> c;
 

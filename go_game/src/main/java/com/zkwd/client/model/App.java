@@ -1,6 +1,9 @@
 package com.zkwd.client.model;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import com.zkwd.client.ServerMessenger;
 
@@ -23,20 +26,38 @@ public class App extends Application
 
     private static ServerMessenger hook;
 
+    // db connection
+    private static Connection connection;
+    public static Connection getConnection() { return connection; }
+    // user data
+    private static int uid;
+    private static String uname;
+    public static void setUserId(int id) { uid = id; }
+    public static void setUserName(String name) { uname = name; }
+    public static int getUserId() { return uid; }
+    public static String getUserName() { return uname; }
+
     @Override
     public void start(Stage stage) throws IOException {
 
         StackPane sp = new StackPane(new Text("loading"));
 
-        //connect to server
+        // connect to server
         hook = new ServerMessenger("localhost", 8888);
+
+        // connect to local db
+        try {
+            connectAsGuest();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         scene = new Scene(sp, 600, 400);
 
         stage.setScene(scene);
         stage.show();
 
-        changeState(AppState.LOBBY);
+        changeState(AppState.LOGIN);
     }
 
     @Override
@@ -49,6 +70,13 @@ public class App extends Application
         }
 
         System.exit(0);
+    }
+
+    public void connectAsGuest() throws SQLException {
+        System.out.println("connecting to mariadb...");
+        connection = DriverManager.getConnection(
+            "jdbc:mariadb://localhost:3306/gogame", "guest", ""
+        );
     }
 
     /**

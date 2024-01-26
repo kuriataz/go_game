@@ -62,21 +62,39 @@ public class App extends Application
 
     @Override
     public void stop() {
-
         // if we are in game, tell server that we are abandoning the game.
         if(currentState == AppState.INGAME) {
             System.out.println("exiting");
             App.send("exit");
         }
 
+        try {
+            disconnect();
+        } catch (SQLException e) {
+            System.out.println("failed to disconnect from db");
+        }
+
         System.exit(0);
     }
 
+    /**
+     * Connect to database as guest.
+     * @throws SQLException if failed
+     */
     public void connectAsGuest() throws SQLException {
         System.out.println("connecting to mariadb...");
         connection = DriverManager.getConnection(
             "jdbc:mariadb://localhost:3306/gogame", "guest", ""
         );
+    }
+
+    /**
+     * Disconnect from database.
+     * @throws SQLException if failed
+     */
+    public void disconnect() throws SQLException {
+        System.out.println("disconnecting from mariadb...");
+        connection.close();
     }
 
     /**

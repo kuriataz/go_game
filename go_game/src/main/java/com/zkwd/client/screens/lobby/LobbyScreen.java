@@ -69,7 +69,7 @@ public class LobbyScreen extends BorderPane {
     btn = new Button("start game");
     btn.setOnAction(this::enterLobby);
 
-    txt = new Text("this is the lobby screen.");
+    txt = new Text("logged in as: " + App.getUserName());
     cancel = new Button("x");
     cancel.setOnAction(this::cancelLobby);
     cancel.setVisible(false);

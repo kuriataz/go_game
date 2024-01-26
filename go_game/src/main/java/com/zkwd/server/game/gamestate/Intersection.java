@@ -43,7 +43,7 @@ public class Intersection {
   public void updateLiberty() {
     this.liberty = 0;
     for (Intersection i : neighbours) {
-      if (i.getState() == FREE) {
+      if (i.getState() == 0) {
         ++this.liberty;
       }
     }

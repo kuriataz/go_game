@@ -193,8 +193,9 @@ public class Board {
    */
   public void putStone(int x, int y, int playerColor) throws MoveException {
     if (correctMove(x, y, playerColor)) {
+      System.out.println("3,8 liberites: " + board[3][8].getLiberty());
       board[x][y].setState(playerColor);
-      board[x][y].takeLiberties();
+      // board[x][y].takeLiberties();
 
       // new stone joins existing chain
       ArrayList<Integer> ids = new ArrayList<Integer>();
@@ -232,6 +233,7 @@ public class Board {
       }
       updateLiberties();
       updateChainsLiberty();
+      System.out.println("3,8 liberites: " + board[3][8].getLiberty());
     } else {
       throw new MoveException();
     }
@@ -241,6 +243,9 @@ public class Board {
     for (int i = 0; i != size; ++i) {
       for (int j = 0; j != size; ++j) {
         board[i][j].updateLiberty();
+        if (i == 3 && j == 8) {
+          System.out.println(board[i][j].getLiberty());
+        }
       }
     }
   }
@@ -272,23 +277,31 @@ public class Board {
     for (Intersection i : board[x][y].neighbours) {
       if (i.getState() == FREE) {
         suicide = false;
+        System.out.println("IIIIIIInot suicide0");
       } else if (i.getState() == playerColor) {
         if (i.getChainId() != 0) {
           for (Chain ch : chains) {
             if (ch.getId() == i.getChainId() && ch.getLiberty() > 1) {
               suicide = false;
+              System.out.println(ch.getLiberty());
+              System.out.println("IIIIIIInot suicide1");
             }
           }
         } else if (i.getLiberty() > 1) {
           suicide = false;
+          System.out.println(board[3][8].getLiberty());
+          System.out.println(i.getLiberty());
+          System.out.println("IIIIIIInot suicide2");
         }
       } else if (i.getLiberty() == 1) {
         if (i.getChainId() == 0) {
           capturing = true;
+          System.out.println("IIIIIIIcapturing1");
         } else {
           for (Chain ch : chains) {
             if (ch.getId() == i.getChainId() && ch.getLiberty() == 1) {
               capturing = true;
+              System.out.println("IIIIIIIcapturing2");
             }
           }
         }
@@ -353,7 +366,8 @@ public class Board {
   public void removeCapturedStones() {
     for (int i = 0; i != size; ++i) {
       for (int j = 0; j != size; ++j) {
-        if (board[i][j].getLiberty() <= 0 && board[i][j].getChainId() == 0) {
+        if (board[i][j].getState() != FREE && board[i][j].getLiberty() <= 0 &&
+            board[i][j].getChainId() == 0) {
           removeStone(i, j);
         }
       }

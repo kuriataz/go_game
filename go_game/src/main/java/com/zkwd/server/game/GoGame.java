@@ -1,13 +1,11 @@
 package com.zkwd.server.game;
 
-
 import com.zkwd.server.game.exceptions.GameException;
 import com.zkwd.server.game.exceptions.MoveException;
 import com.zkwd.server.game.gamestate.Board;
 import com.zkwd.server.game.players.CPUPlayer;
 import com.zkwd.server.game.players.ClientPlayer;
 import com.zkwd.server.game.players.Player;
-
 import javafx.util.Pair;
 
 /**
@@ -27,7 +25,7 @@ public class GoGame {
   // gamestate information
   private Board board;
   // turn information
-  //private int round = 0;
+  // private int round = 0;
   private int turn = BLACK;
 
   /**
@@ -66,14 +64,15 @@ public class GoGame {
     /**
      * !! GAME LOOP !!
      */
-    while (currentPlayer instanceof ClientPlayer || otherPlayer instanceof ClientPlayer) {
+    while (currentPlayer instanceof ClientPlayer || otherPlayer instanceof
+                                                        ClientPlayer) {
       valid = true;
       // tell players whose turn it is
       currentPlayer.sendMessage("game_go");
       otherPlayer.sendMessage("game_opp");
 
       // if other player requested game end, ask current player.
-      if(requested) {
+      if (requested) {
         currentPlayer.sendMessage("game_reqend");
         // await response
         if (currentPlayer.requestConfirmation()) {
@@ -83,7 +82,7 @@ public class GoGame {
         } else {
           // skip to next round, switch players
           broadcast("game_noend");
-          if(turn == -1) {
+          if (turn == -1) {
             currentPlayer = white;
             otherPlayer = black;
           } else {
@@ -102,7 +101,7 @@ public class GoGame {
 
       // listen for exit singals from both players, and move from current
       String csig, osig;
-      
+
       currentPlayer.clear();
       otherPlayer.clear();
 
@@ -115,8 +114,9 @@ public class GoGame {
           osig = otherPlayer.getLastMessage();
           // !!! LOADBEARING SOUT DO NOT DELETE
           System.out.print("");
-        } while (!csig.equals("exit") && !osig.equals("exit") && !csig.startsWith("move:"));
-  
+        } while (!csig.equals("exit") && !osig.equals("exit") &&
+                 !csig.startsWith("move:"));
+
         System.out.println("received: " + csig + "|" + osig + ". parsing...");
         // parse signal - was it an abandonment, or a move?
         if (csig.equals("exit")) {
@@ -173,11 +173,11 @@ public class GoGame {
       } while (!csig.startsWith("move:"));
 
       System.out.println(turn + ": detected a move! checking validity...");
-  
+
       try {
         Pair<Integer, Integer> move = parseMove(csig);
 
-        if(move.getKey() == -1) {
+        if (move.getKey() == -1) {
           // requested
           requested = true;
           System.out.println(turn + ": player requested end...");
@@ -185,8 +185,11 @@ public class GoGame {
           //
         } else if (board.correctMove(move.getKey(), move.getValue(), turn)) {
           board.putStone(move.getKey(), move.getValue(), turn);
+          System.out.println("FROM GOGAME: " + board.board[3][8].getLiberty());
           board.removeCapturedStones();
+          System.out.println("FROM GOGAME: " + board.board[3][8].getLiberty());
           board.removeCapturedChains();
+          System.out.println("FROM GOGAME: " + board.board[3][8].getLiberty());
 
           System.out.println("valid move");
           broadcast("game_vrfd");
@@ -212,7 +215,8 @@ public class GoGame {
       }
 
       System.out.println(turn + ": checking if players abandoned...");
-      // check if either player has abandoned the match while we weren't listening
+      // check if either player has abandoned the match while we weren't
+      // listening
       if (checkAbandoned(otherPlayer)) {
         otherPlayer.sendMessage("game_err");
         if (isBotGame) {
@@ -272,8 +276,8 @@ public class GoGame {
       broadcast(board.prepareBoardString());
 
       // switch turns, if move was valid
-      if(valid) {
-        if(turn == -1) {
+      if (valid) {
+        if (turn == -1) {
           currentPlayer = white;
           otherPlayer = black;
         } else {
@@ -294,7 +298,8 @@ public class GoGame {
   }
 
   /**
-   * Calculate game score. This method is called once both players agree to end the game.
+   * Calculate game score. This method is called once both players agree to end
+   * the game.
    */
   private void calculateScore() {
     // TODO : write
@@ -305,19 +310,20 @@ public class GoGame {
    * @param move formatted: "move:x,y"
    * @return (x, y)
    */
-  private Pair<Integer, Integer> parseMove(String move) throws MoveException, GameException {
+  private Pair<Integer, Integer> parseMove(String move)
+      throws MoveException, GameException {
     try {
-        String[] parts = move.substring(5).split(",");
+      String[] parts = move.substring(5).split(",");
 
-        int x = Integer.parseInt(parts[0]);
-        int y = Integer.parseInt(parts[1]);
+      int x = Integer.parseInt(parts[0]);
+      int y = Integer.parseInt(parts[1]);
 
-        Pair<Integer, Integer> coords = new Pair<Integer,Integer>(x, y);
+      Pair<Integer, Integer> coords = new Pair<Integer, Integer>(x, y);
 
-        return coords;
+      return coords;
     } catch (NumberFormatException e) {
-        // The transmitted move was incorrect - generate another
-        throw new MoveException();
+      // The transmitted move was incorrect - generate another
+      throw new MoveException();
     }
   }
 

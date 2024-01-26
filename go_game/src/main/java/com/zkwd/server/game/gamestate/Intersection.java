@@ -11,21 +11,25 @@ public class Intersection {
   public static final int FREE = 0;
   private int state;
   private int liberty = 0; // is set by setNeighbours in Board's constructor
+  private int neighboursCounter = 0;
   public int chainId = 0;
   public double priority = 0;
   public ArrayList<Intersection> neighbours = new ArrayList<Intersection>();
 
-  Intersection(int state) { this.state = state; }
+  public Intersection(int state) { this.state = state; }
 
   public void setState(int state) { this.state = state; }
-
   public int getState() { return this.state; }
-
   public int getLiberty() { return this.liberty; }
-  void setLiberty(int liberty) { this.liberty = liberty; }
-
-  void addLiberty() { ++this.liberty; }
-  void subLiberty() { --this.liberty; }
+  public void setLiberty(int liberty) { this.liberty = liberty; }
+  public void addLiberty() { ++this.liberty; }
+  public void subLiberty() { --this.liberty; }
+  public int getNeighboursC() { return this.neighboursCounter; }
+  public void setNeighboursC(int quantity) {
+    this.neighboursCounter = quantity;
+  }
+  public void addNeighbour() { ++this.neighboursCounter; }
+  public void subNeighbour() { --this.neighboursCounter; }
 
   // when a stone is removed, neighbours' liberties must be updated
   void returnLiberties() {

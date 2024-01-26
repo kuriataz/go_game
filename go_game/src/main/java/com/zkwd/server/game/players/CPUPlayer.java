@@ -1,6 +1,7 @@
 package com.zkwd.server.game.players;
 
 import com.zkwd.server.game.gamestate.Board;
+import com.zkwd.server.game.gamestate.Intersection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,6 +11,17 @@ import javafx.util.Pair;
  * A bot player that generates moves
  */
 public class CPUPlayer implements Player {
+
+  private static final double BASE_PRIORITY = 10000;
+  private static final double MAX_BONUS = 10000000;
+  private static final double MAX_PRIORITY = Double.MAX_VALUE;
+  private static final double MIN_PRIORITY = 0;
+  private static final double SUICIDE_PENALTY = -100;
+  private static final double OPPONENT_DISTANCE_WEIGHT = 5;
+  private static final double BOT_DISTANCE_WEIGHT = 5;
+  private static final int LIBERTY_3_BONUS = 50;
+  private static final int LIBERTY_2_BONUS = 25;
+  private static final double BOARD_EDGE_PERCENTAGE = 0.1;
 
   // the bot's own board
   private Board board;
@@ -92,50 +104,91 @@ public class CPUPlayer implements Player {
     try {
       bestMoves.clear();
 
-      double disOpponent = 0;
-      double disPlayer = 0;
-      double priority = 0;
+      double priority = BASE_PRIORITY;
       for (int i = 0; i != board.getSize(); ++i) {
         for (int j = 0; j != board.getSize(); ++j) {
-          disOpponent = 1 / squareDistance(i, j, -playerColor);
-          disPlayer = squareDistance(i, j, playerColor) * 0.5;
-          priority = disOpponent + disPlayer;
+          priority = BASE_PRIORITY;
 
-          priority += 10000;
+          // distance to opponetnt's stones
+          priority +=
+              squareDistance(i, j, -playerColor) * OPPONENT_DISTANCE_WEIGHT;
+          // distance to bot's stones
+          priority += squareDistance(i, j, playerColor) * BOT_DISTANCE_WEIGHT;
+
+          if (board.board[i][j].getLiberty() == 3) {
+            priority += LIBERTY_3_BONUS;
+          } else if (board.board[i][j].getLiberty() == 2) {
+            priority += LIBERTY_2_BONUS;
+          }
 
           if ((i % 8) == 0 || (j % 8) == 0) {
-            priority -= 500;
+            priority *= BOARD_EDGE_PERCENTAGE;
           }
+
+          priority = checkNeighbours(board.board[i][j], playerColor, priority);
 
           if (board.getValue(i, j) != 0) {
             System.out.println("zeroing " + i + " " + j);
-            priority = Double.MIN_VALUE;
+            priority = MIN_PRIORITY;
+          }
+          if (priority < 0) {
+            priority = MIN_PRIORITY;
+          }
+          if (priority > MAX_BONUS) {
+            priority = MAX_PRIORITY;
           }
 
           // prepare value for storage
           String move = "move:" + i + "," + j;
           Pair<String, Double> val = new Pair<String, Double>(move, priority);
           bestMoves.add(val);
-          //   // put value into sorted array
-          //   int index = 0;
-          //   while (index < bestMoves.size() &&
-          //          val.getValue() < bestMoves.get(index).getValue()) {
-          //     index++;
-          //   } // loop ends when val >= arr[index]. we want to insert val
-          //   before
-          //     // that index.
-          //   bestMoves.add(index, val);
-          //   // TODO : recheck my math pls loll
         }
       }
       Collections.sort(bestMoves, Collections.reverseOrder(
                                       Comparator.comparing(Pair::getValue)));
       // set best move as preferred move
-      preferredMove = bestMoves.get(0).getKey();
-      // preferredMove = "move:5,5";
+      //   preferredMove = bestMoves.get(0).getKey();
+
+      // if several moves have the same priority, choose one randomly
+      preferredMove = samePriority(bestMoves);
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+  private String samePriority(ArrayList<Pair<String, Double>> bestMoves) {
+
+    ArrayList<String> sameMoves = new ArrayList<String>();
+
+    double highest = bestMoves.get(0).getValue();
+    int i = 0;
+    while (i < bestMoves.size() && bestMoves.get(i).getValue() == highest) {
+      sameMoves.add(bestMoves.get(i).getKey());
+      ++i;
+    }
+    // int index = new Random().nextInt(sameMoves.size());
+    int index = (int)(Math.random() * sameMoves.size());
+
+    return sameMoves.get(index);
+  }
+
+  private double checkNeighbours(Intersection potential, int playerColor,
+                                 double currentPriority) {
+    for (Intersection i : potential.neighbours) {
+      if (i.getLiberty() == 1) {
+        if (i.getState() == playerColor) {
+          return MAX_PRIORITY;
+        } else {
+          return SUICIDE_PENALTY * currentPriority;
+        }
+      } else if (i.getLiberty() == 2) {
+        if (i.getState() == playerColor) {
+          return MAX_PRIORITY;
+        } else {
+          return currentPriority * SUICIDE_PENALTY / 2;
+        }
+      }
+    }
+    return currentPriority;
   }
 
   public double squareDistance(int x, int y, int playerColor) {
@@ -147,7 +200,10 @@ public class CPUPlayer implements Player {
         }
       }
     }
-    return disSum;
+    if (disSum == 0) {
+      return 0;
+    }
+    return 1.0 / disSum;
   }
 
   /**

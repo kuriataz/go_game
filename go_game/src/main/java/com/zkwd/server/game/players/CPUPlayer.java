@@ -57,7 +57,7 @@ public class CPUPlayer implements Player {
       // bot round
       turn = true;
       turnCounter--;
-    } else if(message.equals("game_opp")) {
+    } else if (message.equals("game_opp")) {
       // non-bot round
       turn = false;
       turnCounter = 2;
@@ -70,7 +70,7 @@ public class CPUPlayer implements Player {
         // next best move
         preferredMove = bestMoves.get(0).getKey();
         System.out.println("prefferedMove: " + preferredMove +
-                         " priority: " + bestMoves.get(0).getValue());
+                           " priority: " + bestMoves.get(0).getValue());
       }
     }
   }
@@ -96,10 +96,10 @@ public class CPUPlayer implements Player {
           disPlayer = squareDistance(i, j, playerColor) * 0.5;
           priority = disOpponent + disPlayer;
 
-          //   priority += 10000;
+          priority += 10000;
 
           if ((i % 8) == 0 || (j % 8) == 0) {
-            // priority -= 500;
+            priority -= 500;
           }
 
           if (board.getValue(i, j) != 0) {
@@ -123,12 +123,11 @@ public class CPUPlayer implements Player {
           //   // TODO : recheck my math pls loll
         }
       }
-      Collections.sort(
-              bestMoves,
-              Collections.reverseOrder(Comparator.comparing(Pair::getValue)));
+      Collections.sort(bestMoves, Collections.reverseOrder(
+                                      Comparator.comparing(Pair::getValue)));
       // set best move as preferred move
       preferredMove = bestMoves.get(0).getKey();
-      //preferredMove = "move:5,5";
+      // preferredMove = "move:5,5";
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -138,7 +137,7 @@ public class CPUPlayer implements Player {
     int disSum = 0;
     for (int i = 0; i != board.getSize(); ++i) {
       for (int j = 0; j != board.getSize(); ++j) {
-        if (board.board[i][j].getState() == -playerColor) {
+        if (board.board[i][j].getState() == playerColor) {
           disSum += Math.pow((i - x), 2) + Math.pow((j - y), 2);
         }
       }

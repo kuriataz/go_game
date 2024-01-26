@@ -71,6 +71,11 @@ public class CPUPlayer implements Player {
         preferredMove = bestMoves.get(0).getKey();
         System.out.println("prefferedMove: " + preferredMove +
                            " priority: " + bestMoves.get(0).getValue());
+        for (int i = 0; i < 5 && i < bestMoves.size(); i++) {
+          System.out.println("candidate #" + i + ": " +
+                             bestMoves.get(i).getKey() +
+                             " priority: " + bestMoves.get(i).getValue());
+        }
       }
     }
   }

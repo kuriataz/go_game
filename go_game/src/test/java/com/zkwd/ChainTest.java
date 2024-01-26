@@ -18,8 +18,8 @@ public class ChainTest {
     } catch (MoveException e) {
       e.printStackTrace();
     }
-    assert (b.board[2][5].chainId == 1);
-    assert (b.board[2][4].chainId == 1);
+    assert (b.board[2][5].getChainId() == 1);
+    assert (b.board[2][4].getChainId() == 1);
   }
 
   /**
@@ -34,14 +34,14 @@ public class ChainTest {
     } catch (MoveException e) {
       e.printStackTrace();
     }
-    assert (b.board[2][5].chainId == 1);
-    assert (b.board[2][4].chainId == 1);
+    assert (b.board[2][5].getChainId() == 1);
+    assert (b.board[2][4].getChainId() == 1);
     try {
       b.putStone(1, 5, -1);
     } catch (MoveException e) {
       e.printStackTrace();
     }
-    assert (b.board[1][5].chainId == 1);
+    assert (b.board[1][5].getChainId() == 1);
   }
 
   /**
@@ -63,20 +63,20 @@ public class ChainTest {
     } catch (MoveException e) {
       e.printStackTrace();
     }
-    assert (b.board[2][5].chainId == 0);
-    assert (b.board[3][6].chainId == 0);
-    assert (b.board[1][6].chainId == 0);
-    assert (b.board[2][7].chainId == 0);
+    assert (b.board[2][5].getChainId() == 0);
+    assert (b.board[3][6].getChainId() == 0);
+    assert (b.board[1][6].getChainId() == 0);
+    assert (b.board[2][7].getChainId() == 0);
     try {
       b.putStone(2, 6, -1);
     } catch (MoveException e) {
       e.printStackTrace();
     }
-    assert (b.board[2][5].chainId == 1);
-    assert (b.board[3][6].chainId == 1);
-    assert (b.board[1][6].chainId == 1);
-    assert (b.board[2][7].chainId == 1);
-    assert (b.board[2][6].chainId == 1);
+    assert (b.board[2][5].getChainId() == 1);
+    assert (b.board[3][6].getChainId() == 1);
+    assert (b.board[1][6].getChainId() == 1);
+    assert (b.board[2][7].getChainId() == 1);
+    assert (b.board[2][6].getChainId() == 1);
   }
 
   /**
@@ -90,27 +90,27 @@ public class ChainTest {
     } catch (MoveException e) {
       e.printStackTrace();
     }
-    assert (b.board[2][5].chainId == 1);
-    assert (b.board[2][4].chainId == 1);
+    assert (b.board[2][5].getChainId() == 1);
+    assert (b.board[2][4].getChainId() == 1);
     try {
       b.putStone(0, 5, -1);
       b.putStone(0, 4, -1);
     } catch (MoveException e) {
       e.printStackTrace();
     }
-    assert (b.board[0][5].chainId == 2);
-    assert (b.board[0][4].chainId == 2);
+    assert (b.board[0][5].getChainId() == 2);
+    assert (b.board[0][4].getChainId() == 2);
 
     try {
       b.putStone(1, 5, -1);
     } catch (MoveException e) {
       e.printStackTrace();
     }
-    assert (b.board[2][5].chainId == 1);
-    assert (b.board[2][4].chainId == 1);
-    assert (b.board[0][5].chainId == 1);
-    assert (b.board[0][4].chainId == 1);
-    assert (b.board[1][5].chainId == 1);
+    assert (b.board[2][5].getChainId() == 1);
+    assert (b.board[2][4].getChainId() == 1);
+    assert (b.board[0][5].getChainId() == 1);
+    assert (b.board[0][4].getChainId() == 1);
+    assert (b.board[1][5].getChainId() == 1);
   }
 
   /**
@@ -124,8 +124,8 @@ public class ChainTest {
     } catch (MoveException e) {
       e.printStackTrace();
     }
-    assert (b.board[2][5].chainId == 1);
-    assert (b.board[2][4].chainId == 1);
+    assert (b.board[2][5].getChainId() == 1);
+    assert (b.board[2][4].getChainId() == 1);
 
     try {
       b.putStone(0, 5, -1);
@@ -133,8 +133,8 @@ public class ChainTest {
     } catch (MoveException e) {
       e.printStackTrace();
     }
-    assert (b.board[0][5].chainId == 2);
-    assert (b.board[0][4].chainId == 2);
+    assert (b.board[0][5].getChainId() == 2);
+    assert (b.board[0][4].getChainId() == 2);
 
     b.board[1][5].setState(-1);
     ArrayList<Integer> ids = b.board[1][5].findChain();

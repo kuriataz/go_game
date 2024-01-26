@@ -17,7 +17,7 @@ public class Board {
   private int size;
   private int maxChainId;
   public Intersection[][] board;
-  public ArrayList<Chain> chains;
+  private ArrayList<Chain> chains;
 
   public Board(int size) {
     this.size = size;
@@ -36,15 +36,15 @@ public class Board {
    * Randomizes the board state. For debug purposes.
    * @return The board that has been randomized (this)
    */
-  Board randomize() {
-    Random r = new Random();
-    for (int i = 0; i < size; ++i) {
-      for (int j = 0; j < size; ++j) {
-        board[i][j].setState(r.nextInt() % 3 - 1);
-      }
-    }
-    return this;
-  }
+  // Board randomize() {
+  //   Random r = new Random();
+  //   for (int i = 0; i < size; ++i) {
+  //     for (int j = 0; j < size; ++j) {
+  //       board[i][j].setState(r.nextInt() % 3 - 1);
+  //     }
+  //   }
+  //   return this;
+  // }
 
   public Board setBoard(String boardString) {
 
@@ -68,10 +68,60 @@ public class Board {
       // Skip the '|' separator
       index++;
     }
+    updateLiberties();
+    setChains();
+    updateLiberties();
+    updateChainsLiberty();
 
     return this; // Assuming that you want to return the modified Board object
   }
-  
+  private void resetChains() {
+    for (Chain ch : chains) {
+      ch.reset();
+    }
+    chains.clear();
+  }
+
+  private void setChains() {
+    resetChains();
+    for (int x = 0; x < size; ++x) {
+      for (int y = 0; y < size; ++y) {
+        ArrayList<Integer> ids = new ArrayList<Integer>();
+        ids = board[x][y].findChain();
+        if (!(ids.isEmpty())) {
+          for (int i = 0; i < ids.size(); ++i) {
+            if (i != 0) {
+              changeChain(ids.get(i), ids.get(0));
+              deleteChain(ids.get(i));
+            } else {
+              board[x][y].setChainId(ids.get(0));
+              for (Chain ch : chains) {
+                if (ch.getId() == ids.get(0)) {
+                  ch.addOne(board[x][y]);
+                }
+              }
+            }
+          }
+        }
+
+        ArrayList<Intersection> toGain = board[x][y].gainToChain();
+        if (!(toGain.isEmpty())) {
+          if (board[x][y].getChainId() == 0) {
+            Chain newChain = createChain();
+            newChain.addOne(board[x][y]);
+            for (Intersection i : toGain) {
+              newChain.addOne(i);
+            }
+          } else if (findChain(board[x][y].getChainId()) != null) {
+            for (Intersection i : toGain) {
+              findChain(board[x][y].getChainId()).addOne(i);
+            }
+          }
+        }
+      }
+    }
+  }
+
   /**
    * Gets the size of the board.
    * @return The size of the board
@@ -155,9 +205,9 @@ public class Board {
             changeChain(ids.get(i), ids.get(0));
             deleteChain(ids.get(i));
           } else {
-            board[x][y].chainId = ids.get(0);
+            board[x][y].setChainId(ids.get(0));
             for (Chain ch : chains) {
-              if (ch.id == ids.get(0)) {
+              if (ch.getId() == ids.get(0)) {
                 ch.addOne(board[x][y]);
               }
             }
@@ -168,15 +218,15 @@ public class Board {
       // chain
       ArrayList<Intersection> toGain = board[x][y].gainToChain();
       if (!(toGain.isEmpty())) {
-        if (board[x][y].chainId == 0) {
-          Chain newChain = createChain(playerColor);
+        if (board[x][y].getChainId() == 0) {
+          Chain newChain = createChain();
           newChain.addOne(board[x][y]);
           for (Intersection i : toGain) {
             newChain.addOne(i);
           }
-        } else if (findChain(board[x][y].chainId) != null) {
+        } else if (findChain(board[x][y].getChainId()) != null) {
           for (Intersection i : toGain) {
-            findChain(board[x][y].chainId).addOne(i);
+            findChain(board[x][y].getChainId()).addOne(i);
           }
         }
       }
@@ -222,21 +272,26 @@ public class Board {
     for (Intersection i : board[x][y].neighbours) {
       if (i.getState() == FREE) {
         suicide = false;
-      }
-      if (i.getState() == playerColor) {
-        if (i.chainId != 0) {
+      } else if (i.getState() == playerColor) {
+        if (i.getChainId() != 0) {
           for (Chain ch : chains) {
-            if (ch.id == i.chainId && ch.getLiberty() > 1) {
+            if (ch.getId() == i.getChainId() && ch.getLiberty() > 1) {
               suicide = false;
             }
           }
         } else if (i.getLiberty() > 1) {
-
           suicide = false;
         }
-      }
-      if (i.getState() == -playerColor && i.getLiberty() == 1) {
-        capturing = true;
+      } else if (i.getLiberty() == 1) {
+        if (i.getChainId() == 0) {
+          capturing = true;
+        } else {
+          for (Chain ch : chains) {
+            if (ch.getId() == i.getChainId() && ch.getLiberty() == 1) {
+              capturing = true;
+            }
+          }
+        }
       }
     }
     return inbounds && free && (!suicide || capturing) && !ko;
@@ -244,15 +299,15 @@ public class Board {
 
   private Chain findChain(int chainId) {
     for (Chain ch : chains) {
-      if (ch.id == chainId) {
+      if (ch.getId() == chainId) {
         return ch;
       }
     }
     return null;
   }
 
-  private Chain createChain(int color) {
-    Chain newChain = new Chain(color, maxChainId + 1);
+  private Chain createChain() {
+    Chain newChain = new Chain(maxChainId + 1);
     ++maxChainId;
     chains.add(newChain);
     return newChain;
@@ -264,7 +319,7 @@ public class Board {
 
     while (iterator.hasNext()) {
       Chain ch = iterator.next();
-      if (ch.id == currentId) {
+      if (ch.getId() == currentId) {
         ch.changeId(newId);
         stones = ch.chain;
         iterator.remove();
@@ -272,7 +327,7 @@ public class Board {
     }
     // Move stones to new chain
     for (Chain ch : chains) {
-      if (ch.id == newId) {
+      if (ch.getId() == newId) {
         for (Intersection i : stones) {
           ch.addOne(i);
         }
@@ -283,14 +338,14 @@ public class Board {
   private void deleteChain(int id) {
     if (!(chains.isEmpty())) {
       for (Chain ch : chains) {
-        if (ch.id == id) {
+        if (ch.getId() == id) {
           chains.remove(ch);
         }
       }
     }
   }
 
-  void removeChain(Chain chain) {
+  private void removeChain(Chain chain) {
     chain.removeStones();
     chains.remove(chain);
   }
@@ -298,7 +353,7 @@ public class Board {
   public void removeCapturedStones() {
     for (int i = 0; i != size; ++i) {
       for (int j = 0; j != size; ++j) {
-        if (board[i][j].getLiberty() <= 0 && board[i][j].chainId == 0) {
+        if (board[i][j].getLiberty() <= 0 && board[i][j].getChainId() == 0) {
           removeStone(i, j);
         }
       }
@@ -308,7 +363,6 @@ public class Board {
     ArrayList<Chain> toRemove = new ArrayList<Chain>();
     for (Chain ch : chains) {
       ch.updateLiberty();
-      // System.out.println(ch.getLiberty() + "id: " + ch.id + " HERE3");
       if (ch.getLiberty() <= 0) {
         toRemove.add(ch);
       }
@@ -316,10 +370,9 @@ public class Board {
     for (Chain ch : toRemove) {
       removeChain(ch);
     }
-    // System.out.println(toRemove.size() + " HERE2");
   }
 
-  public void updateChainsLiberty() {
+  private void updateChainsLiberty() {
     for (Chain ch : chains) {
       ch.updateLiberty();
     }
@@ -331,7 +384,7 @@ public class Board {
     for (Intersection i : board[x][y].neighbours) {
       if (i.getState() == -playerColor) {
         ++neighboursCounter;
-        if (i.getLiberty() == 1 && i.chainId == 0) {
+        if (i.getLiberty() == 1 && i.getChainId() == 0) {
           captureKo = true;
         }
       }
@@ -341,7 +394,7 @@ public class Board {
 
   public int getChainLiberty(int id) {
     for (Chain ch : chains) {
-      if (ch.id == id) {
+      if (ch.getId() == id) {
         return ch.getLiberty();
       }
     }

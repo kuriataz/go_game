@@ -11,55 +11,41 @@ public class Intersection {
   public static final int FREE = 0;
   private int state;
   private int liberty = 0; // is set by setNeighbours in Board's constructor
-  private int neighboursCounter = 0;
-  public int chainId = 0;
-  public double priority = 0;
+  private int chainId = 0;
   public ArrayList<Intersection> neighbours = new ArrayList<Intersection>();
 
   public Intersection(int state) { this.state = state; }
 
   public void setState(int state) { this.state = state; }
   public int getState() { return this.state; }
+
   public int getLiberty() { return this.liberty; }
   public void setLiberty(int liberty) { this.liberty = liberty; }
   public void addLiberty() { ++this.liberty; }
   public void subLiberty() { --this.liberty; }
-  public int getNeighboursC() { return this.neighboursCounter; }
-  public void setNeighboursC(int quantity) {
-    this.neighboursCounter = quantity;
-  }
-  public void addNeighbour() { ++this.neighboursCounter; }
-  public void subNeighbour() { --this.neighboursCounter; }
+
+  public int getChainId() { return this.chainId; }
+  public void setChainId(int chainId) { this.chainId = chainId; }
 
   // when a stone is removed, neighbours' liberties must be updated
-  void returnLiberties() {
+  public void returnLiberties() {
     for (Intersection i : neighbours) {
       i.addLiberty();
     }
   }
   // when a stone is added, neighbours' liberties must be updated
-  void takeLiberties() {
+  public void takeLiberties() {
     for (Intersection i : neighbours) {
       i.subLiberty();
     }
   }
 
-  void updateLiberty() {
+  public void updateLiberty() {
     this.liberty = 0;
     for (Intersection i : neighbours) {
-      if (i.getState() == 0) {
+      if (i.getState() == FREE) {
         ++this.liberty;
       }
-    }
-  }
-
-  void removeChain() {
-    for (Intersection i : neighbours) {
-      if (i.getState() == this.state) {
-        i.removeChain();
-      }
-      i.setState(FREE);
-      i.returnLiberties();
     }
   }
 
@@ -93,6 +79,4 @@ public class Intersection {
     }
     return toGain;
   }
-
-  public void setPriority(double priority) { this.priority = priority; }
 }

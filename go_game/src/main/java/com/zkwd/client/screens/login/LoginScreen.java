@@ -1,6 +1,5 @@
 package com.zkwd.client.screens.login;
 
-import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,7 +15,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class LoginScreen extends BorderPane {
@@ -26,6 +24,13 @@ public class LoginScreen extends BorderPane {
   
   public LoginScreen() {
     super();
+
+    Button reg = new Button("register");
+    reg.setOnAction(e -> {
+      App.changeState(AppState.REGISTER);
+    });
+
+    this.setTop(reg);
 
     Label l_user = new Label("username:");
     Label l_pass = new Label("password:");

@@ -15,12 +15,12 @@ public class CPUPlayer implements Player {
   private static final double BASE_PRIORITY = 10000;
   private static final double MAX_BONUS = 10000000;
   private static final double MAX_PRIORITY = Double.MAX_VALUE;
-  private static final double MIN_PRIORITY = 0;
+  private static final double MIN_PRIORITY = 0.41;
   private static final double SUICIDE_PENALTY = -100;
-  private static final double OPPONENT_DISTANCE_WEIGHT = 5;
-  private static final double BOT_DISTANCE_WEIGHT = 5;
-  private static final int LIBERTY_3_BONUS = 50;
-  private static final int LIBERTY_2_BONUS = 25;
+  private static final double OPPONENT_DISTANCE_WEIGHT = 20;
+  private static final double BOT_DISTANCE_WEIGHT = 10;
+  private static final int LIBERTY_3_BONUS = 10;
+  private static final int LIBERTY_2_BONUS = 5;
   private static final double BOARD_EDGE_PERCENTAGE = 0.1;
 
   // the bot's own board
@@ -80,10 +80,11 @@ public class CPUPlayer implements Player {
         preferredMove = "move:-1,0";
       } else {
         // next best move
-        preferredMove = bestMoves.get(0).getKey();
+        // preferredMove = bestMoves.get(0).getKey();
+        preferredMove = samePriority(bestMoves);
         System.out.println("prefferedMove: " + preferredMove +
                            " priority: " + bestMoves.get(0).getValue());
-        for (int i = 0; i < 5 && i < bestMoves.size(); i++) {
+        for (int i = 0; i < 10 && i < bestMoves.size(); i++) {
           System.out.println("candidate #" + i + ": " +
                              bestMoves.get(i).getKey() +
                              " priority: " + bestMoves.get(i).getValue());
@@ -121,17 +122,19 @@ public class CPUPlayer implements Player {
             priority += LIBERTY_2_BONUS;
           }
 
-          if ((i % 8) == 0 || (j % 8) == 0) {
-            priority *= BOARD_EDGE_PERCENTAGE;
-          }
+          // if ((i % 8) == 0 || (j % 8) == 0) {
+          //   priority *= BOARD_EDGE_PERCENTAGE;
+          // }
 
-          priority = checkNeighbours(board.board[i][j], playerColor, priority);
-
-          if (board.getValue(i, j) != 0) {
+          if (board.board[i][j].getState() != 0) {
             System.out.println("zeroing " + i + " " + j);
             priority = MIN_PRIORITY;
+          } else {
+            priority =
+                checkNeighbours(board.board[i][j], -playerColor, priority);
           }
           if (priority < 0) {
+            System.out.println("priority < 0 for: " + i + "," + j);
             priority = MIN_PRIORITY;
           }
           if (priority > MAX_BONUS) {
@@ -147,7 +150,7 @@ public class CPUPlayer implements Player {
       Collections.sort(bestMoves, Collections.reverseOrder(
                                       Comparator.comparing(Pair::getValue)));
       // set best move as preferred move
-      //   preferredMove = bestMoves.get(0).getKey();
+      preferredMove = bestMoves.get(0).getKey();
 
       // if several moves have the same priority, choose one randomly
       preferredMove = samePriority(bestMoves);
@@ -174,17 +177,19 @@ public class CPUPlayer implements Player {
   private double checkNeighbours(Intersection potential, int playerColor,
                                  double currentPriority) {
     for (Intersection i : potential.neighbours) {
-      if (i.getLiberty() == 1) {
+      if (i.getLiberty() == 1 && i.getState() != 0) {
+        System.out.println("1 LIBERTY");
         if (i.getState() == playerColor) {
+          System.out.println("1 LIBERTY OPP COLOR");
           return MAX_PRIORITY;
         } else {
-          return SUICIDE_PENALTY * currentPriority;
+          return SUICIDE_PENALTY + currentPriority;
         }
-      } else if (i.getLiberty() == 2) {
+      } else if (i.getLiberty() == 2 && i.getState() != 0) {
         if (i.getState() == playerColor) {
           return MAX_PRIORITY;
         } else {
-          return currentPriority * SUICIDE_PENALTY / 2;
+          return currentPriority + SUICIDE_PENALTY / 2;
         }
       }
     }

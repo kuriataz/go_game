@@ -2,7 +2,7 @@ create database if not exists gogame;
 
 use gogame;
 
-CREATE IF NOT EXISTS TABLE Users (
+CREATE TABLE IF NOT EXISTS Users (
 	id INT AUTO_INCREMENT,
 	username VARCHAR(20) NOT NULL UNIQUE,
 	pass VARBINARY(300) NOT NULL,
@@ -11,7 +11,7 @@ CREATE IF NOT EXISTS TABLE Users (
 	CONSTRAINT usernameLength CHECK (LENGTH(username) > 3)
 );
 
-CREATE IF NOT EXISTS TABLE Games (
+CREATE TABLE IF NOT EXISTS Games (
 	id INT AUTO_INCREMENT,
 	white INT NOT NULL,
 	black INT NOT NULL,
@@ -22,7 +22,7 @@ CREATE IF NOT EXISTS TABLE Games (
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE add_user (
-    IN user varchar(20), 
+    IN user varchar(20),
     IN pass varchar(30)
 )
 BEGIN

@@ -185,11 +185,8 @@ public class GoGame {
           //
         } else if (board.correctMove(move.getKey(), move.getValue(), turn)) {
           board.putStone(move.getKey(), move.getValue(), turn);
-          System.out.println("FROM GOGAME: " + board.board[3][8].getLiberty());
           board.removeCapturedStones();
-          System.out.println("FROM GOGAME: " + board.board[3][8].getLiberty());
           board.removeCapturedChains();
-          System.out.println("FROM GOGAME: " + board.board[3][8].getLiberty());
 
           System.out.println("valid move");
           broadcast("game_vrfd");

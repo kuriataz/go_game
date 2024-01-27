@@ -24,7 +24,7 @@ public class CPUPlayer implements Player {
 
   // the bot's own board
   private Board board;
-  private String preferredMove;
+  public String preferredMove;
   // player color
   private int color;
   // indicates whether it is the bot's turn or not
@@ -173,9 +173,7 @@ public class CPUPlayer implements Player {
                                  double currentPriority) {
     for (Intersection i : potential.neighbours) {
       if (i.getLiberty() == 1 && i.getState() != 0) {
-        System.out.println("1 LIBERTY");
         if (i.getState() == playerColor) {
-          System.out.println("1 LIBERTY OPP COLOR");
           return MAX_PRIORITY;
         } else {
           return SUICIDE_PENALTY + currentPriority;

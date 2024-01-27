@@ -1,4 +1,4 @@
-package com.zkwd.client.screens.ingame;
+package com.zkwd.client.util;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -19,8 +19,8 @@ public class GUIBoardBuilder {
   /**
    * size of circle nodes and padding - will determine size of board
    */
-  final double CircleSize = 12;
-  final double GridPadding = 3;
+  final public double CircleSize = 12;
+  final public double GridPadding = 3;
 
   public Group DisplayBoard(String boardState) {
     Group out = new Group();

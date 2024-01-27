@@ -109,7 +109,7 @@ public class GoServer {
           ClientPlayer b = new ClientPlayer(joinee);
 
           String hist = new GoGame(a, b, size).startGame();
-          logGame(joinee.getUID(), host.getUID(), hist);
+          logGame(joinee.getUID(), host.getUID(), hist, size);
 
           System.out.println("!!! game ended successfully !!!");
           System.out.println("final history: " + hist);
@@ -141,11 +141,11 @@ public class GoServer {
           if(white) {
             CPUPlayer b = new CPUPlayer(1);
             hist = new GoGame(a, b, size).startGame();
-            logGame(-1, host.getUID(), hist);
+            logGame(-1, host.getUID(), hist, size);
           } else {
             CPUPlayer b = new CPUPlayer(-1);
             hist = new GoGame(b, a, size).startGame();
-            logGame(host.getUID(), -1, hist);
+            logGame(host.getUID(), -1, hist, size);
           }
 
           System.out.println("!!! game ended successfully !!!");
@@ -166,14 +166,15 @@ public class GoServer {
    * @param history string encoding game history
    * @throws SQLException if an SQL error occurs
    */
-  private static void logGame(int whiteID, int blackID, String history) throws SQLException {
+  private static void logGame(int whiteID, int blackID, String history, int size) throws SQLException {
     PreparedStatement req = connection.prepareStatement("""
-      INSERT INTO Games (white, black, moves)
-      VALUES (?, ?, ?)
+      INSERT INTO Games (white, black, moves, size)
+      VALUES (?, ?, ?, ?)
     """);
     req.setInt(1, whiteID);
     req.setInt(2, blackID);
     req.setString(3, history);
+    req.setInt(4, size);
 
     req.executeUpdate();
     req.close();

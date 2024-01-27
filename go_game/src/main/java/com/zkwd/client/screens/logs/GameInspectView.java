@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.zkwd.client.model.App;
+import com.zkwd.client.model.Queries;
 import com.zkwd.client.util.GUIBoardBuilder;
 
 import javafx.scene.Group;
@@ -85,10 +86,8 @@ public class GameInspectView extends BorderPane {
     boards.clear();
     try {
       PreparedStatement req = App.getConnection().prepareStatement("""
-        SELECT ub.username, uw.username, g.moves, g.timestamp, g.bsize
-        FROM Games g
-        JOIN Users ub on g.black = ub.id
-        JOIN Users uw on g.white = uw.id
+        SELECT black, white, moves, timestamp, boardsize
+        FROM Games
         WHERE id = ?
       """);
       req.setInt(1, gameID);
@@ -96,8 +95,8 @@ public class GameInspectView extends BorderPane {
       ResultSet res = req.executeQuery();
       res.next(); // move to first result
 
-      black = res.getString(1);
-      white = res.getString(2);
+      black = Queries.fetchUsername(res.getInt(1));
+      white = Queries.fetchUsername(res.getInt(2));
       hist = res.getString(3);
       time = res.getString(4);
       bsize = res.getInt(5);
@@ -123,12 +122,15 @@ public class GameInspectView extends BorderPane {
     }
 
     while(!hist.isEmpty()) {
-      char[] move = hist.substring(0, 2).toCharArray();
+      char[] move = hist.substring(0, 3).toCharArray();
       hist = hist.substring(3);
 
+      System.out.println(move);
+
       // position is x * bsize + y
-      int pos = parseLetter(move[0]) * bsize + parseLetter(move[1]);
-      char col = move[2];
+      int pos = parseLetter(move[1]) * bsize + parseLetter(move[2]);
+      System.out.println(pos);
+      char col = move[0];
 
       // add new stone to board
       board = board.substring(0, pos) + col + board.substring(pos);

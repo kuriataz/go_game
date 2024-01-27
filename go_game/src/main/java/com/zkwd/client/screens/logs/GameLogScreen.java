@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.zkwd.client.model.App;
+import com.zkwd.client.model.Queries;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -53,11 +54,11 @@ public class GameLogScreen extends BorderPane {
         GameListItem item;
         if (bid == App.getUserId()) {
           // user played black
-          item = new GameListItem(gid, "vs " + fetchUsername(wid), itemWidth, itemHeight);
+          item = new GameListItem(gid, "vs " + Queries.fetchUsername(wid), itemWidth, itemHeight);
           item.getStyleClass().add("black");
         } else {
           // user played white
-          item = new GameListItem(gid, "vs " + fetchUsername(bid), itemWidth, itemHeight);
+          item = new GameListItem(gid, "vs " + Queries.fetchUsername(bid), itemWidth, itemHeight);
           item.getStyleClass().add("white");
         }
 
@@ -78,33 +79,6 @@ public class GameLogScreen extends BorderPane {
       req.close();
     } catch (SQLException e) {
       System.out.println(e.getLocalizedMessage());
-    }
-  }
-
-  /**
-   * Get username from user id.
-   * @param uid user id
-   * @return username of specified user
-   */
-  private String fetchUsername(int uid) {
-    if (uid < 0) {
-      return "CPU";
-    } else {
-      try {
-        PreparedStatement req = App.getConnection().prepareStatement("""
-          SELECT username FROM Users
-          WHERE id = ?
-        """);
-        req.setInt(1, uid);
-        ResultSet res = req.executeQuery();
-        req.close();
-        res.next();
-
-        return res.getString(1);
-      } catch (SQLException e) {
-        System.out.println(e.getLocalizedMessage());
-        return "unknown";
-      }
     }
   }
 }

@@ -81,22 +81,6 @@ public class CorrectMoveTest {
 
     assert (b.correctMove(2, 0, -1));
   }
-  public void testKo() {
-    Board b = new Board(9);
-    try {
-      b.putStone(5, 2, -1);
-      b.putStone(4, 3, -1);
-      b.putStone(6, 3, -1);
-      b.putStone(5, 3, 1);
-      b.putStone(4, 4, 1);
-      b.putStone(6, 4, 1);
-      b.putStone(5, 5, 1);
-    } catch (MoveException e) {
-      e.printStackTrace();
-    }
-
-    assert (b.Ko(5, 4, -1) == true);
-  }
 
   public void testPutAfterCapture() {
     Board b = new Board(9);

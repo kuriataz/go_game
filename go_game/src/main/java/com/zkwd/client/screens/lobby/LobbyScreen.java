@@ -44,7 +44,6 @@ public class LobbyScreen extends BorderPane {
     super();
 
     Button exitBtn = new Button("exit");
-    this.setTop(exitBtn);
     exitBtn.setOnMouseClicked((event) -> {
       // show modal
       ConfirmPane c = new ConfirmPane("are you sure you want to exit?");
@@ -63,6 +62,14 @@ public class LobbyScreen extends BorderPane {
 
       this.setCenter(c);
     });
+
+    Button gamesBtn = new Button("past games");
+    gamesBtn.setOnMouseClicked(e -> {
+      App.changeState(AppState.GAMELOG);
+    });
+
+    HBox btns = new HBox(5, exitBtn, gamesBtn);
+    this.setTop(btns);
 
     join = new Label("join game:");
     tf = new TextField();

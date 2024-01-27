@@ -111,6 +111,9 @@ public class LoginScreen extends BorderPane {
         // tell server to set our user id
         App.send("setuid:" + res.getInt(2));
 
+        App.disconnect();
+        App.connectAsUser();
+
         App.changeState(AppState.LOBBY);
       } else {
         // login failed

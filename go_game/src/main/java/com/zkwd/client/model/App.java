@@ -81,7 +81,7 @@ public class App extends Application
      * Connect to database as guest.
      * @throws SQLException if failed
      */
-    public void connectAsGuest() throws SQLException {
+    public static void connectAsGuest() throws SQLException {
         System.out.println("connecting to mariadb...");
         connection = DriverManager.getConnection(
             "jdbc:mariadb://localhost:3306/gogame", "guest", ""
@@ -89,10 +89,22 @@ public class App extends Application
     }
 
     /**
+     * Connect to database as guest.
+     * @throws SQLException if failed
+     */
+    public static void connectAsUser() throws SQLException {
+        System.out.println("connecting to mariadb...");
+        // TODO: MOVE TO RESOURCES!!!
+        connection = DriverManager.getConnection(
+            "jdbc:mariadb://localhost:3306/gogame", "user", "secret_password"
+        );
+    }
+
+    /**
      * Disconnect from database.
      * @throws SQLException if failed
      */
-    public void disconnect() throws SQLException {
+    public static void disconnect() throws SQLException {
         System.out.println("disconnecting from mariadb...");
         connection.close();
     }

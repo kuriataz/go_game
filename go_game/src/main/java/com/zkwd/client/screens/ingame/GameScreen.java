@@ -3,6 +3,8 @@ package com.zkwd.client.screens.ingame;
 import com.zkwd.client.model.App;
 import com.zkwd.client.model.AppState;
 import com.zkwd.client.util.ConfirmPane;
+import com.zkwd.client.util.GUIBoardBuilder;
+
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Group;

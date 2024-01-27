@@ -168,7 +168,7 @@ public class GoServer {
    */
   private static void logGame(int whiteID, int blackID, String history, int size) throws SQLException {
     PreparedStatement req = connection.prepareStatement("""
-      INSERT INTO Games (white, black, moves, size)
+      INSERT INTO Games (white, black, moves, boardsize)
       VALUES (?, ?, ?, ?)
     """);
     req.setInt(1, whiteID);

@@ -11,8 +11,6 @@ import javafx.scene.shape.Line;
 
 /**
  * Draws a board to be displayed on screen.
- *
- * (we could make this a builder for free tbh)
  */
 public class GUIBoardBuilder {
 
@@ -90,5 +88,70 @@ public class GUIBoardBuilder {
   private Point2D getCoords(int x, int y) {
     double w = GridPadding + CircleSize + 1;
     return new Point2D(w * (2 * x + 1), w * (2 * y + 1));
+  }
+
+  public Group customBoard(String boardState, double csize, double gpadd) {
+    Group out = new Group();
+
+    String[] lines = boardState.split("\\|");
+
+    if (lines.length != lines[0].length()) {
+      // data is wrong
+      // maybe throw something here
+      return null;
+    }
+
+    int size = lines.length;
+    double w = gpadd + csize + 1;
+
+    /**
+     * GRID LINES
+     */
+    for (int i = 0; i < size; ++i) {
+
+      Line vertical = new Line(w * (2 * i + 1), w,
+                               w * (2 * i + 1),
+                               w * (2 * size - 1));
+
+      vertical.setStrokeWidth(2);
+      out.getChildren().add(vertical);
+
+      Line horizontal = new Line(w, w * (2 * i + 1),
+                                 w * (2 * size - 1),
+                                 w * (2 * i + 1));
+
+      horizontal.setStrokeWidth(2);
+      out.getChildren().add(horizontal);
+    }
+
+    /**
+     * STONES
+     */
+    GridPane gp = new GridPane();
+    gp.setAlignment(Pos.CENTER);
+    for (int i = 0; i < size; ++i) {
+      for (int j = 0; j < size; ++j) {
+        Circle shape = new Circle(csize);
+        GridPane.setMargin(shape, new Insets(gpadd));
+        shape.setStroke(Color.BLACK);
+        shape.setStrokeWidth(2);
+
+        switch (lines[i].charAt(j)) {
+        case 'W': // WHITE
+          shape.setFill(Color.WHITE);
+          break;
+        case 'B': // BLACK
+          shape.setFill(Color.BLACK);
+          break;
+        default:
+          shape.setFill(Color.TRANSPARENT);
+          shape.setStroke(Color.TRANSPARENT);
+        }
+        gp.add(shape, i, j);
+      }
+    }
+    out.getChildren().add(gp);
+
+    return out;
   }
 }

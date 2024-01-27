@@ -49,13 +49,8 @@ public class GameInspectView extends BorderPane {
       right.setDisable(true);
     }
 
-    Platform.runLater(() -> {
-      Window w = left.getScene().getWindow();
-      w.setWidth(30 * bsize + 500);
-      w.setHeight(30 * bsize + 300);
-    });
-
     StackPane sp = new StackPane(boards.get(ind));
+
     HBox boardBox = new HBox(10, left, sp, right);
     boardBox.setAlignment(Pos.CENTER);
 
@@ -142,9 +137,16 @@ public class GameInspectView extends BorderPane {
     //   board += "|";
     // }
 
+    // 9 -> 12
+    // 19 -> 5
+    double csize = Math.round(18.0 - 2.0 * bsize / 3.0);
+    // 9 -> 3
+    // 19 -> 1
+    double gpadd = Math.round(5.0 - 2.0 * bsize / 9.0);
+
     Board b = new Board(bsize);
 
-    boards.add(builder.DisplayBoard(b.prepareBoardString()));
+    boards.add(builder.customBoard(b.prepareBoardString(), csize, gpadd));
 
     while(!hist.isEmpty()) {
       char[] move = hist.substring(0, 3).toCharArray();
@@ -172,7 +174,7 @@ public class GameInspectView extends BorderPane {
       }
 
       // generate board display and store
-      boards.add(builder.DisplayBoard(b.prepareBoardString()));
+      boards.add(builder.customBoard(b.prepareBoardString(), csize, gpadd));
     }
   }
 

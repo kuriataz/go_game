@@ -10,6 +10,7 @@ import com.zkwd.client.model.Queries;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
@@ -29,8 +30,10 @@ public class GameLogScreen extends BorderPane {
     itemList.setPadding(new Insets(10));
 
     ScrollPane sp = new ScrollPane(itemList);
-    sp.setFitToWidth(true);
+    //sp.setFitToWidth(true);
     sp.setPrefHeight(Double.MAX_VALUE);
+    sp.setHbarPolicy(ScrollBarPolicy.NEVER);
+    sp.setVbarPolicy(ScrollBarPolicy.ALWAYS);
 
     this.setRight(sp);
   }

@@ -26,3 +26,7 @@
 .game-item.black:hover .game-item-text {
   -fx-text-fill: whitesmoke;
 }
+
+.scroll-pane {
+  -fx-background-color: transparent;
+}

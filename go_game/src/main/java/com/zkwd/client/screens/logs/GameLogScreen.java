@@ -29,6 +29,7 @@ public class GameLogScreen extends BorderPane {
     itemList.setPadding(new Insets(10));
 
     ScrollPane sp = new ScrollPane(itemList);
+    sp.setFitToWidth(true);
     sp.setPrefHeight(Double.MAX_VALUE);
 
     this.setRight(sp);

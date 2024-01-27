@@ -13,6 +13,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 
 public class GameScreen extends BorderPane {
 
@@ -65,6 +67,10 @@ public class GameScreen extends BorderPane {
           System.out.println(startBoard.split("\\|")[0]);
           boardsize = startBoard.split("\\|")[0].length();
           updateBoard(startBoard);
+
+          Window w = rbtn.getScene().getWindow();
+          w.setWidth(30 * boardsize + 300);
+          w.setHeight(30 * boardsize + 200);
         });
 
         if (message.equals("game_black")) {

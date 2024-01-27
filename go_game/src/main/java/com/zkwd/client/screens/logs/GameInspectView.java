@@ -11,6 +11,7 @@ import com.zkwd.client.util.GUIBoardBuilder;
 import com.zkwd.server.game.exceptions.MoveException;
 import com.zkwd.server.game.gamestate.Board;
 
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
@@ -19,6 +20,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Window;
 
 public class GameInspectView extends BorderPane {
 
@@ -46,6 +48,12 @@ public class GameInspectView extends BorderPane {
     if (boards.isEmpty()) {
       right.setDisable(true);
     }
+
+    Platform.runLater(() -> {
+      Window w = left.getScene().getWindow();
+      w.setWidth(30 * bsize + 500);
+      w.setHeight(30 * bsize + 300);
+    });
 
     StackPane sp = new StackPane(boards.get(ind));
     HBox boardBox = new HBox(10, left, sp, right);

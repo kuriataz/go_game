@@ -15,6 +15,8 @@ public class SocketReceiver implements Runnable{
     private BufferedReader in;
     private PrintWriter out;
 
+    private int userID;
+
     private volatile String currentMessage;
     private boolean closed = false;
 
@@ -53,6 +55,18 @@ public class SocketReceiver implements Runnable{
 
         // do something when socket closes? maybe
         closed = true;
+    }
+
+    /**
+     * Sets the user ID
+     * @param uid new value
+     */
+    public void setUID(int uid) {
+        userID = uid;
+    }
+
+    public int getUID() {
+        return userID;
     }
 
     /**

@@ -25,7 +25,12 @@ public class LobbyInterpreter implements Runnable {
         clientMessage = receiver.getNextMessage();
         System.out.println("lobby thread received: " + clientMessage);
 
-        if (clientMessage.startsWith("joinlobby:")) {
+        if (clientMessage.startsWith("setuid:")) {
+          // set user id
+          int uid = Integer.parseInt(clientMessage.split(":")[1]);
+          receiver.setUID(uid);
+
+        } else if (clientMessage.startsWith("joinlobby:")) {
 
           // find out if the lobby code is taken
           boardSize = Integer.parseInt(clientMessage.split(":")[1]);

@@ -9,6 +9,10 @@ import com.zkwd.server.game.players.ClientPlayer;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class GoServer {
@@ -18,8 +22,20 @@ public class GoServer {
   // opponent
   private static ArrayList<Lobby> pendingGames = new ArrayList<Lobby>();
 
+  private static Connection connection;
+
   public GoServer(int port) throws IOException {
     serverSocket = new ServerSocket(port);
+
+    // TODO : move credentials out of code and into resources
+    try {
+      System.out.println("connecting to mariadb...");
+      connection = DriverManager.getConnection(
+          "jdbc:mariadb://localhost:3306/gogame", "server", "server_pass"
+      );
+    } catch (SQLException e) {
+      System.out.println(e.getLocalizedMessage());
+    }
   }
 
   public void start() {
@@ -93,6 +109,7 @@ public class GoServer {
           ClientPlayer b = new ClientPlayer(joinee);
 
           String hist = new GoGame(a, b, size).startGame();
+          logGame(joinee.getUID(), host.getUID(), hist);
 
           System.out.println("!!! game ended successfully !!!");
           System.out.println("final history: " + hist);
@@ -124,18 +141,41 @@ public class GoServer {
           if(white) {
             CPUPlayer b = new CPUPlayer(1);
             hist = new GoGame(a, b, size).startGame();
+            logGame(-1, host.getUID(), hist);
           } else {
             CPUPlayer b = new CPUPlayer(-1);
             hist = new GoGame(b, a, size).startGame();
+            logGame(host.getUID(), -1, hist);
           }
 
           System.out.println("!!! game ended successfully !!!");
           System.out.println("final history: " + hist);
+          System.out.println("user id of player: " + host.getUID());
 
         } catch (Exception e) {
           e.printStackTrace();
         }
       }
     }.start();
+  }
+
+  /**
+   * Logs a game into the database
+   * @param whiteID ID of the white player
+   * @param blackID ID of the black player
+   * @param history string encoding game history
+   * @throws SQLException if an SQL error occurs
+   */
+  private static void logGame(int whiteID, int blackID, String history) throws SQLException {
+    PreparedStatement req = connection.prepareStatement("""
+      INSERT INTO Games (white, black, moves)
+      VALUES (?, ?, ?)
+    """);
+    req.setInt(1, whiteID);
+    req.setInt(2, blackID);
+    req.setString(3, history);
+
+    req.executeUpdate();
+    req.close();
   }
 }

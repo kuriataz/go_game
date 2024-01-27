@@ -7,11 +7,13 @@ import java.sql.SQLException;
 import com.zkwd.client.model.App;
 import com.zkwd.client.model.AppState;
 
+import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -61,10 +63,22 @@ public class LoginScreen extends BorderPane {
       attemptLogin();
     });
 
+    f_user.setOnKeyPressed((event) -> {
+      if (event.getCode() == KeyCode.ENTER) {
+        attemptLogin();
+      }
+    });
+    f_pass.setOnKeyPressed((event) -> {
+      if (event.getCode() == KeyCode.ENTER) {
+        attemptLogin();
+      }
+    });
+
     VBox vbox = new VBox(5, inputGrid, submit);
     vbox.setAlignment(Pos.CENTER);
 
     this.setCenter(vbox);
+    Platform.runLater(() -> { f_user.requestFocus(); });
   }
 
   /**
@@ -93,6 +107,9 @@ public class LoginScreen extends BorderPane {
         // for queries later
         App.setUserId(res.getInt(2));
         App.setUserName(f_user.getText());
+
+        // tell server to set our user id
+        App.send("setuid:" + res.getInt(2));
 
         App.changeState(AppState.LOBBY);
       } else {

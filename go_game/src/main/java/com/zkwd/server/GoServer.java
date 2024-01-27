@@ -92,17 +92,13 @@ public class GoServer {
           ClientPlayer a = new ClientPlayer(host);
           ClientPlayer b = new ClientPlayer(joinee);
 
-          new GoGame(a, b, size).startGame();
+          String hist = new GoGame(a, b, size).startGame();
 
           System.out.println("!!! game ended successfully !!!");
+          System.out.println("final history: " + hist);
 
         } catch (Exception e) {
-          /**
-           * TODO : in GoGame, exceptions should be thrown that should end the
-           * game (one of the players disconnects, something goes very wrong)
-           * because here both players (or the remaining player) can be safely
-           * disconnected into the lobby screen
-           */
+          e.printStackTrace();
         }
       }
     }.start();
@@ -123,23 +119,21 @@ public class GoServer {
 
           ClientPlayer a = new ClientPlayer(host);
 
+          String hist;
+
           if(white) {
             CPUPlayer b = new CPUPlayer(1);
-            new GoGame(a, b, size).startGame();
+            hist = new GoGame(a, b, size).startGame();
           } else {
             CPUPlayer b = new CPUPlayer(-1);
-            new GoGame(b, a, size).startGame();
+            hist = new GoGame(b, a, size).startGame();
           }
 
           System.out.println("!!! game ended successfully !!!");
+          System.out.println("final history: " + hist);
 
         } catch (Exception e) {
-          /**
-           * TODO : in GoGame, exceptions should be thrown that should end the
-           * game (one of the players disconnects, something goes very wrong)
-           * because here both players (or the remaining player) can be safely
-           * disconnected into the lobby screen
-           */
+          e.printStackTrace();
         }
       }
     }.start();

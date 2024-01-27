@@ -44,7 +44,7 @@ public class GoGame {
   /**
    * Mediate a game of Go between the two players.
    */
-  public void startGame() {
+  public String startGame() {
 
     // tell both players to enter the ingame app state
     broadcast("_connect");
@@ -123,7 +123,7 @@ public class GoGame {
           currentPlayer.sendMessage("game_err");
           // current player abandoned
           if (isBotGame) {
-            return;
+            return board.getHistory();
           }
           otherPlayer.sendMessage("game_abdn");
           if (otherPlayer.requestConfirmation()) {
@@ -140,7 +140,7 @@ public class GoGame {
           } else {
             // exit game
             otherPlayer.sendMessage("game_err");
-            return;
+            return board.getHistory();
             //
           }
           //
@@ -148,7 +148,7 @@ public class GoGame {
           // other player abandoned
           otherPlayer.sendMessage("game_err");
           if (isBotGame) {
-            return;
+            return board.getHistory();
           }
           currentPlayer.sendMessage("game_abdn");
           if (currentPlayer.requestConfirmation()) {
@@ -165,7 +165,7 @@ public class GoGame {
           } else {
             // exit game
             currentPlayer.sendMessage("game_err");
-            return;
+            return board.getHistory();
             //
           }
           //
@@ -189,6 +189,7 @@ public class GoGame {
           board.removeCapturedChains();
 
           System.out.println("valid move");
+          System.out.println("history: " + board.getHistory());
           broadcast("game_vrfd");
         } else {
           // tell current player their move is invalid.
@@ -208,7 +209,7 @@ public class GoGame {
         e.printStackTrace();
         // something went wrong and the game must close
         broadcast("game_err");
-        return;
+        return board.getHistory();
       }
 
       System.out.println(turn + ": checking if players abandoned...");
@@ -217,7 +218,7 @@ public class GoGame {
       if (checkAbandoned(otherPlayer)) {
         otherPlayer.sendMessage("game_err");
         if (isBotGame) {
-          return;
+          return board.getHistory();
         }
         currentPlayer.sendMessage("game_abdn");
         if (currentPlayer.requestConfirmation()) {
@@ -234,7 +235,7 @@ public class GoGame {
         } else {
           // exit game
           currentPlayer.sendMessage("game_err");
-          return;
+          return board.getHistory();
           //
         }
       } else {
@@ -244,7 +245,7 @@ public class GoGame {
       if (checkAbandoned(currentPlayer)) {
         currentPlayer.sendMessage("game_err");
         if (isBotGame) {
-          return;
+          return board.getHistory();
         }
         otherPlayer.sendMessage("game_abdn");
         if (otherPlayer.requestConfirmation()) {
@@ -261,7 +262,7 @@ public class GoGame {
         } else {
           // exit game
           otherPlayer.sendMessage("game_err");
-          return;
+          return board.getHistory();
           //
         }
       } else {
@@ -287,6 +288,7 @@ public class GoGame {
 
     System.out.println("game ended!");
     calculateScore();
+    return board.getHistory();
   }
 
   private void broadcast(String message) {

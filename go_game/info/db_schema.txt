@@ -1,0 +1,48 @@
+create database if not exists gogame;
+
+use gogame;
+
+CREATE IF NOT EXISTS TABLE Users (
+	id INT AUTO_INCREMENT,
+	username VARCHAR(20) NOT NULL UNIQUE,
+	pass VARBINARY(300) NOT NULL,
+	salt VARBINARY(16) NOT NULL,
+	PRIMARY KEY (id),
+	CONSTRAINT usernameLength CHECK (LENGTH(username) > 3)
+);
+
+CREATE IF NOT EXISTS TABLE Games (
+	id INT AUTO_INCREMENT,
+	white INT NOT NULL,
+	black INT NOT NULL,
+	moves TEXT NOT NULL,
+	timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (id)
+);
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE add_user (
+    IN user varchar(20), 
+    IN pass varchar(30)
+)
+BEGIN
+    SET @salt = SUBSTRING(MD5(RAND()), 1, 16);
+    INSERT INTO Users (username, pass, salt)
+    VALUES (
+        user,
+        SHA2(CONCAT(@salt, pass), 256),
+        @salt
+    );
+END$$
+DELIMITER ;
+
+CREATE USER IF NOT EXISTS 'guest'@'%';
+GRANT SELECT ON gogame.Users TO guest;
+GRANT EXECUTE ON gogame.* TO guest;
+
+CREATE USER IF NOT EXISTS 'user'@'%' IDENTIFIED BY 'secret_password';
+GRANT SELECT ON gogame.* TO user;
+GRANT EXECUTE ON gogame.* TO user;
+
+CREATE USER IF NOT EXISTS 'server'@'%' IDENTIFIED BY 'server_pass';
+GRANT SELECT, INSERT, DELETE ON gogame.* TO server;

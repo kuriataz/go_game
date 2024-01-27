@@ -76,10 +76,8 @@ public class Board {
 
         if (currentChar == 'W') {
           board[i][j].setState(1); // Assuming 1 represents the state for 'W'
-          history = history + 'W' + toLetter(i) + toLetter(j);
         } else if (currentChar == 'B') {
           board[i][j].setState(-1); // Assuming -1 represents the state for 'B'
-          history = history + 'B' + toLetter(i) + toLetter(j);
         } else {
           board[i][j].setState(0); // Assuming 0 represents the state for 'E'
         }

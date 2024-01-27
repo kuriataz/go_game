@@ -123,6 +123,7 @@ public class GoGame {
           currentPlayer.sendMessage("game_err");
           // current player abandoned
           if (isBotGame) {
+            System.out.println("fhistory: " + board.getHistory());
             return board.getHistory();
           }
           otherPlayer.sendMessage("game_abdn");
@@ -140,6 +141,7 @@ public class GoGame {
           } else {
             // exit game
             otherPlayer.sendMessage("game_err");
+            System.out.println("fhistory: " + board.getHistory());
             return board.getHistory();
             //
           }
@@ -148,6 +150,7 @@ public class GoGame {
           // other player abandoned
           otherPlayer.sendMessage("game_err");
           if (isBotGame) {
+            System.out.println("fhistory: " + board.getHistory());
             return board.getHistory();
           }
           currentPlayer.sendMessage("game_abdn");
@@ -165,6 +168,7 @@ public class GoGame {
           } else {
             // exit game
             currentPlayer.sendMessage("game_err");
+            System.out.println("fhistory: " + board.getHistory());
             return board.getHistory();
             //
           }
@@ -209,6 +213,7 @@ public class GoGame {
         e.printStackTrace();
         // something went wrong and the game must close
         broadcast("game_err");
+        System.out.println("fhistory: " + board.getHistory());
         return board.getHistory();
       }
 
@@ -218,6 +223,7 @@ public class GoGame {
       if (checkAbandoned(otherPlayer)) {
         otherPlayer.sendMessage("game_err");
         if (isBotGame) {
+          System.out.println("fhistory: " + board.getHistory());
           return board.getHistory();
         }
         currentPlayer.sendMessage("game_abdn");
@@ -235,6 +241,7 @@ public class GoGame {
         } else {
           // exit game
           currentPlayer.sendMessage("game_err");
+          System.out.println("fhistory: " + board.getHistory());
           return board.getHistory();
           //
         }
@@ -245,6 +252,7 @@ public class GoGame {
       if (checkAbandoned(currentPlayer)) {
         currentPlayer.sendMessage("game_err");
         if (isBotGame) {
+          System.out.println("fhistory: " + board.getHistory());
           return board.getHistory();
         }
         otherPlayer.sendMessage("game_abdn");
@@ -262,6 +270,7 @@ public class GoGame {
         } else {
           // exit game
           otherPlayer.sendMessage("game_err");
+          System.out.println("fhistory: " + board.getHistory());
           return board.getHistory();
           //
         }
@@ -288,6 +297,7 @@ public class GoGame {
 
     System.out.println("game ended!");
     calculateScore();
+    System.out.println("fhistory: " + board.getHistory());
     return board.getHistory();
   }
 

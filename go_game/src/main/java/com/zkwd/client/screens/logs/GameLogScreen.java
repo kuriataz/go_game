@@ -27,8 +27,8 @@ public class GameLogScreen extends BorderPane {
     this.setLeft(itemList);
   }
 
-  private final double itemWidth = 120;
-  private final double itemHeight = 50;
+  private final double itemWidth = 125;
+  private final double itemHeight = 30;
 
   private void refreshList() {
     try {

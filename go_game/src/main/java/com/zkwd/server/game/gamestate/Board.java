@@ -47,9 +47,6 @@ public class Board {
 
   public Board setBoard(String boardString) {
 
-    // TODO : hey, can you set up chains here somehow? plss
-    // i think its necessary for bot
-
     int index = 0;
 
     for (int i = 0; i < size; ++i) {
@@ -127,6 +124,7 @@ public class Board {
    */
   public int getSize() { return this.size; }
 
+  // i think it isn't neccessary
   /**
    * Returns the state of the intersection (color).
    * @param x intersection's x coordinate
@@ -139,7 +137,7 @@ public class Board {
   /**
    * Sets neighbours of each intersection and gives them numbers of liberties.
    */
-  void setNeighbours() {
+  private void setNeighbours() {
     for (int i = 0; i < size; ++i) {
       for (int j = 0; j < size; ++j) {
         if (i + 1 < size) {

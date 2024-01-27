@@ -71,7 +71,7 @@ public class Intersection {
    * Checks if there is any lonley (not in chain) stone in this.neighbours
    * @return ArrayList of intersections' taken by the lonley stone
    */
-  ArrayList<Intersection> gainToChain() {
+  public ArrayList<Intersection> gainToChain() {
     ArrayList<Intersection> toGain = new ArrayList<Intersection>();
     for (Intersection i : neighbours) {
       if (i.getState() == this.state && i.chainId == 0) {

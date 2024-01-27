@@ -100,7 +100,7 @@ public class CPUPlayer implements Player {
     priorityFunction(color);
   }
 
-  public void priorityFunction(int playerColor) {
+  private void priorityFunction(int playerColor) {
     try {
       bestMoves.clear();
 
@@ -149,6 +149,7 @@ public class CPUPlayer implements Player {
 
       // if several moves have the same priority, choose one randomly
       preferredMove = samePriority(bestMoves);
+
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -190,7 +191,7 @@ public class CPUPlayer implements Player {
     return currentPriority;
   }
 
-  public double squareDistance(int x, int y, int playerColor) {
+  private double squareDistance(int x, int y, int playerColor) {
     int disSum = 0;
     for (int i = 0; i != board.getSize(); ++i) {
       for (int j = 0; j != board.getSize(); ++j) {

@@ -11,11 +11,14 @@ import com.zkwd.client.util.GUIBoardBuilder;
 import com.zkwd.server.game.exceptions.MoveException;
 import com.zkwd.server.game.gamestate.Board;
 
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 public class GameInspectView extends BorderPane {
 
@@ -46,6 +49,12 @@ public class GameInspectView extends BorderPane {
 
     StackPane sp = new StackPane(boards.get(ind));
     HBox boardBox = new HBox(10, left, sp, right);
+    boardBox.setAlignment(Pos.CENTER);
+
+    Label timestamp = new Label("played at: " + time);
+
+    VBox box = new VBox(15, boardBox, timestamp);
+    box.setAlignment(Pos.CENTER);
 
     // left button functionality
     left.setOnAction(e -> {
@@ -76,7 +85,7 @@ public class GameInspectView extends BorderPane {
       System.out.println(ind + "|" + boards.size());
     });
 
-    this.setCenter(boardBox);
+    this.setCenter(box);
 
     // center - board
     // left and right - last/next move

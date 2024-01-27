@@ -55,6 +55,16 @@ public class Board {
       return '?';
     }
   }
+
+  // counting from 0
+  public String getMove(int n) {
+    String move = "";
+    move = move + history.charAt(3 * n);
+    move = move + history.charAt(3 * n + 1);
+    move = move + history.charAt(3 * n + 2);
+
+    return move;
+  }
   public Board setBoard(String boardString) {
 
     int index = 0;

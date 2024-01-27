@@ -54,6 +54,8 @@ public class App extends Application
 
         scene = new Scene(sp, 600, 400);
 
+        scene.getStylesheets().add(getClass().getClassLoader().getResource("css/stylesheet.css").toExternalForm());
+
         stage.setScene(scene);
         stage.show();
 

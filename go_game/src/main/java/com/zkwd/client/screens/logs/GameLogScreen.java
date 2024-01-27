@@ -7,7 +7,9 @@ import java.sql.SQLException;
 import com.zkwd.client.model.App;
 import com.zkwd.client.model.Queries;
 
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
@@ -24,7 +26,12 @@ public class GameLogScreen extends BorderPane {
 
     refreshList();
 
-    this.setLeft(itemList);
+    itemList.setPadding(new Insets(10));
+
+    ScrollPane sp = new ScrollPane(itemList);
+    sp.setPrefHeight(Double.MAX_VALUE);
+
+    this.setRight(sp);
   }
 
   private final double itemWidth = 125;

@@ -296,10 +296,10 @@ public class Board {
   public boolean correctMove(int x, int y, int playerColor) {
     boolean inbounds = (x < size && x >= 0 && y < size && y >= 0);
     boolean free = (board[x][y].getState() == FREE);
+    boolean ko = halfKo(x, y, playerColor) && koInLastMove;
+
     boolean suicide = true;
     boolean capturing = false;
-    boolean ko = halfKo(x, y, playerColor) && koInLastMove;
-    // boolean ko = false;
     for (Intersection i : board[x][y].neighbours) {
       if (i.getState() == FREE) {
         suicide = false;
@@ -327,7 +327,7 @@ public class Board {
         }
       }
     }
-    return inbounds && free && (!suicide || capturing) && !ko;
+    return inbounds && free && !ko && (!suicide || capturing);
   }
 
   private Chain findChain(int chainId) {
@@ -415,25 +415,6 @@ public class Board {
     }
   }
 
-  // true if Ko Rule is broken: the last move was KoMove
-  // public boolean Ko(int x, int y, int playerColor) {
-  //   boolean koBefore = false;
-  //   String lastMove = "";
-  //   if (history.length() >= 2) {
-  //     lastMove = lastMove + history.charAt(history.length() - 2);
-  //     lastMove = lastMove + history.charAt(history.length() - 1);
-  //   }
-  //   ArrayList<String> forbbidenMoves = koMoves(x, y);
-
-  //   for (int i = 0; i != forbbidenMoves.size(); ++i) {
-  //     if (!(forbbidenMoves.isEmpty()) &&
-  //         lastMove.equals(forbbidenMoves.get(i))) {
-  //       koBefore = true;
-  //     }
-  //   }
-  //   return captureKo && neighboursCounter == 4 && koBefore;
-  // }
-
   private boolean halfKo(int x, int y, int playerColor) {
     boolean captureKo = false;
     int neighboursCounter = 0;
@@ -448,19 +429,6 @@ public class Board {
     return captureKo && neighboursCounter == 4;
   }
 
-  private ArrayList<String> koMoves(int x, int y) {
-    ArrayList<String> forbbidenMoves = new ArrayList<>();
-    String move = "";
-    for (int i = -1; i != 2; ++i) {
-      for (int j = -1; j != 2; ++j) {
-        if ((x + i) >= 0 && (x + i) < size && (y + j) >= 0 && (y + j) < size) {
-          move = "" + toLetter(x + i) + toLetter(y + j);
-          forbbidenMoves.add(move);
-        }
-      }
-    }
-    return forbbidenMoves;
-  }
   public int getChainLiberty(int id) {
     for (Chain ch : chains) {
       if (ch.getId() == id) {

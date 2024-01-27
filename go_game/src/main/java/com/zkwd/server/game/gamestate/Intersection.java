@@ -12,6 +12,7 @@ public class Intersection {
   private int state;
   private int liberty = 0; // is set by setNeighbours in Board's constructor
   private int chainId = 0;
+  public boolean capturing = false;
   public ArrayList<Intersection> neighbours = new ArrayList<Intersection>();
 
   public Intersection(int state) { this.state = state; }

@@ -13,7 +13,7 @@ import javafx.util.Pair;
 public class CPUPlayer implements Player {
 
   private static final double BASE_PRIORITY = 10000;
-  private static final double MAX_BONUS = 10000000;
+  // private static final double TOO_BIG = 10000000;
   private static final double MAX_PRIORITY = Double.MAX_VALUE;
   private static final double MIN_PRIORITY = 0.41;
   private static final double SUICIDE_PENALTY = -100;
@@ -21,7 +21,6 @@ public class CPUPlayer implements Player {
   private static final double BOT_DISTANCE_WEIGHT = 10;
   private static final int LIBERTY_3_BONUS = 10;
   private static final int LIBERTY_2_BONUS = 5;
-  private static final double BOARD_EDGE_PERCENTAGE = 0.1;
 
   // the bot's own board
   private Board board;
@@ -122,10 +121,6 @@ public class CPUPlayer implements Player {
             priority += LIBERTY_2_BONUS;
           }
 
-          // if ((i % 8) == 0 || (j % 8) == 0) {
-          //   priority *= BOARD_EDGE_PERCENTAGE;
-          // }
-
           if (board.board[i][j].getState() != 0) {
             System.out.println("zeroing " + i + " " + j);
             priority = MIN_PRIORITY;
@@ -137,9 +132,9 @@ public class CPUPlayer implements Player {
             System.out.println("priority < 0 for: " + i + "," + j);
             priority = MIN_PRIORITY;
           }
-          if (priority > MAX_BONUS) {
-            priority = MAX_PRIORITY;
-          }
+          // if (priority > TOO_BIG) {
+          //   priority = MAX_PRIORITY;
+          // }
 
           // prepare value for storage
           String move = "move:" + i + "," + j;
@@ -150,7 +145,7 @@ public class CPUPlayer implements Player {
       Collections.sort(bestMoves, Collections.reverseOrder(
                                       Comparator.comparing(Pair::getValue)));
       // set best move as preferred move
-      preferredMove = bestMoves.get(0).getKey();
+      // preferredMove = bestMoves.get(0).getKey();
 
       // if several moves have the same priority, choose one randomly
       preferredMove = samePriority(bestMoves);
@@ -168,7 +163,6 @@ public class CPUPlayer implements Player {
       sameMoves.add(bestMoves.get(i).getKey());
       ++i;
     }
-    // int index = new Random().nextInt(sameMoves.size());
     int index = (int)(Math.random() * sameMoves.size());
 
     return sameMoves.get(index);

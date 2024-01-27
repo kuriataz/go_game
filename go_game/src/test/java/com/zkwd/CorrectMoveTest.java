@@ -73,6 +73,8 @@ public class CorrectMoveTest {
       b.putStone(1, 0, 1);
       b.putStone(3, 0, 1);
       b.putStone(2, 1, 1);
+      b.removeCapturedStones();
+      b.removeCapturedChains();
     } catch (MoveException e) {
       e.printStackTrace();
     }

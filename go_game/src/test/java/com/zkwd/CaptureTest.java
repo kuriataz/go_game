@@ -197,4 +197,24 @@ public class CaptureTest {
     assert (b.board[4][4].getState() == 0);
     assert (b.board[4][5].getState() == 0);
   }
+
+  public void testCaptureNotSuicide() {
+    Board b = new Board(9);
+    try {
+      b.putStone(0, 0, 1);
+      b.putStone(1, 1, -1);
+      b.putStone(0, 1, -1);
+      b.putStone(1, 0, 1);
+      b.putStone(3, 0, 1);
+      b.putStone(2, 1, 1);
+      b.putStone(2, 0, -1);
+      b.removeCapturedStones();
+      b.removeCapturedChains();
+    } catch (MoveException e) {
+      e.printStackTrace();
+    }
+
+    assert (b.board[0][0].getState() == 0);
+    assert (b.board[1][0].getState() == 0);
+  }
 }

@@ -3,7 +3,6 @@ package com.zkwd.server.game.gamestate;
 import com.zkwd.server.game.exceptions.MoveException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Random;
 
 /**
  * Stores game information: the size of the board and placement of pieces on it.
@@ -241,9 +240,6 @@ public class Board {
     for (int i = 0; i != size; ++i) {
       for (int j = 0; j != size; ++j) {
         board[i][j].updateLiberty();
-        if (i == 3 && j == 8) {
-          System.out.println(board[i][j].getLiberty());
-        }
       }
     }
   }
@@ -288,10 +284,12 @@ public class Board {
         }
       } else if (i.getLiberty() == 1) {
         if (i.getChainId() == 0) {
+          board[x][y].capturing = true;
           capturing = true;
         } else {
           for (Chain ch : chains) {
             if (ch.getId() == i.getChainId() && ch.getLiberty() == 1) {
+              board[x][y].capturing = true;
               capturing = true;
             }
           }
@@ -358,8 +356,11 @@ public class Board {
     for (int i = 0; i != size; ++i) {
       for (int j = 0; j != size; ++j) {
         if (board[i][j].getState() != FREE && board[i][j].getLiberty() <= 0 &&
-            board[i][j].getChainId() == 0) {
+            board[i][j].getChainId() == 0 && !board[i][j].capturing) {
           removeStone(i, j);
+        }
+        if (board[i][j].capturing) {
+          board[i][j].capturing = false;
         }
       }
     }

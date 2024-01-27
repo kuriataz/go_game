@@ -15,7 +15,7 @@ public class BotTest {
     }
     CPUPlayer bot = new CPUPlayer(b, 1);
 
-    assert (bot.preferredMove.equals("move:1,0") ||
-            bot.preferredMove.equals("move:0,1"));
+    assert (bot.getPreferredMove().equals("move:1,0") ||
+            bot.getPreferredMove().equals("move:0,1"));
   }
 }

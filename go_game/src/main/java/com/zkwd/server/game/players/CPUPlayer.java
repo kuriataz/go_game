@@ -24,7 +24,7 @@ public class CPUPlayer implements Player {
 
   // the bot's own board
   private Board board;
-  public String preferredMove;
+  private String preferredMove;
   // player color
   private int color;
   // indicates whether it is the bot's turn or not
@@ -43,6 +43,8 @@ public class CPUPlayer implements Player {
   }
 
   public CPUPlayer(int color) { this.color = color; }
+
+  public String getPreferredMove() { return this.preferredMove; }
 
   /**
    * The computer receives a message and does something.

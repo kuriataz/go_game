@@ -17,6 +17,7 @@ public class Board {
   private int maxChainId;
   public Intersection[][] board;
   private ArrayList<Chain> chains;
+  private String history = "";
 
   public Board(int size) {
     this.size = size;
@@ -45,6 +46,15 @@ public class Board {
   //   return this;
   // }
 
+  public String getHistory() { return this.history; }
+
+  public char toLetter(int i) {
+    if (i >= 0 && i <= 25) {
+      return (char)('a' + i);
+    } else {
+      return '?';
+    }
+  }
   public Board setBoard(String boardString) {
 
     int index = 0;
@@ -55,8 +65,10 @@ public class Board {
 
         if (currentChar == 'W') {
           board[i][j].setState(1); // Assuming 1 represents the state for 'W'
+          history = history + 'W' + toLetter(i) + toLetter(j);
         } else if (currentChar == 'B') {
           board[i][j].setState(-1); // Assuming -1 represents the state for 'B'
+          history = history + 'B' + toLetter(i) + toLetter(j);
         } else {
           board[i][j].setState(0); // Assuming 0 represents the state for 'E'
         }
@@ -191,6 +203,12 @@ public class Board {
   public void putStone(int x, int y, int playerColor) throws MoveException {
     if (correctMove(x, y, playerColor)) {
       board[x][y].setState(playerColor);
+
+      char color = 'W';
+      if (playerColor == -1) {
+        color = 'B';
+      }
+      history = history + color + toLetter(x) + toLetter(y);
       board[x][y].takeLiberties();
 
       // new stone joins existing chain

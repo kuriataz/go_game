@@ -38,7 +38,6 @@ public class GameLogScreen extends BorderPane {
     BorderPane.setMargin(topBar, new Insets(5));
     topBar.setAlignment(Pos.TOP_RIGHT);
     topBar.getStyleClass().add("top-bar");
-
     this.setTop(topBar);
 
     refreshList();

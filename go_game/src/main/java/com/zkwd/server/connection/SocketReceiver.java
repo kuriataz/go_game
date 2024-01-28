@@ -50,6 +50,7 @@ public class SocketReceiver implements Runnable{
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+                break;
             }
         }
 

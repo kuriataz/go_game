@@ -167,7 +167,9 @@ public class GameScreen extends BorderPane {
             } 
           } while(!req.equals("game_vrfd"));
 
-          disableInput();
+          Platform.runLater(() -> {
+            disableInput();
+          });
           
           // if invalid, ->loop
           

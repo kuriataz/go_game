@@ -31,18 +31,17 @@ public class ResultsScreen extends BorderPane {
         topBar.getStyleClass().add("top-bar");
         this.setTop(topBar);
 
-        VBox results = new VBox(txt);
-        results.setAlignment(Pos.CENTER);
-
-        this.setCenter(results);
+        this.setCenter(txt);
 
         String bstate = App.await();
 
         GUIBoardBuilder builder = new GUIBoardBuilder();
-        results.getChildren().add(builder.DisplayBoard(bstate));
-        txt.setText("final board state:");
-        results.getChildren().add(new Label(
-            "feel free to calculate the final score now :)"
-        ));
+        VBox results = new VBox(
+            new Label("final board state:"),
+            builder.DisplayBoard(bstate), 
+            new Label("feel free to calculate the final score now :)")
+        );
+        results.setAlignment(Pos.CENTER);
+        this.setCenter(results);
     }
 }

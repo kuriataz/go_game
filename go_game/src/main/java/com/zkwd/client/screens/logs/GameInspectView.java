@@ -11,7 +11,6 @@ import com.zkwd.client.util.GUIBoardBuilder;
 import com.zkwd.server.game.exceptions.MoveException;
 import com.zkwd.server.game.gamestate.Board;
 
-import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
@@ -20,7 +19,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Window;
 
 public class GameInspectView extends BorderPane {
 

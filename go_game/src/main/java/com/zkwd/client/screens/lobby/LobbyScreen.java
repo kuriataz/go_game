@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -68,8 +69,10 @@ public class LobbyScreen extends BorderPane {
       App.changeState(AppState.GAMELOG);
     });
 
-    HBox btns = new HBox(5, exitBtn, gamesBtn);
-    this.setTop(btns);
+    HBox topBar = new HBox(5, exitBtn, gamesBtn);
+    BorderPane.setMargin(topBar, new Insets(5));
+    topBar.getStyleClass().add("top-bar");
+    this.setTop(topBar);
 
     join = new Label("join game:");
     tf = new TextField();
@@ -98,6 +101,8 @@ public class LobbyScreen extends BorderPane {
     sizeBox = new HBox(5);
     sizeBox.getChildren().addAll(nine, thirteen, nineteen);
     sizeBox.setAlignment(Pos.CENTER);
+
+    nine.getStyleClass().add("active");
 
     Label bot = new Label("play against CPU?: ");
     Button bot1 = new Button("as white");
@@ -155,9 +160,24 @@ public class LobbyScreen extends BorderPane {
     App.send("bot_black");
   }
 
-  private void sizeNine(ActionEvent event) { boardSize = 9; }
-  private void sizeThirteen(ActionEvent event) { boardSize = 13; }
-  private void sizeNineteen(ActionEvent event) { boardSize = 19; }
+  private void sizeNine(ActionEvent event) { 
+    boardSize = 9;
+    nine.getStyleClass().add("active");
+    thirteen.getStyleClass().remove("active");
+    nineteen.getStyleClass().remove("active");
+  }
+  private void sizeThirteen(ActionEvent event) { 
+    boardSize = 13;
+    nine.getStyleClass().remove("active");
+    thirteen.getStyleClass().add("active");
+    nineteen.getStyleClass().remove("active");
+  }
+  private void sizeNineteen(ActionEvent event) { 
+    boardSize = 19;
+    nine.getStyleClass().remove("active");
+    thirteen.getStyleClass().remove("active");
+    nineteen.getStyleClass().add("active");
+  }
 
   /**
    * Waits for an opponent to join the lobby in the background

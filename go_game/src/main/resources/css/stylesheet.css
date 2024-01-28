@@ -1,3 +1,28 @@
+.root {
+  -fx-text-fill: darkslategrey;
+}
+
+.button {
+  -fx-background-color: gainsboro;
+  -fx-border-color: gainsboro;
+
+  -fx-border-width: 2px;
+  -fx-border-radius: 5px;
+}
+
+.button:hover {
+  -fx-background-color: whitesmoke;
+  -fx-background-insets: 0;
+  -fx-text-fill: darkslategrey;
+
+  -fx-border-color: darkslategrey;
+}
+
+.button.active {
+  -fx-background-color: darkslategrey;
+  -fx-border-color: darkslategrey;
+  -fx-text-fill: whitesmoke;
+}
 
 .game-item-fill {
   -fx-fill: gainsboro;
@@ -7,17 +32,17 @@
 
 .game-item.white:hover .game-item-fill {
   -fx-fill: whitesmoke;
-  -fx-stroke: black;
+  -fx-stroke: darkslategrey;
   -fx-stroke-width: 3; 
   /* -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .20), 16, 0.2, 0, 0) */
 }
 
 .game-item.white:hover .game-item-text {
-  -fx-text-fill: black;
+  -fx-text-fill: darkslategrey;
 }
 
 .game-item.black:hover .game-item-fill {
-  -fx-fill: black;
+  -fx-fill: darkslategrey;
   -fx-stroke: whitesmoke;
   -fx-stroke-width: 3; 
   /* -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .20), 16, 0.2, 0, 0) */
@@ -29,4 +54,27 @@
 
 .scroll-pane {
   -fx-background-color: transparent;
+}
+
+.top-bar > .button {
+  -fx-background-color: darkslategrey;
+  -fx-background-insets: 0;
+  -fx-effect: null;
+  -fx-text-fill: whitesmoke;
+
+  -fx-border-color: transparent;
+}
+
+.top-bar > .button:hover {
+  -fx-background-color: whitesmoke;
+  -fx-background-insets: 0;
+  -fx-text-fill: darkslategrey;
+}
+
+.scroll-bar {
+  -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+  -fx-background-color: darkslategrey;
 }

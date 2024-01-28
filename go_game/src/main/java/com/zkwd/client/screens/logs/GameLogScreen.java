@@ -5,13 +5,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.zkwd.client.model.App;
+import com.zkwd.client.model.AppState;
 import com.zkwd.client.model.Queries;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class GameLogScreen extends BorderPane {
@@ -24,6 +28,18 @@ public class GameLogScreen extends BorderPane {
   private final VBox itemList = new VBox(10);
 
   public GameLogScreen() {
+
+    Button back = new Button("back");
+    back.setOnAction(e -> {
+      App.changeState(AppState.LOBBY);
+    });
+
+    HBox topBar = new HBox(5, back);
+    BorderPane.setMargin(topBar, new Insets(5));
+    topBar.setAlignment(Pos.TOP_RIGHT);
+    topBar.getStyleClass().add("top-bar");
+
+    this.setTop(topBar);
 
     refreshList();
 
@@ -73,7 +89,6 @@ public class GameLogScreen extends BorderPane {
           item.getStyleClass().add("white");
         }
 
-        // TODO : on click bring up game view
         item.setOnMouseClicked(e -> {
           System.out.println(item.getGameID());
           this.setCenter(new GameInspectView(item.getGameID()));

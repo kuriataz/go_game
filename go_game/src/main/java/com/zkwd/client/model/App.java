@@ -52,7 +52,7 @@ public class App extends Application
             e.printStackTrace();
         }
 
-        scene = new Scene(sp, 600, 400);
+        scene = new Scene(sp, 700, 450);
 
         scene.getStylesheets().add(getClass().getClassLoader().getResource("css/stylesheet.css").toExternalForm());
 

@@ -9,6 +9,7 @@ import com.zkwd.client.model.AppState;
 
 import javafx.application.Platform;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -17,6 +18,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class LoginScreen extends BorderPane {
@@ -32,7 +34,11 @@ public class LoginScreen extends BorderPane {
       App.changeState(AppState.REGISTER);
     });
 
-    this.setTop(reg);
+    HBox topBar = new HBox(5, reg);
+    BorderPane.setMargin(topBar, new Insets(5));
+    topBar.setAlignment(Pos.TOP_RIGHT);
+    topBar.getStyleClass().add("top-bar");
+    this.setTop(topBar);
 
     Label l_user = new Label("username:");
     Label l_pass = new Label("password:");

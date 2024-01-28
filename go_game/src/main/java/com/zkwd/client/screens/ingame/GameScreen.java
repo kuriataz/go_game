@@ -7,12 +7,17 @@ import com.zkwd.client.util.GUIBoardBuilder;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -37,16 +42,25 @@ public class GameScreen extends BorderPane {
     System.out.println("!! creating new GameScreen");
 
     exitbtn = new Button("exit");
-    this.setTop(exitbtn);
     exitbtn.setOnMouseClicked(abdHandler);
-
-    this.boardBuilder = new GUIBoardBuilder();
 
     rbtn = new Button("end game");
     rbtn.setOnMouseClicked(reqHandler);
 
-    HBox hbox = new HBox(5, txt, rbtn);
-    this.setBottom(hbox);
+    txt.setTextAlignment(TextAlignment.CENTER);
+
+    Pane buffer = new Pane();
+    Pane buffer2 = new Pane();
+    HBox topBar = new HBox(5, exitbtn, buffer, txt, buffer2, rbtn);
+    topBar.setAlignment(Pos.CENTER);
+    HBox.setHgrow(buffer, Priority.ALWAYS);
+    HBox.setHgrow(buffer2, Priority.ALWAYS);
+    BorderPane.setMargin(topBar, new Insets(5));
+    topBar.setAlignment(Pos.TOP_RIGHT);
+    topBar.getStyleClass().add("top-bar");
+    this.setTop(topBar);
+
+    this.boardBuilder = new GUIBoardBuilder();
 
     // begin game
     runGame();

@@ -6,6 +6,7 @@ import java.sql.CallableStatement;
 import java.sql.SQLException;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -14,6 +15,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 /**
@@ -32,7 +34,11 @@ public class RegisterScreen extends BorderPane {
     Button log = new Button("login");
     log.setOnAction(e -> { App.changeState(AppState.LOGIN); });
 
-    this.setTop(log);
+    HBox topBar = new HBox(5, log);
+    BorderPane.setMargin(topBar, new Insets(5));
+    topBar.setAlignment(Pos.TOP_RIGHT);
+    topBar.getStyleClass().add("top-bar");
+    this.setTop(topBar);
 
     Label l_user = new Label("username:");
     Label l_pass = new Label("password:");

@@ -1,6 +1,13 @@
+/* i am not sure this does anything. i don't think it does */
 .root {
   -fx-text-fill: darkslategrey;
 }
+
+/*
+  ----------------
+  DEFAULT BUTTONS
+  ----------------
+*/
 
 .button {
   -fx-background-color: gainsboro;
@@ -23,6 +30,12 @@
   -fx-border-color: darkslategrey;
   -fx-text-fill: whitesmoke;
 }
+
+/*
+  ----------------
+  GAMELIST ITEMS
+  ----------------
+*/
 
 .game-item-fill {
   -fx-fill: gainsboro;
@@ -52,9 +65,29 @@
   -fx-text-fill: whitesmoke;
 }
 
+/*
+  ----------------
+  SCROLLPANES
+  ----------------
+*/
+
 .scroll-pane {
   -fx-background-color: transparent;
 }
+
+.scroll-bar {
+  -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+  -fx-background-color: darkslategrey;
+}
+
+/*
+  ----------------
+  TOP BARS
+  ----------------
+*/
 
 .top-bar > .button {
   -fx-background-color: darkslategrey;
@@ -71,10 +104,6 @@
   -fx-text-fill: darkslategrey;
 }
 
-.scroll-bar {
-  -fx-background-color: transparent;
-}
-
-.scroll-bar .thumb {
-  -fx-background-color: darkslategrey;
+.top-bar > .button:disabled {
+  -fx-text-fill: gainsboro;
 }

@@ -71,6 +71,7 @@ public class LobbyScreen extends BorderPane {
 
     HBox topBar = new HBox(5, exitBtn, gamesBtn);
     BorderPane.setMargin(topBar, new Insets(5));
+    topBar.setAlignment(Pos.TOP_RIGHT);
     topBar.getStyleClass().add("top-bar");
     this.setTop(topBar);
 

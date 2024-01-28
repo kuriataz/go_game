@@ -38,32 +38,46 @@
 */
 
 .game-item-fill {
-  -fx-fill: gainsboro;
-  -fx-stroke: gainsboro;
-  -fx-stroke-width: 3; 
-}
-
-.game-item.white:hover .game-item-fill {
-  -fx-fill: whitesmoke;
   -fx-stroke: darkslategrey;
-  -fx-stroke-width: 3; 
-  /* -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .20), 16, 0.2, 0, 0) */
+  -fx-stroke-width: 2;
 }
 
-.game-item.white:hover .game-item-text {
+/*
+  --- WHITE ITEMS ---
+*/
+.game-item.white .game-item-fill {
+  -fx-fill: whitesmoke;
+}
+.game-item.white .game-item-text {
   -fx-text-fill: darkslategrey;
 }
 
-.game-item.black:hover .game-item-fill {
-  -fx-fill: darkslategrey;
-  -fx-stroke: whitesmoke;
-  -fx-stroke-width: 3; 
-  /* -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .20), 16, 0.2, 0, 0) */
+.game-item.white:hover .game-item-fill{
+  -fx-fill: gainsboro;
+  -fx-stroke: gainsboro;
+}
+.game-item.white:hover .game-item-text{
+  -fx-text-fill: darkslategrey;
 }
 
-.game-item.black:hover .game-item-text {
+/*
+  --- BLACK ITEMS ---
+*/
+.game-item.black .game-item-fill {
+  -fx-fill: darkslategrey;
+}
+.game-item.black .game-item-text {
   -fx-text-fill: whitesmoke;
 }
+
+.game-item.black:hover .game-item-fill{
+  -fx-fill: gainsboro;
+  -fx-stroke: gainsboro;
+}
+.game-item.black:hover .game-item-text{
+  -fx-text-fill: darkslategrey;
+}
+
 
 /*
   ----------------

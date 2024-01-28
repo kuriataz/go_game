@@ -45,10 +45,13 @@ public class LobbyScreen extends BorderPane {
     super();
 
     Button exitBtn = new Button("exit");
+    Button gamesBtn = new Button("past games");
+    
     exitBtn.setOnMouseClicked((event) -> {
       // show modal
       ConfirmPane c = new ConfirmPane("are you sure you want to exit?");
       exitBtn.setDisable(true);
+      gamesBtn.setDisable(true);
 
       c.yes.setOnMouseClicked((e_yes) -> {
         Platform.exit();
@@ -59,12 +62,12 @@ public class LobbyScreen extends BorderPane {
       c.no.setOnMouseClicked((e_no) -> {
         this.setCenter(vbox);
         exitBtn.setDisable(false);
+        gamesBtn.setDisable(false);
       });
 
       this.setCenter(c);
     });
 
-    Button gamesBtn = new Button("past games");
     gamesBtn.setOnMouseClicked(e -> {
       App.changeState(AppState.GAMELOG);
     });

@@ -296,22 +296,15 @@ public class GoGame {
     }
 
     System.out.println("game ended!");
-    calculateScore();
     System.out.println("fhistory: " + board.getHistory());
+    // send the final board to the results screen
+    broadcast(board.prepareBoardString());
     return board.getHistory();
   }
 
   private void broadcast(String message) {
     black.sendMessage(message);
     white.sendMessage(message);
-  }
-
-  /**
-   * Calculate game score. This method is called once both players agree to end
-   * the game.
-   */
-  private void calculateScore() {
-    // TODO : write
   }
 
   /**

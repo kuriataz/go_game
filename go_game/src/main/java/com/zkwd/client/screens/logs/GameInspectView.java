@@ -42,6 +42,8 @@ public class GameInspectView extends BorderPane {
   private final Button lleft;
   private final Button rright;
   private final Label timestamp;
+  private final Label wplayer;
+  private final Label bplayer;
 
   public GameInspectView(int gameID) {
     super();
@@ -59,9 +61,14 @@ public class GameInspectView extends BorderPane {
     HBox boardBox = new HBox(10, lleft, left, sp, right, rright);
     boardBox.setAlignment(Pos.CENTER);
 
+    bplayer = new Label();
+    wplayer = new Label();
+    HBox players = new HBox(50, bplayer, wplayer);
+    players.setAlignment(Pos.CENTER);
+
     timestamp = new Label();
 
-    VBox box = new VBox(15, boardBox, timestamp);
+    VBox box = new VBox(15, players, boardBox, timestamp);
     box.setAlignment(Pos.CENTER);
 
     // left button functionality
@@ -239,5 +246,7 @@ public class GameInspectView extends BorderPane {
     ind = boards.size() - 1;
     //load timestamp
     timestamp.setText("played: " + time);
+    wplayer.setText("white: " + white);
+    bplayer.setText("black: " + black);
   }
 }

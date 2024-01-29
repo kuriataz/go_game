@@ -189,8 +189,8 @@ public class GoGame {
           //
         } else if (board.correctMove(move.getKey(), move.getValue(), turn)) {
           board.putStone(move.getKey(), move.getValue(), turn);
-          board.removeCapturedStones();
           board.removeCapturedChains();
+          board.removeCapturedStones();
 
           System.out.println("valid move");
           System.out.println("history: " + board.getHistory());
